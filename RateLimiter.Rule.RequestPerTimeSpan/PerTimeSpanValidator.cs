@@ -24,13 +24,6 @@ namespace RateLimiter.Rule.RequestPerTimeSpan
         {
             try
             {
-                if (request == null)
-                {
-                    return false;
-                }
-                if (!request.AccessTime.Any())
-                    return false;
-
                 var beginningTimespan = DateTime.Now.Subtract(_periodInSeconds);
                 var requestsPerTimespan = request.AccessTime.Where(x => x >= beginningTimespan).ToList();
                 return _maxRequestCount >= requestsPerTimespan.Count();

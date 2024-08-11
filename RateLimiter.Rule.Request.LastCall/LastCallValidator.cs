@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using RateLimiter.Interface;
+using RateLimiter.Model;
 
 namespace RateLimiter.Rule.Request.LastCall
 {
@@ -20,12 +21,8 @@ namespace RateLimiter.Rule.Request.LastCall
         {
             try
             {
-                if (!request.AccessTime.Any())
-                {
-                    return false;
-                }
-                
-                var allowAccessTime = request.CurrentTime.Add(_timePeriodInSeconds);
+                var lastAccessTime = request.AccessTime.OrderBy(x => x).Last();
+                var allowAccessTime = lastAccessTime.Add(_timePeriodInSeconds);
                 return DateTime.Now >= allowAccessTime;
             }
             catch (Exception ex)

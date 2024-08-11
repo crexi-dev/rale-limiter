@@ -29,6 +29,11 @@ namespace RateLimiter
 
             try
             {
+                if (!this.AccessTime.Any())
+                {
+                    return true;
+                }
+
                 var results = new ConcurrentBag<bool>();
                 Parallel.ForEach(Rules, rule =>
                 {
