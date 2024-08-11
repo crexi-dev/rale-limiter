@@ -4,7 +4,7 @@ namespace RateLimiter.Interface
 {
     public interface IRateLimiterRepository
     {
-        void Add(Request request);
-        Request Get(string callId);  
+        Request Update(RequestDTO requestDTO);
+        Request Get(RequestDTO requestDTO)
     }
 }

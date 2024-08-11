@@ -2,33 +2,39 @@
 using RateLimiter.Interface;
 using RateLimiter.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace RateLimiter
-{    
-    public class RateLimiterService : IRateLimiterService
+{
+    public class RateLimiterService
     {
-        private readonly IEnumerable<IRateLimiterRule> _rules;
-        private readonly ILogger<IRateLimiterService> _logger;
-        
-        public RateLimiterService(ILogger<RateLimiterService> logger,IEnumerable<IRateLimiterRule> rules)
+        private readonly ILogger<RateLimiterService> _logger;
+        private readonly IRateLimiterRepository _rateLimiterRepository;
+        private readonly IRequestLimitValidator _accessValidator;
+        public RateLimiterService(ILogger<RateLimiterService> logger, IRateLimiterRepository rateLimiterRepository, IRequestLimitValidator accessValidator) 
         {
-            _rules = rules;        
             _logger = logger;
+            _rateLimiterRepository = rateLimiterRepository;
+            _accessValidator = accessValidator;
         }
-        public bool Validate(Request request) 
+
+        public bool Validate(RequestDTO request)
         {
             try
             {
-                var requestValidator = (RequestStrategy)request;
-                requestValidator.Rules = _rules.Where(x => x.SupportedRegion.Contains(request.Region));
-                return requestValidator.VerifyAccess();
+                if (request == null) 
+                {
+                    _logger.LogWarning("Request DTO is null");
+                    return false;
+                }
+                var currentRequest = _rateLimiterRepository.Get(request);
+                currentRequest.AccessTime.Add(request.CurrentTime);
+                _rateLimiterRepository.Update(currentRequest);
+                return _accessValidator.Validate(currentRequest);
             }
-            catch ( Exception ex )
+            catch (Exception ex)
             {
-                _logger.LogError(ex, "Error validate access at Access Validator");
-                return false;
+                _logger.LogError(ex, "Failed to Validate request");
+                throw;
             }
         }
     }
