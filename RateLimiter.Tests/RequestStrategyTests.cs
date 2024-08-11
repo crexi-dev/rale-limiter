@@ -5,9 +5,6 @@ using RateLimiter.Interface;
 using RateLimiter.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RateLimiter.Tests
 {
@@ -41,6 +38,19 @@ namespace RateLimiter.Tests
             strategy.Rules = rules;   
             var result = strategy.VerifyAccess();
 
+            Assert.True(result);
+        }
+
+        [Test]
+        public void RequestStrategy_Rules_Set_Firs_Time_Access_Return_True()
+        {
+            var testRule = new Mock<IRateLimiterRule>();
+            testRule.Setup(x => x.VerifyAccess(It.IsAny<Request>())).Returns(true);
+
+            var strategy = new RequestStrategy(_logger);
+            var rules = new List<IRateLimiterRule> { testRule.Object };
+            strategy.Rules = rules;
+            var result = strategy.VerifyAccess();
             Assert.True(result);
         }
 
