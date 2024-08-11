@@ -21,7 +21,16 @@ namespace RateLimiter
         {
             try
             {
-                request.Rules = _rules.Where( x => x.SupportedRegion.Contains(request.Region));
+                if(string.IsNullOrWhiteSpace(request.Region)) 
+                {
+                    throw new Exception("Request Region not set");
+                }
+
+                var regionMatchRules = _rules.Where(x => x.SupportedRegion.Contains(request.Region));
+                var rulesApplyToAllRegion = _rules.Where(x => !x.SupportedRegion.Any());
+                var rules = regionMatchRules.Concat(rulesApplyToAllRegion).Distinct();
+
+                request.Rules = rules;
                 return request.VerifyAccess();
             }
             catch ( Exception ex )

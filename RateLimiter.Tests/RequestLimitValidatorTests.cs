@@ -44,6 +44,66 @@ namespace RateLimiter.Tests
             Assert.IsTrue(requestStrategy.Rules.Count() == 2);            
         }
 
+        [Test]
+        public void RequestLimitValidator_Region_Set_Corret_Number_EmptyString()
+        {
+            var testRule = new Mock<IRateLimiterRule>();
+            testRule.Setup(x => x.SupportedRegion).Returns(new List<string> { "US" });
 
+            var testRule1 = new Mock<IRateLimiterRule>();
+            testRule1.Setup(x => x.SupportedRegion).Returns(new List<string> { });
+
+            var rules = new List<IRateLimiterRule> { testRule.Object, testRule1.Object };
+
+            var mockRequestStrategyLogger = new Mock<ILogger<RequestStrategy>>();
+            var requestStrategy = new RequestStrategy(mockRequestStrategyLogger.Object);
+            requestStrategy.Region = "US";
+
+            var validator = new RequestLimitValidator(_logger, rules);
+            validator.Validate(requestStrategy);
+            Assert.IsTrue(requestStrategy.Rules != null);
+            Assert.IsTrue(requestStrategy.Rules.Count() == 1);
+        }
+
+        [Test]
+        public void RequestLimitValidator_Region_Set_Corret_Number_More_Than_1_Region()
+        {
+            var testRule = new Mock<IRateLimiterRule>();
+            testRule.Setup(x => x.SupportedRegion).Returns(new List<string> { "US","EU" });
+
+            var testRule1 = new Mock<IRateLimiterRule>();
+            testRule1.Setup(x => x.SupportedRegion).Returns(new List<string> { });
+
+            var rules = new List<IRateLimiterRule> { testRule.Object, testRule1.Object };
+
+            var mockRequestStrategyLogger = new Mock<ILogger<RequestStrategy>>();
+            var requestStrategy = new RequestStrategy(mockRequestStrategyLogger.Object);
+            requestStrategy.Region = "US";
+
+            var validator = new RequestLimitValidator(_logger, rules);
+            validator.Validate(requestStrategy);
+            Assert.IsTrue(requestStrategy.Rules != null);
+            Assert.IsTrue(requestStrategy.Rules.Count() == 1);
+        }
+        [Test]
+        public void RequestLimitValidator_Region_Set_Corret_Empty_Region()
+        {
+            var testRule = new Mock<IRateLimiterRule>();
+            testRule.Setup(x => x.SupportedRegion).Returns(new List<string> { "US", "EU" });
+
+            var testRule1 = new Mock<IRateLimiterRule>();
+            testRule1.Setup(x => x.SupportedRegion).Returns(new List<string> { });
+
+            var rules = new List<IRateLimiterRule> { testRule.Object, testRule1.Object };
+
+            var mockRequestStrategyLogger = new Mock<ILogger<RequestStrategy>>();
+            var requestStrategy = new RequestStrategy(mockRequestStrategyLogger.Object);
+            requestStrategy.Region = "US";
+
+            var validator = new RequestLimitValidator(_logger, rules);
+            validator.Validate(requestStrategy);
+            Assert.IsTrue(requestStrategy.Rules != null);
+            Assert.IsTrue(requestStrategy.Rules.Count() == 2);
+        }
     }
 }
