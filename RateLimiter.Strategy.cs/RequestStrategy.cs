@@ -5,7 +5,7 @@ using RateLimiter.Model;
 using System.Collections.Concurrent;
 
 namespace RateLimiter
-{    
+{
     public class RequestStrategy : Request
     {
         private readonly ILogger<RequestStrategy> _logger;
