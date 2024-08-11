@@ -2,7 +2,7 @@
 
 namespace RateLimiter.Interface
 {
-    public interface IAccessValidator
+    public interface IRateLimiterService
     {
         bool Validate(Request request);
     }

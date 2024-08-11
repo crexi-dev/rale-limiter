@@ -8,8 +8,8 @@ namespace RateLimiter
     {
         private readonly ILogger<RateLimiter> _logger;
         private readonly IRateLimiterRepository _rateLimiterRepository;
-        private readonly IAccessValidator _accessValidator;
-        public RateLimiter(ILogger<RateLimiter> logger, IRateLimiterRepository rateLimiterRepository, IAccessValidator accessValidator) 
+        private readonly IRateLimiterService _accessValidator;
+        public RateLimiter(ILogger<RateLimiter> logger, IRateLimiterRepository rateLimiterRepository, IRateLimiterService accessValidator) 
         {
             _logger = logger;
             _rateLimiterRepository = rateLimiterRepository;

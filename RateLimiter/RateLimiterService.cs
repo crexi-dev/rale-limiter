@@ -7,12 +7,12 @@ using System.Linq;
 
 namespace RateLimiter
 {    
-    public class AccessValidator : IAccessValidator
+    public class RateLimiterService : IRateLimiterService
     {
         private readonly IEnumerable<IRateLimiterRule> _rules;
-        private readonly ILogger<IAccessValidator> _logger;
+        private readonly ILogger<IRateLimiterService> _logger;
         
-        public AccessValidator(ILogger<AccessValidator> logger,IEnumerable<IRateLimiterRule> rules)
+        public RateLimiterService(ILogger<RateLimiterService> logger,IEnumerable<IRateLimiterRule> rules)
         {
             _rules = rules;        
             _logger = logger;
