@@ -16,7 +16,7 @@ namespace RateLimiter.Rule.Request.LastCall
             _timePeriodInSeconds = new TimeSpan(0, 0, 0, periodInSeconds);
             _supportedRegions = supportedRegions;
         } 
-        public bool ReachLimit(Model.Request request)
+        public bool VerifyAccess(Model.Request request)
         {
             try
             {
@@ -24,9 +24,8 @@ namespace RateLimiter.Rule.Request.LastCall
                 {
                     return false;
                 }
-
-                var lastAccessTime = request.AccessTime.OrderBy(x => x).Last();
-                var allowAccessTime = lastAccessTime.Add(_timePeriodInSeconds);
+                
+                var allowAccessTime = request.CurrentTime.Add(_timePeriodInSeconds);
                 return DateTime.Now >= allowAccessTime;
             }
             catch (Exception ex)

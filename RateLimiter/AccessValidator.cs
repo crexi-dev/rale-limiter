@@ -23,7 +23,7 @@ namespace RateLimiter
             {
                 var requestValidator = (RequestStrategy)request;
                 requestValidator.Rules = _rules.Where(x => x.SupportedRegion.Contains(request.Region));
-                return !requestValidator.ReachLimit();
+                return requestValidator.VerifyAccess();
             }
             catch ( Exception ex )
             {

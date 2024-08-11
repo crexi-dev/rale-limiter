@@ -20,7 +20,7 @@ namespace RateLimiter.Rule.RequestPerTimeSpan
             _logger = logger;
             _supportedRegions = supportedRegions;
         }
-        public bool ReachLimit(Request request)
+        public bool VerifyAccess(Request request)
         {
             try
             {

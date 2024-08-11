@@ -19,7 +19,7 @@ namespace RateLimiter
         }
         public IEnumerable<IRateLimiterRule>? Rules { get; set; } = null;
 
-        public bool ReachLimit()
+        public bool VerifyAccess()
         {
             if (Rules == null)
             {
@@ -32,7 +32,7 @@ namespace RateLimiter
                 var results = new ConcurrentBag<bool>();
                 Parallel.ForEach(Rules, rule =>
                 {
-                    results.Add(rule.ReachLimit(this));                    
+                    results.Add(rule.VerifyAccess(this));                    
                 });
 
                 return results.ToList().All(x => x ==  true);
