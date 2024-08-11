@@ -32,7 +32,7 @@ namespace RateLimiter.Rule.RequestPerTimeSpan
                     return false;
 
                 var beginningTimespan = DateTime.Now.Subtract(_periodInSeconds);
-                var requestsPerTimespan = request.AccessTime.Where(x => x >= beginningTimespan);
+                var requestsPerTimespan = request.AccessTime.Where(x => x >= beginningTimespan).ToList();
                 return _maxRequestCount >= requestsPerTimespan.Count();
             }
             catch (Exception ex) 
