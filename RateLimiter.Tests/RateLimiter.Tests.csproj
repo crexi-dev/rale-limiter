@@ -7,6 +7,7 @@
   <ItemGroup>
     <ProjectReference Include="..\RateLimiter.Rule.Request.LastCall\RateLimiter.Rule.Request.LastCall.csproj" />
     <ProjectReference Include="..\RateLimiter.Rule.RequestPerTimeSpan\RateLimiter.Rule.Request.PerTimeSpan.csproj" />
+    <ProjectReference Include="..\RateLimiter.Strategy.cs\RateLimiter.Strategy.cs.csproj" />
     <ProjectReference Include="..\RateLimiter\RateLimiter.csproj" />
   </ItemGroup>
   <ItemGroup>

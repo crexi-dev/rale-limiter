@@ -4,6 +4,6 @@ namespace RateLimiter.Interface
 {
     public interface IRequestLimitValidator
     {
-        bool Validate(Request request);
+        bool Validate(RequestStrategy request);
     }
 }

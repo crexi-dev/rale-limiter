@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using RateLimiter.Interface;
-using RateLimiter.Model;
+using RateLimiter.Interface.Rule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,13 +17,12 @@ namespace RateLimiter
             _rules = rules;        
             _logger = logger;
         }
-        public bool Validate(Request request) 
+        public bool Validate(RequestStrategy request) 
         {
             try
             {
-                var requestValidator = (RequestStrategy)request;
-                requestValidator.Rules = _rules.Where(x => x.SupportedRegion.Contains(request.Region));
-                return requestValidator.VerifyAccess();
+                request.Rules = _rules.Where( x => x.SupportedRegion.Contains(request.Region));
+                return request.VerifyAccess();
             }
             catch ( Exception ex )
             {

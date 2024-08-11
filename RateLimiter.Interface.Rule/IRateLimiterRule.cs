@@ -1,6 +1,6 @@
 ﻿using RateLimiter.Model;
 
-namespace RateLimiter.Interface
+namespace RateLimiter.Interface.Rule
 {
     public interface IRateLimiterRule
     {

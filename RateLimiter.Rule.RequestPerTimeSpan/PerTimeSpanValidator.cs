@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using RateLimiter.Interface;
+using RateLimiter.Interface.Rule;
 using RateLimiter.Model;
 
 namespace RateLimiter.Rule.RequestPerTimeSpan

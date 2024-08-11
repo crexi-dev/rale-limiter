@@ -10,4 +10,9 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\RateLimiter.Interface.Rule\RateLimiter.Interface.Rule.csproj" />
+    <ProjectReference Include="..\RateLimiter.Model\RateLimiter.Model.csproj" />
+  </ItemGroup>
+
 </Project>

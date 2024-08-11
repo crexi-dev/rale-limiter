@@ -1,12 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using RateLimiter.Interface;
+using RateLimiter.Interface.Rule;
 using RateLimiter.Model;
-using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RateLimiter
 {    

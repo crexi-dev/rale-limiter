@@ -29,7 +29,7 @@ namespace RateLimiter
                 var currentRequest = _rateLimiterRepository.Get(request);
                 currentRequest.AccessTime.Add(request.CurrentTime);
                 _rateLimiterRepository.Update(currentRequest);
-                return _accessValidator.Validate(currentRequest);
+                return _accessValidator.Validate((RequestStrategy)currentRequest);
             }
             catch (Exception ex)
             {

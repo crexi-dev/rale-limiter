@@ -2,6 +2,7 @@
 using Moq;
 using NUnit.Framework;
 using RateLimiter.Interface;
+using RateLimiter.Interface.Rule;
 using RateLimiter.Model;
 using System;
 using System.Collections.Generic;
