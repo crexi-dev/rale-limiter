@@ -11,11 +11,11 @@ namespace RateLimiter.Repository
         public RateLimiterDataStore(IMemoryCache memoryCache)
         {
             _concurrentDictionary = new ConcurrentDictionary<string, Request>();
-        }      
+        }
         public Request Update(RequestDTO requestDTO)
         {
             if (_concurrentDictionary.ContainsKey(requestDTO.CallId))
-            { 
+            {
                 var currentRequest = _concurrentDictionary[requestDTO.CallId];
                 currentRequest.AccessTime.Add(requestDTO.CurrentTime);
                 _concurrentDictionary[requestDTO.CallId] = currentRequest;

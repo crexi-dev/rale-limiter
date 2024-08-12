@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using RateLimiter.Interface;
 using RateLimiter.Interface.Rule;
 using RateLimiter.Model;
 
@@ -14,7 +13,7 @@ namespace RateLimiter.Rule.RequestPerTimeSpan
         private readonly ILogger<PerTimeSpanValidator> _logger;
         private readonly IEnumerable<string> _supportedRegions;
 
-        public PerTimeSpanValidator(int maxReqeustCount, int periodInSeconds, ILogger<PerTimeSpanValidator>logger, IEnumerable<string> supportedRegions) 
+        public PerTimeSpanValidator(int maxReqeustCount, int periodInSeconds, ILogger<PerTimeSpanValidator> logger, IEnumerable<string> supportedRegions)
         {
             _maxRequestCount = maxReqeustCount;
             _periodInSeconds = new TimeSpan(0, 0, 0, periodInSeconds);
@@ -29,7 +28,7 @@ namespace RateLimiter.Rule.RequestPerTimeSpan
                 var requestsPerTimespan = request.AccessTime.Where(x => x >= beginningTimespan).ToList();
                 return _maxRequestCount >= requestsPerTimespan.Count();
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Issue with Request Per Time Span Validator");
                 throw;

@@ -2,13 +2,9 @@
 using Moq;
 using NUnit.Framework;
 using RateLimiter.Model;
-using RateLimiter.Rule.Request.LastCall;
 using RateLimiter.Rule.RequestPerTimeSpan;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RateLimiter.Tests
 {
@@ -20,7 +16,7 @@ namespace RateLimiter.Tests
         {
             _logger = new Mock<ILogger<PerTimeSpanValidator>>().Object;
 
-            
+
         }
 
         [Test]

@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using RateLimiter.Interface;
 using RateLimiter.Interface.Rule;
 using RateLimiter.Model;
 using System.Collections.Concurrent;
@@ -9,7 +8,7 @@ namespace RateLimiter
     public class RequestStrategy : Request
     {
         private readonly ILogger<RequestStrategy> _logger;
-        public RequestStrategy(ILogger<RequestStrategy> logger) 
+        public RequestStrategy(ILogger<RequestStrategy> logger)
         {
             _logger = logger;
         }
@@ -33,17 +32,17 @@ namespace RateLimiter
                 var results = new ConcurrentBag<bool>();
                 Parallel.ForEach(Rules, rule =>
                 {
-                    results.Add(rule.VerifyAccess(this));                    
+                    results.Add(rule.VerifyAccess(this));
                 });
 
-                return results.ToList().All(x => x ==  true);
+                return results.ToList().All(x => x == true);
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 _logger.LogError(ex, "Error with validate access in Validator");
                 return false;
             }
-            
+
         }
     }
 }

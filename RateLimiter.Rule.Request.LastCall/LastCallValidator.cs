@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using RateLimiter.Interface;
 using RateLimiter.Interface.Rule;
-using RateLimiter.Model;
 
 namespace RateLimiter.Rule.Request.LastCall
 {
@@ -17,7 +15,7 @@ namespace RateLimiter.Rule.Request.LastCall
             _logger = logger;
             _timePeriodInSeconds = new TimeSpan(0, 0, 0, periodInSeconds);
             _supportedRegions = supportedRegions;
-        } 
+        }
         public bool VerifyAccess(Model.Request request)
         {
             try
@@ -31,6 +29,6 @@ namespace RateLimiter.Rule.Request.LastCall
                 _logger.LogError(ex, "Issue with Last Call Validator");
                 throw;
             }
-        }      
+        }
     }
 }

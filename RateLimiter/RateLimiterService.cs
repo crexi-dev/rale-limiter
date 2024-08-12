@@ -10,7 +10,7 @@ namespace RateLimiter
         private readonly ILogger<RateLimiterService> _logger;
         private readonly IRateLimiterRepository _rateLimiterRepository;
         private readonly IRequestLimitValidator _accessValidator;
-        public RateLimiterService(ILogger<RateLimiterService> logger, IRateLimiterRepository rateLimiterRepository, IRequestLimitValidator accessValidator) 
+        public RateLimiterService(ILogger<RateLimiterService> logger, IRateLimiterRepository rateLimiterRepository, IRequestLimitValidator accessValidator)
         {
             _logger = logger;
             _rateLimiterRepository = rateLimiterRepository;
@@ -21,7 +21,7 @@ namespace RateLimiter
         {
             try
             {
-                if (requestDTO == null) 
+                if (requestDTO == null)
                 {
                     _logger.LogWarning("Request DTO is null");
                     return false;

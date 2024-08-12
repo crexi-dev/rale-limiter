@@ -1,16 +1,9 @@
-﻿using Castle.Components.DictionaryAdapter.Xml;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
-using RateLimiter.Interface;
 using RateLimiter.Interface.Rule;
-using RateLimiter.Model;
-using RateLimiter.Rule.Request.LastCall;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RateLimiter.Tests
 {
@@ -27,21 +20,23 @@ namespace RateLimiter.Tests
         public void RequestLimitValidator_Region_Set_Corret_Number()
         {
             var testRule = new Mock<IRateLimiterRule>();
-            testRule.Setup(x => x.SupportedRegion).Returns(new List<string> {"US"  });            
+            testRule.Setup(x => x.SupportedRegion).Returns(new List<string> { "US" });
 
             var testRule1 = new Mock<IRateLimiterRule>();
-            testRule1.Setup(x => x.SupportedRegion).Returns(new List<string> { "US" });           
+            testRule1.Setup(x => x.SupportedRegion).Returns(new List<string> { "US" });
 
-            var rules = new List<IRateLimiterRule> { testRule.Object, testRule1.Object};
+            var rules = new List<IRateLimiterRule> { testRule.Object, testRule1.Object };
 
             var mockRequestStrategyLogger = new Mock<ILogger<RequestStrategy>>();
             var requestStrategy = new RequestStrategy(mockRequestStrategyLogger.Object);
             requestStrategy.Region = "US";
-            
+
             var validator = new RequestLimitValidator(_logger, rules);
             validator.Validate(requestStrategy);
             Assert.IsTrue(requestStrategy.Rules != null);
-            Assert.IsTrue(requestStrategy.Rules.Count() == 2);            
+#pragma warning disable CS8604 // Possible null reference argument.
+            Assert.IsTrue(requestStrategy.Rules.Count() == 2);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         [Test]
@@ -62,14 +57,16 @@ namespace RateLimiter.Tests
             var validator = new RequestLimitValidator(_logger, rules);
             validator.Validate(requestStrategy);
             Assert.IsTrue(requestStrategy.Rules != null);
+#pragma warning disable CS8604 // Possible null reference argument.
             Assert.IsTrue(requestStrategy.Rules.Count() == 1);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
 
         [Test]
         public void RequestLimitValidator_Region_Set_Corret_Number_More_Than_1_Region()
         {
             var testRule = new Mock<IRateLimiterRule>();
-            testRule.Setup(x => x.SupportedRegion).Returns(new List<string> { "US","EU" });
+            testRule.Setup(x => x.SupportedRegion).Returns(new List<string> { "US", "EU" });
 
             var testRule1 = new Mock<IRateLimiterRule>();
             testRule1.Setup(x => x.SupportedRegion).Returns(new List<string> { });
@@ -83,7 +80,9 @@ namespace RateLimiter.Tests
             var validator = new RequestLimitValidator(_logger, rules);
             validator.Validate(requestStrategy);
             Assert.IsTrue(requestStrategy.Rules != null);
+#pragma warning disable CS8604 // Possible null reference argument.
             Assert.IsTrue(requestStrategy.Rules.Count() == 1);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
         [Test]
         public void RequestLimitValidator_Region_Set_Corret_Empty_Region()
@@ -103,7 +102,9 @@ namespace RateLimiter.Tests
             var validator = new RequestLimitValidator(_logger, rules);
             validator.Validate(requestStrategy);
             Assert.IsTrue(requestStrategy.Rules != null);
+#pragma warning disable CS8604 // Possible null reference argument.
             Assert.IsTrue(requestStrategy.Rules.Count() == 2);
+#pragma warning restore CS8604 // Possible null reference argument.
         }
     }
 }

@@ -12,13 +12,13 @@ namespace RateLimiter.Tests
     public class RateLimiterLastCallTest
     {
         private ILogger<LastCallValidator> _logger;
-        public RateLimiterLastCallTest() 
+        public RateLimiterLastCallTest()
         {
             _logger = new Mock<ILogger<LastCallValidator>>().Object;
         }
         [Test]
         public void Last_Request_Call_Pass_TimePeriod_Current_Access_Set_To_Min_Should_Return_True()
-        {           
+        {
             var testValidator = new LastCallValidator(5, _logger, new List<string> { "US" });
             var request = new Request();
             request.AccessTime.Add(DateTime.Now);
@@ -42,7 +42,7 @@ namespace RateLimiter.Tests
             var testValidator = new LastCallValidator(5, _logger, new List<string> { "US" });
 
             var request = new Request();
-            request.CurrentTime = DateTime.Now.AddMinutes(5);            
+            request.CurrentTime = DateTime.Now.AddMinutes(5);
             Assert.False(testValidator.VerifyAccess(request));
         }
     }
