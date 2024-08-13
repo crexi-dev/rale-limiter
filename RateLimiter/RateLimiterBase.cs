@@ -34,25 +34,32 @@ namespace Crexi.Common.RateLimiter
 				var isAllowed = false;
 
 				// Check client rules based on the clientId
-				if (ClientRules.TryGetValue(user.ClientId, out var clientRules))
+				lock (ClientRules)
 				{
-					foreach (var rule in clientRules)
+					if (ClientRules.TryGetValue(user.ClientId, out var clientRules))
 					{
-						if (rule is BypassRule) return true; //shortcutting the BypassRule on Client level
-						if (rule.Allowed())
-							isAllowed = true;
+						foreach (var rule in clientRules)
+						{
+							if (rule is BypassRule) return true; //shortcutting the BypassRule on Client level
+							if (rule.Allowed())
+								isAllowed = true;
+						}
 					}
 				}
 				if (!isAllowed) return false;//If request is not allowed on the client level we skip session check and return false.
 				isAllowed = false;
+
 				// Check session rules based on the token
-				if (SessionRules.TryGetValue(user.Token, out var sessionRules))
+				lock (SessionRules)
 				{
-					foreach (var rule in sessionRules)
+					if (SessionRules.TryGetValue(user.Token, out var sessionRules))
 					{
-						if (rule is BypassRule) return true; //shortcutting the BypassRule on Session level
-						if (rule.Allowed())
-							isAllowed = true;
+						foreach (var rule in sessionRules)
+						{
+							if (rule is BypassRule) return true; //shortcutting the BypassRule on Session level
+							if (rule.Allowed())
+								isAllowed = true;
+						}
 					}
 				}
 				return isAllowed;
@@ -92,14 +99,20 @@ namespace Crexi.Common.RateLimiter
 			{
 				// Add client rule if not already present. Update it if already present
 				// Note that if the select below returns an empty list we will still add it to dictionary to update it.
-				if (!ClientRules.ContainsKey(user.ClientId))
-					ClientRules.Add(user.ClientId, new List<IRateLimitRule>());
-				ClientRules[user.ClientId] = ruleDefinitions.Where(r => r.Scope == RuleScope.Client).Select(r => CreateRule(r)).ToList();
+				lock (ClientRules)
+				{
+					if (!ClientRules.ContainsKey(user.ClientId))
+						ClientRules.Add(user.ClientId, new List<IRateLimitRule>());
+					ClientRules[user.ClientId] = ruleDefinitions.Where(r => r.Scope == RuleScope.Client).Select(r => CreateRule(r)).ToList();
+				}
 
 				// Add session rule if not already present
-				if (!SessionRules.ContainsKey(user.Token))
-					SessionRules.Add(user.Token, new List<IRateLimitRule>());
-				SessionRules[user.Token] = ruleDefinitions.Where(r => r.Scope == RuleScope.Session).Select(r => CreateRule(r)).ToList();
+				lock (SessionRules)
+				{
+					if (!SessionRules.ContainsKey(user.Token))
+						SessionRules.Add(user.Token, new List<IRateLimitRule>());
+					SessionRules[user.Token] = ruleDefinitions.Where(r => r.Scope == RuleScope.Session).Select(r => CreateRule(r)).ToList();
+				}
 			}
 			catch (Exception ex)
 			{
@@ -142,9 +155,12 @@ namespace Crexi.Common.RateLimiter
 		{
 			try
 			{
-				// Remove session-specific rules
-				if (SessionRules.ContainsKey(user.Token))
-					SessionRules.Remove(user.Token);
+				lock (SessionRules)
+				{
+					// Remove session-specific rules
+					if (SessionRules.ContainsKey(user.Token))
+						SessionRules.Remove(user.Token);
+				}
 			}
 			catch (Exception ex)
 			{
