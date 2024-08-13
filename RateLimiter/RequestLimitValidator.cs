@@ -1,23 +1,25 @@
 ﻿using Microsoft.Extensions.Logging;
 using RateLimiter.Interface;
-using RateLimiter.Interface.Rule;
+using RateLimiter.Model;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RateLimiter
 {
     public class RequestLimitValidator : IRequestLimitValidator
-    {
-        private readonly IEnumerable<IRateLimiterRule> _rules;
+    {        
         private readonly ILogger<IRequestLimitValidator> _logger;
+        private readonly IRateLimiterRegionRuleService _rateLimiterRegionRuleService;
 
-        public RequestLimitValidator(ILogger<RequestLimitValidator> logger, IEnumerable<IRateLimiterRule> rules)
-        {
-            _rules = rules;
+        public RequestLimitValidator(ILogger<RequestLimitValidator> logger, IRateLimiterRegionRuleService rateLimiterRegionRuleService)
+        {            
             _logger = logger;
+            _rateLimiterRegionRuleService = rateLimiterRegionRuleService;
         }
-        public bool Validate(RequestStrategy request)
+        public bool Validate(Request request)
         {
             try
             {
@@ -26,12 +28,20 @@ namespace RateLimiter
                     throw new Exception("Request Region not set");
                 }
 
-                var regionMatchRules = _rules.Where(x => x.SupportedRegion.Contains(request.Region));
-                var rulesApplyToAllRegion = _rules.Where(x => !x.SupportedRegion.Any());
-                var rules = regionMatchRules.Concat(rulesApplyToAllRegion).Distinct();
+                var rules = _rateLimiterRegionRuleService.GetRulesByRegion(request.Region);
+                
+                if(rules == null) 
+                {
+                    throw new Exception("No rules apply this region");
+                }
 
-                request.Rules = rules;
-                return request.VerifyAccess();
+                var results = new ConcurrentBag<bool>();
+                Parallel.ForEach(rules, rule =>
+                {
+                    results.Add(rule.VerifyAccess(request));
+                });
+
+                return results.ToList().All(x => x == true);
             }
             catch (Exception ex)
             {

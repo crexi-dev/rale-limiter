@@ -8,7 +8,7 @@ namespace RateLimiter.Repository
     public class RateLimiterDataStore : IRateLimiterRepository
     {
         private readonly ConcurrentDictionary<string, Request> _concurrentDictionary;
-        public RateLimiterDataStore(IMemoryCache memoryCache)
+        public RateLimiterDataStore()
         {
             _concurrentDictionary = new ConcurrentDictionary<string, Request>();
         }

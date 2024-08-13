@@ -17,6 +17,7 @@ namespace RateLimiter
             _accessValidator = accessValidator;
         }
 
+       
         public bool Validate(RequestDTO requestDTO)
         {
             try
@@ -26,10 +27,10 @@ namespace RateLimiter
                     _logger.LogWarning("Request DTO is null");
                     return false;
                 }
-                var currentRequest = _rateLimiterRepository.Get(requestDTO);
+                Request currentRequest = _rateLimiterRepository.Get(requestDTO);
                 currentRequest.AccessTime.Add(requestDTO.CurrentTime);
                 _rateLimiterRepository.Update(currentRequest);
-                return _accessValidator.Validate((RequestStrategy)currentRequest);
+                return _accessValidator.Validate(currentRequest);
             }
             catch (Exception ex)
             {
