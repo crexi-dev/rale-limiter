@@ -13,9 +13,9 @@ namespace RateLimiter.Rule.RequestPerTimeSpan
         private readonly ILogger<PerTimeSpanValidator> _logger;
         private readonly IEnumerable<string> _supportedRegions;
 
-        public PerTimeSpanValidator(int maxReqeustCount, int periodInSeconds, ILogger<PerTimeSpanValidator> logger, IEnumerable<string> supportedRegions)
+        public PerTimeSpanValidator(int maxRequestCount, int periodInSeconds, ILogger<PerTimeSpanValidator> logger, IEnumerable<string> supportedRegions)
         {
-            _maxRequestCount = maxReqeustCount;
+            _maxRequestCount = maxRequestCount;
             _periodInSeconds = new TimeSpan(0, 0, 0, periodInSeconds);
             _logger = logger;
             _supportedRegions = supportedRegions;
