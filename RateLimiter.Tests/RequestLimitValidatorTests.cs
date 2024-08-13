@@ -11,12 +11,10 @@ namespace RateLimiter.Tests
     [TestFixture]
     public class RequestLimitValidatorTests
     {
-        private ILogger<RequestLimitValidator> _logger;
-        private Mock<IRateLimiterRegionRuleService> _regionRuleService;
+        private ILogger<RequestLimitValidator> _logger;       
         public RequestLimitValidatorTests()
         {
-            _logger = new Mock<ILogger<RequestLimitValidator>>().Object;
-            _regionRuleService = new Mock<IRateLimiterRegionRuleService>();
+            _logger = new Mock<ILogger<RequestLimitValidator>>().Object;           
         }
 
         [Test]
