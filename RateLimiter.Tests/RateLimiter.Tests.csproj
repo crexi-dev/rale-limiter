@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\RateLimiter.Interface\RateLimiter.Interface.csproj" />
+    <ProjectReference Include="..\RateLimiter.Repository\RateLimiter.Repository.csproj" />
     <ProjectReference Include="..\RateLimiter.Rule.Request.LastCall\RateLimiter.Rule.Request.LastCall.csproj" />
     <ProjectReference Include="..\RateLimiter.Rule.RequestPerTimeSpan\RateLimiter.Rule.Request.PerTimeSpan.csproj" />
     <ProjectReference Include="..\RateLimiter\RateLimiter.csproj" />

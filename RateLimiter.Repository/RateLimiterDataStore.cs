@@ -48,6 +48,7 @@ namespace RateLimiter.Repository
             return new Request
             {
                 CallId = requestDTO.CallId,
+                CurrentTime = requestDTO.CurrentTime,
                 AccessTime = new List<DateTime> { requestDTO.CurrentTime }
             };
         }
