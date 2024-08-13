@@ -1,0 +1,4 @@
+@RateLimiter.Examples_HostAddress = http://localhost:5247
+
+GET {{RateLimiter.Examples_HostAddress}}/RateLimiterExamples/defaultFixedWindow
+Accept: application/json
