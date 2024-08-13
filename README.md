@@ -65,3 +65,17 @@ So there are 4 types of classes in this exercise:
 	2- Rate Limiter concrete class(es). These classes have the concrete implementation of the Rate Limiter class above with different implementation for each type of limiter.
 	3- Session manager class. This class will emulate an authentication and creates a token. This class looks up applicable policies for the user and creates the concrete rate limiting class(es) and passes them to the rate limiter manager
 	4- A test class that will be rate limited. This class represents the endpoint that we're trying to limit. This could also be substituted by the unit tests.
+
+
+Update: 08/13/2024
+
+The final implementation consists of:
+
+1- SessionManager Class. This class will emulate the authentication of users and will hold a live session key in a memory dictionary. This class will register new sessions with the RateLimiterBase class.
+2- IRateLimiter Interface and ancillary objects. This is the interface upon which all rate limiter concrete classes are based
+3- RateLimiterBase Class. This class will be called by SessionManager for each new session. It will lookup the users' session and client based ratelimiting rule definitions and will use a factory pattern to create these rules and save them in memory for lookp.
+   These objects are client based keyed by the clientId, and session based keyed by the token.
+4- Upon each request to validate the token at the SessionManager class, it will call the RateLimitingBase.Allow() method and pass it the user context. The RateLimiterBase will use the user context to look up the ratelimiting rules in memory.
+	 It will then apply the client rules and session rules and determine whether the user is allowed to execute or not (Read comments in class for more info)
+5- There is a series of tests in RateLimiter.Tests that attempt to test a few scenarios and edge cases.
+6- Sample rate limiters provided are under the Rules folder: BypassRule, FixedWindowRule, and SlidingWindowRule. More rules can be added to limit by different algorithms and segmentation methods.
