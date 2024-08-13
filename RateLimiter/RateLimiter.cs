@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using RateLimiter.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -16,15 +15,20 @@ public class RateLimiter
     public static async Task<bool> IsRequestAllowedAsync(HttpContext httpContext, IEnumerable<IRateLimiterRule> rules, CancellationToken ct = default)
     {
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-        var validationTasks = rules.Select(x => x.IsRequestAllowedAsync(httpContext.Request, cts.Token)).ToAsyncEnumerable();
-        
-        await foreach (var result in validationTasks.WithCancellation(cts.Token))
+        var validationTasks = rules.Select(x => x.IsRequestAllowedAsync(httpContext.Request, cts.Token)).ToList();
+
+        while (validationTasks.Any())
         {
+            var completedTask = await Task.WhenAny(validationTasks);
+
+            bool result = await completedTask;
             if (!result)
             {
                 cts.Cancel();
                 return false;
             }
+
+            validationTasks.Remove(completedTask);
         }
         return true;
     }
