@@ -1,45 +1,69 @@
-﻿using Castle.Core.Logging;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using RateLimiter.Interface;
 using RateLimiter.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RateLimiter.Tests
 {
     [TestFixture]
     public class RateLimiterServiceTests
     {
-        private ILogger<RateLimiterService> _logger;
+        private Mock<ILogger<RateLimiterService>> _logger;
+        private Mock<IRateLimiterRepository> _rateLimiterRepositoryMock;
+        private Mock<IRequestLimitValidator> _accessValidatorMock;
+        private RateLimiterService _rateLimiterService;
 
-        public RateLimiterServiceTests()
-        { 
-            _logger = new Mock <ILogger<RateLimiterService>>().Object;
+        [SetUp]
+        public void Setup()
+        {
+            _logger = new Mock<ILogger<RateLimiterService>>();
+           
+
+            _rateLimiterRepositoryMock = new Mock<IRateLimiterRepository>();
+            _accessValidatorMock = new Mock<IRequestLimitValidator>();
+            
+            _rateLimiterService = new RateLimiterService(_logger.Object, _rateLimiterRepositoryMock.Object, _accessValidatorMock.Object);
         }
 
         [Test]
-        public void RateLimiterService_Has_Access()
-        {
-            var rateLimiterRepostoryMock = new Mock<IRateLimiterRepository>();
-            rateLimiterRepostoryMock
-                .Setup(x => x.Get(It.IsAny<RequestDTO>())).Returns(new Request());
-
-            var validator = new Mock<IRequestLimitValidator>();
-            var reqeust = new Request();
-            validator.Setup(x => x.Validate(reqeust)).Returns(true);
-            var service = new RateLimiterService(_logger, rateLimiterRepostoryMock.Object, validator.Object);
-
-            service.Validate(new RequestDTO());
-
-
-
-
+        public void Validate_Request_Is_Null_ReturnsFalse()
+        {            
+            RequestDTO requestDTO = null;         
+            bool result = _rateLimiterService.Validate(requestDTO);
+            Assert.IsFalse(result);            
         }
 
+        [Test]
+        public void Validate_ValidRequest_ReturnsAccessValidatorResult()
+        {
+            // Arrange
+            RequestDTO requestDTO = new RequestDTO();
+            Request currentRequest = new Request();
+            _rateLimiterRepositoryMock.Setup(x => x.Get(requestDTO)).Returns(currentRequest);
+            _accessValidatorMock.Setup(x => x.Validate(currentRequest)).Returns(true);
+
+            // Act
+            bool result = _rateLimiterService.Validate(requestDTO);
+
+            // Assert
+            Assert.IsTrue(result);
+            _rateLimiterRepositoryMock.Verify(x => x.Update(currentRequest), Times.Once);
+            _accessValidatorMock.Verify(x => x.Validate(currentRequest), Times.Once);
+        }
+
+        [Test]
+        public void Validate_ExceptionThrown_LogsErrorAndThrows()
+        {
+            // Arrange
+            RequestDTO requestDTO = new RequestDTO();
+            Request currentRequest = new Request();
+            _rateLimiterRepositoryMock.Setup(x => x.Get(requestDTO)).Returns(currentRequest);
+            _accessValidatorMock.Setup(x => x.Validate(currentRequest)).Throws<Exception>();
+
+            // Act & Assert
+            Assert.Throws<Exception>(() => _rateLimiterService.Validate(requestDTO));           
+        }
     }
 }
