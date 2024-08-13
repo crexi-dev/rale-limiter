@@ -20,13 +20,14 @@ namespace RateLimiter
        
         public bool Validate(RequestDTO requestDTO)
         {
+            if (requestDTO == null)
+            {
+                _logger.LogWarning("Request DTO is null");
+                return false;
+            }
             try
             {
-                if (requestDTO == null)
-                {
-                    _logger.LogWarning("Request DTO is null");
-                    return false;
-                }
+                
                 Request currentRequest = _rateLimiterRepository.Get(requestDTO);
                 currentRequest.AccessTime.Add(requestDTO.CurrentTime);
                 _rateLimiterRepository.Update(currentRequest);

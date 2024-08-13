@@ -14,10 +14,8 @@ namespace RateLimiter
 
         public IEnumerable<IRateLimiterRule> GetRulesByRegion(string region) 
         {
-            var regionMatchRules = _rules.Where(x => x.SupportedRegion.Contains(region)).ToList();
-            var rulesApplyToAllRegion = _rules.Where(x => !x.SupportedRegion.Any());
-            regionMatchRules.AddRange(rulesApplyToAllRegion);            
-            return regionMatchRules;
+            return _rules.Where(x => x.SupportedRegion.Contains(region) || !x.SupportedRegion.Any()).ToList();
         }
     }
 }
+i
