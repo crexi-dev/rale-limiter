@@ -1,5 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using RateLimiter.Interface;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RateLimiter.Rule.Request.LastCall
 {
@@ -7,26 +10,34 @@ namespace RateLimiter.Rule.Request.LastCall
     {
         public List<string> SupportedRegion => _supportedRegions.ToList();
 
-        private readonly ILogger _logger;
+        private readonly ILogger<LastCallValidator> _logger;
         private readonly TimeSpan _timePeriodInSeconds;
         private readonly IEnumerable<string> _supportedRegions;
+
         public LastCallValidator(int periodInSeconds, ILogger<LastCallValidator> logger, IEnumerable<string> supportedRegions)
         {
             _logger = logger;
-            _timePeriodInSeconds = new TimeSpan(0, 0, 0, periodInSeconds);
+            _timePeriodInSeconds = TimeSpan.FromSeconds(periodInSeconds);
             _supportedRegions = supportedRegions;
         }
-        public bool VerifyAccess(Model.Request   request)
+
+        public bool VerifyAccess(Model.Request request)
         {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             try
             {
                 if (!request.AccessTime.Any())
                 {
                     return true;
                 }
-                var lastAccessTime = request.AccessTime.OrderBy(x => x).Last();              
+
+                var lastAccessTime = request.AccessTime.OrderBy(x => x).Last();
                 var allowAccessTime = lastAccessTime.Add(_timePeriodInSeconds);
-                return DateTime.Now >= allowAccessTime;
+                return DateTime.UtcNow >= allowAccessTime;
             }
             catch (Exception ex)
             {
