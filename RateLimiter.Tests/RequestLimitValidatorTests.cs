@@ -1,112 +1,94 @@
-﻿//using Microsoft.Extensions.Logging;
-//using Moq;
-//using NUnit.Framework;
-//using RateLimiter.Interface;
-//using RateLimiter.Interface.Rule;
-//using System.Collections.Generic;
-//using System.Linq;
+﻿using Microsoft.Extensions.Logging;
+using Moq;
+using NUnit.Framework;
+using RateLimiter.Interface;
+using RateLimiter.Model;
+using System.Collections.Generic;
+using System.Linq;
 
-//namespace RateLimiter.Tests
-//{
-//    [TestFixture]
-//    public class RequestLimitValidatorTests
-//    {
-//        private ILogger<RequestLimitValidator> _logger;
-//        public RequestLimitValidatorTests()
-//        {
-//            _logger = new Mock<ILogger<RequestLimitValidator>>().Object;
-//        }
+namespace RateLimiter.Tests
+{
+    [TestFixture]
+    public class RequestLimitValidatorTests
+    {
+        private ILogger<RequestLimitValidator> _logger;
+        private Mock<IRateLimiterRegionRuleService> _regionRuleService;
+        public RequestLimitValidatorTests()
+        {
+            _logger = new Mock<ILogger<RequestLimitValidator>>().Object;
+            _regionRuleService = new Mock<IRateLimiterRegionRuleService>();
+        }
 
-//        [Test]
-//        public void RequestLimitValidator_Region_Set_Corret_Number()
-//        {
-//            var testRule = new Mock<IRateLimiterRule>();
-//            testRule.Setup(x => x.SupportedRegion).Returns(new List<string> { "US" });
+        [Test]
+        public void Validator_Return_True()
+        {
+            var ruleOne = new Mock<IRateLimiterRule>();
+            ruleOne.Setup( x => x.VerifyAccess(It.IsAny<Request>())).Returns(true);
+            var ruleTwo = new Mock<IRateLimiterRule>();
+            ruleTwo.Setup(x => x.VerifyAccess(It.IsAny<Request>())).Returns(true);
 
-//            var testRule1 = new Mock<IRateLimiterRule>();
-//            testRule1.Setup(x => x.SupportedRegion).Returns(new List<string> { "US" });
+            var rules = new List<IRateLimiterRule>
+            {
+                ruleOne.Object,
+                ruleTwo.Object
+            };
 
-//            var rules = new List<IRateLimiterRule> { testRule.Object, testRule1.Object };
+            var regionRuleService = new Mock<IRateLimiterRegionRuleService>();
+            regionRuleService.Setup(x => x.GetRulesByRegion(It.IsAny<string>())).Returns(rules);
 
-//            var requestStrategy = new RequestStrategy();
-//            requestStrategy.Region = "US";
+            var validator = new RequestLimitValidator(_logger, regionRuleService.Object);
 
-//            var regionService = new Mock<IRateLimiterRegionRuleService>();
-//            regionService.Setup(x => x.GetRulesByRegion(It.IsAny<string>())).Returns(rules);    
-
-//            var validator = new RequestLimitValidator(_logger, regionService.Object);
-//            var result = validator.Validate(requestStrategy);
-//            Assert.IsTrue(requestStrategy.Rules != null);
-//            Assert.IsTrue(requestStrategy.Rules.Count() == 2);
-//        }
-
-//        [Test]
-//        public void RequestLimitValidator_Region_Set_Corret_Number_EmptyString()
-//        {
-//            var testRule = new Mock<IRateLimiterRule>();
-//            testRule.Setup(x => x.SupportedRegion).Returns(new List<string> { "US" });
-
-//            var testRule1 = new Mock<IRateLimiterRule>();
-//            testRule1.Setup(x => x.SupportedRegion).Returns(new List<string> { });
-
-//            var rules = new List<IRateLimiterRule> { testRule.Object, testRule1.Object };
-                        
-//            var requestStrategy = new RequestStrategy();
-//            requestStrategy.Region = "US";
-
-//            var regionService = new Mock<IRateLimiterRegionRuleService>();
-//            regionService.Setup(x => x.GetRulesByRegion(It.IsAny<string>())).Returns(rules);
-
-//            var validator = new RequestLimitValidator(_logger, regionService.Object);
-//            validator.Validate(requestStrategy);
-//            Assert.IsTrue(requestStrategy.Rules != null);
-//            Assert.IsTrue(requestStrategy.Rules.Count() == 1);
-
-//        }
-
-//        [Test]
-//        public void RequestLimitValidator_Region_Set_Corret_Number_More_Than_1_Region()
-//        {
-//            var testRule = new Mock<IRateLimiterRule>();
-//            testRule.Setup(x => x.SupportedRegion).Returns(new List<string> { "US", "EU" });
-
-//            var testRule1 = new Mock<IRateLimiterRule>();
-//            testRule1.Setup(x => x.SupportedRegion).Returns(new List<string> { });
-
-//            var rules = new List<IRateLimiterRule> { testRule.Object, testRule1.Object };
-//            var requestStrategy = new RequestStrategy();
-//            requestStrategy.Region = "US";
-
-//            var regionService = new Mock<IRateLimiterRegionRuleService>();
-//            regionService.Setup(x => x.GetRulesByRegion(It.IsAny<string>())).Returns(rules);
+            var request = new Request();
+            request.Region = "US";
+            Assert.True(validator.Validate(request));
 
 
-//            var validator = new RequestLimitValidator(_logger, regionService.Object);
-//            validator.Validate(requestStrategy);
-//            Assert.IsTrue(requestStrategy.Rules != null);
-//            Assert.IsTrue(requestStrategy.Rules.Count() == 1);
+        }
+        [Test]
+        public void Validator_Return_Mix_True_False()
+        {
+            var ruleOne = new Mock<IRateLimiterRule>();
+            ruleOne.Setup(x => x.VerifyAccess(It.IsAny<Request>())).Returns(false);
+            var ruleTwo = new Mock<IRateLimiterRule>();
+            ruleTwo.Setup(x => x.VerifyAccess(It.IsAny<Request>())).Returns(true);
 
-//        }
-//        [Test]
-//        public void RequestLimitValidator_Region_Set_Corret_Empty_Region()
-//        {
-//            var testRule = new Mock<IRateLimiterRule>();
-//            testRule.Setup(x => x.SupportedRegion).Returns(new List<string> { "US", "EU" });
+            var rules = new List<IRateLimiterRule>
+            {
+                ruleOne.Object,
+                ruleTwo.Object
+            };
 
-//            var testRule1 = new Mock<IRateLimiterRule>();
-//            testRule1.Setup(x => x.SupportedRegion).Returns(new List<string> { });
+            var regionRuleService = new Mock<IRateLimiterRegionRuleService>();
+            regionRuleService.Setup(x => x.GetRulesByRegion(It.IsAny<string>())).Returns(rules);
 
-//            var rules = new List<IRateLimiterRule> { testRule.Object, testRule1.Object };          
-//            var requestStrategy = new RequestStrategy();
-//            requestStrategy.Region = "US";
+            var validator = new RequestLimitValidator(_logger, regionRuleService.Object);
 
-//            var regionService = new Mock<IRateLimiterRegionRuleService>();
-//            regionService.Setup(x => x.GetRulesByRegion(It.IsAny<string>())).Returns(rules);
+            var request = new Request();
+            request.Region = "US";
+            Assert.False(validator.Validate(request));
+        }
+        [Test]
+        public void Validator_Return_False_()
+        {
+            var ruleOne = new Mock<IRateLimiterRule>();
+            ruleOne.Setup(x => x.VerifyAccess(It.IsAny<Request>())).Returns(false);
+            var ruleTwo = new Mock<IRateLimiterRule>();
+            ruleTwo.Setup(x => x.VerifyAccess(It.IsAny<Request>())).Returns(false);
 
-//            var validator = new RequestLimitValidator(_logger, regionService.Object);
-//            validator.Validate(requestStrategy);
-//            Assert.IsTrue(requestStrategy.Rules != null);
-//            Assert.IsTrue(requestStrategy.Rules.Count() == 2);
-//        }
-//    }
-//}
+            var rules = new List<IRateLimiterRule>
+            {
+                ruleOne.Object,
+                ruleTwo.Object
+            };
+
+            var regionRuleService = new Mock<IRateLimiterRegionRuleService>();
+            regionRuleService.Setup(x => x.GetRulesByRegion(It.IsAny<string>())).Returns(rules);
+
+            var validator = new RequestLimitValidator(_logger, regionRuleService.Object);
+
+            var request = new Request();
+            request.Region = "US";
+            Assert.False(validator.Validate(request));
+        }
+    }
+}
