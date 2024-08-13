@@ -20,9 +20,9 @@ namespace RateLimiter.Tests
         public void Last_Request_Call_Pass_TimePeriod_Current_Access_Set_To_Min_Should_Return_True()
         {
             var testValidator = new LastCallValidator(5, _logger, new List<string> { "US" });
-            var request = new Request();
-            request.AccessTime.Add(DateTime.Now);
-            Assert.False(testValidator.VerifyAccess(request));
+            var request = new Request();         
+            request.AccessTime.Add(DateTime.MinValue);
+            Assert.True(testValidator.VerifyAccess(request));
         }
 
         [Test]
@@ -30,8 +30,7 @@ namespace RateLimiter.Tests
         {
             var testValidator = new LastCallValidator(5, _logger, new List<string> { "US" });
 
-            var request = new Request();
-            request.CurrentTime = DateTime.Now.AddMinutes(5);
+            var request = new Request();           
             request.AccessTime.Add(DateTime.Now.AddMinutes(5));
             Assert.False(testValidator.VerifyAccess(request));
         }
@@ -43,7 +42,7 @@ namespace RateLimiter.Tests
 
             var request = new Request();
             request.CurrentTime = DateTime.Now.AddMinutes(5);
-            Assert.False(testValidator.VerifyAccess(request));
+            Assert.True(testValidator.VerifyAccess(request));
         }
     }
 }

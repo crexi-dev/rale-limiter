@@ -16,11 +16,15 @@ namespace RateLimiter.Rule.Request.LastCall
             _timePeriodInSeconds = new TimeSpan(0, 0, 0, periodInSeconds);
             _supportedRegions = supportedRegions;
         }
-        public bool VerifyAccess(Model.Request request)
+        public bool VerifyAccess(Model.Request   request)
         {
             try
             {
-                var lastAccessTime = request.AccessTime.OrderBy(x => x).Last();
+                if (!request.AccessTime.Any())
+                {
+                    return true;
+                }
+                var lastAccessTime = request.AccessTime.OrderBy(x => x).Last();              
                 var allowAccessTime = lastAccessTime.Add(_timePeriodInSeconds);
                 return DateTime.Now >= allowAccessTime;
             }
