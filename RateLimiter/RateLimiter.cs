@@ -15,9 +15,9 @@ public class RateLimiter
     /// </summary>
     public static async Task<bool> IsRequestAllowedAsync(HttpContext httpContext, IEnumerable<IRateLimiterRule> rules, CancellationToken ct = default)
     {
-        var validationTasks = rules.Select(x => x.IsRequestAllowedAsync(httpContext.Request, ct)).ToAsyncEnumerable();
-
         using var cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        var validationTasks = rules.Select(x => x.IsRequestAllowedAsync(httpContext.Request, cts.Token)).ToAsyncEnumerable();
+        
         await foreach (var result in validationTasks.WithCancellation(cts.Token))
         {
             if (!result)
