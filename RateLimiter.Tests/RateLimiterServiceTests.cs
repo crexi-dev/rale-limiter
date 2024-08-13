@@ -37,17 +37,12 @@ namespace RateLimiter.Tests
 
         [Test]
         public void Validate_ValidRequest_ReturnsAccessValidatorResult()
-        {
-            // Arrange
+        {            
             RequestDTO requestDTO = new RequestDTO();
             Request currentRequest = new Request();
             _rateLimiterRepositoryMock.Setup(x => x.Get(requestDTO)).Returns(currentRequest);
-            _accessValidatorMock.Setup(x => x.Validate(currentRequest)).Returns(true);
-
-            // Act
-            bool result = _rateLimiterService.Validate(requestDTO);
-
-            // Assert
+            _accessValidatorMock.Setup(x => x.Validate(currentRequest)).Returns(true);         
+            bool result = _rateLimiterService.Validate(requestDTO);         
             Assert.IsTrue(result);
             _rateLimiterRepositoryMock.Verify(x => x.Update(currentRequest), Times.Once);
             _accessValidatorMock.Verify(x => x.Validate(currentRequest), Times.Once);
@@ -55,14 +50,11 @@ namespace RateLimiter.Tests
 
         [Test]
         public void Validate_ExceptionThrown_LogsErrorAndThrows()
-        {
-            // Arrange
+        {           
             RequestDTO requestDTO = new RequestDTO();
             Request currentRequest = new Request();
             _rateLimiterRepositoryMock.Setup(x => x.Get(requestDTO)).Returns(currentRequest);
-            _accessValidatorMock.Setup(x => x.Validate(currentRequest)).Throws<Exception>();
-
-            // Act & Assert
+            _accessValidatorMock.Setup(x => x.Validate(currentRequest)).Throws<Exception>();           
             Assert.Throws<Exception>(() => _rateLimiterService.Validate(requestDTO));           
         }
     }
