@@ -29,12 +29,7 @@ namespace RateLimiter.Tests
             {
                 CallId = "123",
                 CurrentTime = DateTime.Now
-            };
-            var existingRequest = new Request
-            {
-                CallId = "123",
-                AccessTime = new List<DateTime> { DateTime.Now.AddMinutes(-5) }
-            };
+            };           
             _dataStore.Update(requestDTO);
             var result = _dataStore.Update(requestDTO);
             Assert.AreEqual(requestDTO.CallId, result.CallId);
