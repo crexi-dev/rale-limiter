@@ -2,6 +2,6 @@
 {
     public interface IRateLimitRule
     {
-        bool IsRequestAllowed(string userId);
+        bool IsRequestAllowed(string userToken);
     }
 }

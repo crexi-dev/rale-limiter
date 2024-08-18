@@ -6,9 +6,9 @@ using System;
 
 namespace RateLimiter.Configurations
 {
-    public static class ConfigureServices
+    public static class FactoryServiceConfigs
     {
-        public static IServiceCollection AddServices(this IServiceCollection services)
+        public static IServiceCollection AddRateLimiterFactoryServices(this IServiceCollection services)
         {
             services.AddScoped<RateLimitRuleAService>();
             services.AddScoped<RateLimitRuleBService>();

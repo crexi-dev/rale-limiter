@@ -1,13 +1,12 @@
 ﻿using RateLimiter.Interfaces;
 using System;
 
-namespace RateLimiter.Services
+namespace RateLimiter.Services;
+
+public class RateLimitRuleBService : IRateLimitRule
 {
-    public class RateLimitRuleBService : IRateLimitRule
+    public bool IsRequestAllowed(string userId)
     {
-        public bool IsRequestAllowed(string userId)
-        {
-            throw new NotImplementedException();
-        }
+        throw new NotImplementedException();
     }
 }
