@@ -22,7 +22,7 @@ public class RateLimitRuleAService : IRateLimitRule
             Priority = CacheItemPriority.NeverRemove
         };
     }
-    public bool IsRequestAllowed(RateLimitRuleRequestDto userInfo)
+    public Task<bool> IsRequestAllowed(RateLimitRuleRequestDto userInfo)
     {
         string cacheKey = string.Join(userInfo.UserId.ToString(), RateLimitRules.RuleA.ToString());
 
@@ -36,15 +36,26 @@ public class RateLimitRuleAService : IRateLimitRule
 
                 var datetimeNow = DateTime.UtcNow;
                 TimeSpan difference = datetimeNow - cacheValue.LastCallDateTime;
-                if (difference.Seconds > _optionsMonitor.RuleA.TimespanSeconds.Seconds && cacheValue.RequestCount == _optionsMonitor.RuleA.RequestsPerTimespan)
+                bool test1 = difference.Seconds > _optionsMonitor.RuleA.TimespanSeconds.Seconds;
+                bool test2 = cacheValue.RequestCount == _optionsMonitor.RuleA.RequestsPerTimespan;
+
+                if (difference.Seconds < _optionsMonitor.RuleA.TimespanSeconds.Seconds && cacheValue.RequestCount == _optionsMonitor.RuleA.RequestsPerTimespan)
                 {
                     result = true;
+                    _memoryCache.Remove(cacheKey);
+                }
+                else
+                {
+                    cacheValue.RequestCount++;
+
+                    _memoryCache.Set(cacheKey, cacheValue);
                 }
 
-                cacheValue.LastCallDateTime = datetimeNow;
-                cacheValue.RequestCount++;
 
-                _memoryCache.Set(cacheKey, cacheValue);
+                if (cacheValue.RequestCount > _optionsMonitor.RuleA.RequestsPerTimespan)
+                {
+                    _memoryCache.Remove(cacheKey);
+                }
 
             }
         }
@@ -61,6 +72,6 @@ public class RateLimitRuleAService : IRateLimitRule
 
         }
 
-        return result;
+        return Task.FromResult(result);
     }
 }

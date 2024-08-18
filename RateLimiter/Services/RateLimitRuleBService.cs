@@ -22,10 +22,10 @@ public class RateLimitRuleBService : IRateLimitRule
             Priority = CacheItemPriority.NeverRemove
         };
     }
-    public bool IsRequestAllowed(RateLimitRuleRequestDto userInfo)
+    public Task<bool> IsRequestAllowed(RateLimitRuleRequestDto userInfo)
     {
         string cacheKey = string.Join(userInfo.UserId.ToString(), RateLimitRules.RuleA.ToString());
-        bool result = true;
+        bool result = false;
         if (_memoryCache.TryGetValue(cacheKey, out RuleBDto cacheValue))
         {
 
@@ -34,15 +34,20 @@ public class RateLimitRuleBService : IRateLimitRule
 
 
                 var datetimeNow = DateTime.UtcNow;
-                TimeSpan difference = datetimeNow - cacheValue.LastCallDateTime;
-                if (difference.Seconds == _optionsMonitor.RuleB.MinTimespanBetweenCallsSeconds.Seconds)
+                DateTime certainTime = cacheValue.LastCallDateTime.Add(_optionsMonitor.RuleB.MinTimespanBetweenCallsSeconds);
+                if (datetimeNow <= certainTime)
                 {
-                    result = false;
+                    result = true;
+
+                }
+                else
+                {
+                    cacheValue.LastCallDateTime = datetimeNow;
+
+                    _memoryCache.Set(cacheKey, cacheValue);
+
                 }
 
-                cacheValue.LastCallDateTime = datetimeNow;
-
-                _memoryCache.Set(cacheKey, cacheValue);
 
             }
 
@@ -57,6 +62,6 @@ public class RateLimitRuleBService : IRateLimitRule
             _memoryCache.Set(cacheKey, newCacheValue, _cacheEntryOptions);
         }
 
-        return result;
+        return Task.FromResult(result);
     }
 }

@@ -43,7 +43,7 @@ public class RateLimitAttribute : ActionFilterAttribute
             if (ruleService != null)
             {
 
-                isRateLimited = ruleService.IsRequestAllowed(userInfo);
+                isRateLimited = await ruleService.IsRequestAllowed(userInfo);
 
             }
 

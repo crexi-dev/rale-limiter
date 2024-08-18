@@ -4,6 +4,6 @@ namespace RateLimiter.Interfaces
 {
     public interface IRateLimitRule
     {
-        bool IsRequestAllowed(RateLimitRuleRequestDto userInfo);
+        Task<bool> IsRequestAllowed(RateLimitRuleRequestDto userInfo);
     }
 }

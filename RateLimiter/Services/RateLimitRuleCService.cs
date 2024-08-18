@@ -18,17 +18,17 @@ public class RateLimitRuleCService : IRateLimitRule
         _func = func;
     }
 
-    public bool IsRequestAllowed(RateLimitRuleRequestDto userInfo)
+    public Task<bool> IsRequestAllowed(RateLimitRuleRequestDto userInfo)
     {
         var userLocale = userInfo.UserLocal.ToLower();
 
         if (userLocale == "us" || userLocale == "eu")
         {
             var service = _func(userLocale == "us" ? RateLimitRules.RuleA : RateLimitRules.RuleB);
-            return true;
+            return Task.FromResult(true);
         }
 
-        return false;
+        return Task.FromResult(false);
 
     }
 }
