@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace RateLimiter.Options;
+﻿namespace RateLimiter.Options;
 
 public class RateLimiterOptions
 {

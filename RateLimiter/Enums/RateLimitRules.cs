@@ -3,6 +3,7 @@
     public enum RateLimitRules
     {
         RuleA,
-        RuleB
+        RuleB,
+        RuleC
     }
 }

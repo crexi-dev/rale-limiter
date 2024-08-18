@@ -1,8 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using RateLimiter.Enums;
+﻿using RateLimiter.Enums;
 using RateLimiter.Interfaces;
 using RateLimiter.Services;
-using System;
 
 namespace RateLimiter.Configurations
 {
@@ -12,6 +10,7 @@ namespace RateLimiter.Configurations
         {
             services.AddScoped<RateLimitRuleAService>();
             services.AddScoped<RateLimitRuleBService>();
+            services.AddScoped<RateLimitRuleCService>();
 
             services.AddTransient<Func<RateLimitRules, IRateLimitRule>>(serviceProvider => key =>
             {

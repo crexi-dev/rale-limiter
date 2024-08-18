@@ -1,11 +1,8 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace RateLimiter.Configurations;
+﻿namespace RateLimiter.Configurations;
 
 public static class RateLimiterServiceConfigs
 {
-    public static IServiceCollection AddRateLimiter(this IServiceCollection services,IConfiguration configuration)
+    public static IServiceCollection AddRateLimiter(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddMemoryCache();
         services.AddOptionConfigs(configuration);
