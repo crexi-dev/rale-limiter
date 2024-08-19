@@ -24,7 +24,7 @@ public class RateLimitRuleAService : IRateLimitRule
     }
     public Task<bool> IsRequestAllowed(RateLimitRuleRequestDto userInfo)
     {
-        string cacheKey = string.Join(userInfo.UserId.ToString(), RateLimitRules.RuleA.ToString());
+        string cacheKey = string.Concat(userInfo.UserId.ToString(),"_", RateLimitRules.RuleA.ToString());
 
         bool result = false;
 
@@ -36,10 +36,9 @@ public class RateLimitRuleAService : IRateLimitRule
 
             var datetimeNow = DateTime.UtcNow;
             TimeSpan difference = datetimeNow - cacheValue.LastCallDateTime;
-            bool test1 = difference.Seconds > _optionsMonitor.RuleA.TimespanSeconds.Seconds;
-            bool test2 = cacheValue.RequestCount == _optionsMonitor.RuleA.RequestsPerTimespan;
 
-            if (difference < _optionsMonitor.RuleA.TimespanSeconds && cacheValue.RequestCount == _optionsMonitor.RuleA.RequestsPerTimespan)
+
+            if (difference < _optionsMonitor.RuleA.TimespanSeconds && cacheValue.RequestCount > _optionsMonitor.RuleA.RequestsPerTimespan)
             {
                 result = true;
 

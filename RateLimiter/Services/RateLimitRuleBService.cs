@@ -24,7 +24,7 @@ public class RateLimitRuleBService : IRateLimitRule
     }
     public Task<bool> IsRequestAllowed(RateLimitRuleRequestDto userInfo)
     {
-        string cacheKey = string.Join(userInfo.UserId.ToString(), RateLimitRules.RuleA.ToString());
+        string cacheKey = string.Concat(userInfo.UserId.ToString(), "_", RateLimitRules.RuleA.ToString());
         bool result = false;
 
         var cacheValue = _memoryCacheService.Get<RuleBDto>(cacheKey);
