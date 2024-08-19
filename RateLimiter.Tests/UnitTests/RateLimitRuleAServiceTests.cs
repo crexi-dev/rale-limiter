@@ -1,26 +1,18 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using Moq;
-using NUnit.Framework;
-using RateLimiter.Dtos;
+﻿using RateLimiter.Dtos;
 using RateLimiter.Interfaces;
 using RateLimiter.Options;
 using RateLimiter.Services;
-using System;
-using System.Threading.Tasks;
 
 namespace RateLimiter.Tests;
 
 [TestFixture]
 public class RateLimitRuleAServiceTests
 {
-    private  Mock<IMemoryCacheService> _memoryCacheServiceMock;
+    private Mock<IMemoryCacheService> _memoryCacheServiceMock;
     private Mock<IOptionsMonitor<RateLimiterOptions>> _optionsMonitorMock;
     private RateLimiterOptions _optionsMonitor;
-    private  MemoryCacheEntryOptions _cacheEntryOptions;
-    private IRateLimitRule _rateLimitRuleAService; 
+    private MemoryCacheEntryOptions _cacheEntryOptions;
+    private IRateLimitRule _rateLimitRuleAService;
 
     [SetUp]
     public void SetUp()
@@ -45,10 +37,6 @@ public class RateLimitRuleAServiceTests
         _optionsMonitorMock.Setup(x => x.CurrentValue).Returns(_optionsMonitor);
         _memoryCacheServiceMock = new Mock<IMemoryCacheService>();
         _rateLimitRuleAService = new RateLimitRuleAService(_memoryCacheServiceMock.Object, _optionsMonitorMock.Object);
-        //new ConfigurationBuilder()
-        //        .AddInMemoryCollection(keyValue)
-        //        .AddJsonFile(_fileName, false)
-        //        .Build();
 
     }
 

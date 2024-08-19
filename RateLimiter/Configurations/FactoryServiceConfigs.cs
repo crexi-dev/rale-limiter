@@ -1,9 +1,11 @@
 ﻿using RateLimiter.Enums;
 using RateLimiter.Interfaces;
 using RateLimiter.Services;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RateLimiter.Configurations
 {
+    [ExcludeFromCodeCoverageAttribute]
     public static class FactoryServiceConfigs
     {
         public static IServiceCollection AddRateLimiterFactoryServices(this IServiceCollection services)

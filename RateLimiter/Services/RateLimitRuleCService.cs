@@ -16,17 +16,24 @@ public class RateLimitRuleCService : IRateLimitRule
         _func = func;
     }
 
-    public Task<bool> IsRequestAllowed(RateLimitRuleRequestDto userInfo)
+    public async Task<bool> IsRequestAllowed(RateLimitRuleRequestDto userInfo)
     {
+        bool result = false;
         var userLocale = userInfo.UserLocal.ToLower();
+
 
         if (userLocale == "us" || userLocale == "eu")
         {
             var service = _func(userLocale == "us" ? RateLimitRules.RuleA : RateLimitRules.RuleB);
-            return Task.FromResult(true);
+
+            if (service is not null)
+            {
+                result =  await service.IsRequestAllowed(userInfo);
+            }
         }
 
-        return Task.FromResult(false);
+
+        return await Task.FromResult(result);
 
     }
 }

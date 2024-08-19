@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using RateLimiter.Interfaces;
+using System.Diagnostics.CodeAnalysis;
 
 namespace RateLimiter.Services;
 
+[ExcludeFromCodeCoverageAttribute]
 public class MemoryCacheService : IMemoryCacheService
 {
     private readonly IMemoryCache _cache;
