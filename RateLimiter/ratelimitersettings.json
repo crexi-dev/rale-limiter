@@ -1,10 +1,10 @@
 {
   "RateLimiter": {
-    "RuleA": {
+    "RuleAOptions": {
       "RequestsPerTimespan": 5,
       "TimespanSeconds": 60
     },
-    "RuleB": {
+    "RuleBOptions": {
       "MinTimespanBetweenCallsSeconds": 30
     }
   }
