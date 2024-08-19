@@ -9,13 +9,13 @@ namespace RateLimiter.Services;
 
 public class RateLimitRuleAService : IRateLimitRule
 {
-    private readonly IMemoryCache _memoryCache;
+    private readonly IMemoryCacheService _memoryCacheService;
     private readonly RateLimiterOptions _optionsMonitor;
     private readonly MemoryCacheEntryOptions _cacheEntryOptions;
 
-    public RateLimitRuleAService(IMemoryCache memoryCache, IOptionsMonitor<RateLimiterOptions> optionsMonitor)
+    public RateLimitRuleAService(IMemoryCacheService memoryCacheService, IOptionsMonitor<RateLimiterOptions> optionsMonitor)
     {
-        _memoryCache = memoryCache;
+        _memoryCacheService = memoryCacheService;
         _optionsMonitor = optionsMonitor.CurrentValue;
         _cacheEntryOptions = new MemoryCacheEntryOptions
         {
@@ -27,37 +27,36 @@ public class RateLimitRuleAService : IRateLimitRule
         string cacheKey = string.Join(userInfo.UserId.ToString(), RateLimitRules.RuleA.ToString());
 
         bool result = false;
-        if (_memoryCache.TryGetValue(cacheKey, out RuleADto cacheValue))
+
+        var cacheValue = _memoryCacheService.Get<RuleADto>(cacheKey);
+
+
+        if (cacheValue != null)
         {
 
+            var datetimeNow = DateTime.UtcNow;
+            TimeSpan difference = datetimeNow - cacheValue.LastCallDateTime;
+            bool test1 = difference.Seconds > _optionsMonitor.RuleA.TimespanSeconds.Seconds;
+            bool test2 = cacheValue.RequestCount == _optionsMonitor.RuleA.RequestsPerTimespan;
 
-            if (cacheValue != null)
+            if (difference < _optionsMonitor.RuleA.TimespanSeconds && cacheValue.RequestCount == _optionsMonitor.RuleA.RequestsPerTimespan)
             {
-
-                var datetimeNow = DateTime.UtcNow;
-                TimeSpan difference = datetimeNow - cacheValue.LastCallDateTime;
-                bool test1 = difference.Seconds > _optionsMonitor.RuleA.TimespanSeconds.Seconds;
-                bool test2 = cacheValue.RequestCount == _optionsMonitor.RuleA.RequestsPerTimespan;
-
-                if (difference.Seconds < _optionsMonitor.RuleA.TimespanSeconds.Seconds && cacheValue.RequestCount == _optionsMonitor.RuleA.RequestsPerTimespan)
-                {
-                    result = true;
-                    _memoryCache.Remove(cacheKey);
-                }
-                else
-                {
-                    cacheValue.RequestCount++;
-
-                    _memoryCache.Set(cacheKey, cacheValue);
-                }
-
-
-                if (cacheValue.RequestCount > _optionsMonitor.RuleA.RequestsPerTimespan)
-                {
-                    _memoryCache.Remove(cacheKey);
-                }
+                result = true;
 
             }
+            else
+            {
+                cacheValue.RequestCount++;
+
+                _memoryCacheService.Set<RuleADto>(cacheKey, cacheValue);
+            }
+
+
+            if (difference > _optionsMonitor.RuleA.TimespanSeconds)
+            {
+                _memoryCacheService.Remove(cacheKey);
+            }
+
         }
         else
         {
@@ -68,7 +67,7 @@ public class RateLimitRuleAService : IRateLimitRule
                 RequestCount = 1
             };
 
-            _memoryCache.Set(cacheKey, newCacheValue, _cacheEntryOptions);
+            _memoryCacheService.Set(cacheKey, newCacheValue, _cacheEntryOptions);
 
         }
 

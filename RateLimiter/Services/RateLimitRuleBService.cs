@@ -9,13 +9,13 @@ namespace RateLimiter.Services;
 
 public class RateLimitRuleBService : IRateLimitRule
 {
-    private readonly IMemoryCache _memoryCache;
+    private readonly IMemoryCacheService _memoryCacheService;
     private readonly RateLimiterOptions _optionsMonitor;
     private readonly MemoryCacheEntryOptions _cacheEntryOptions;
 
-    public RateLimitRuleBService(IMemoryCache memoryCache, IOptionsMonitor<RateLimiterOptions> optionsMonitor)
+    public RateLimitRuleBService(IMemoryCacheService memoryCacheService, IOptionsMonitor<RateLimiterOptions> optionsMonitor)
     {
-        _memoryCache = memoryCache;
+        _memoryCacheService = memoryCacheService;
         _optionsMonitor = optionsMonitor.CurrentValue;
         _cacheEntryOptions = new MemoryCacheEntryOptions
         {
@@ -26,30 +26,28 @@ public class RateLimitRuleBService : IRateLimitRule
     {
         string cacheKey = string.Join(userInfo.UserId.ToString(), RateLimitRules.RuleA.ToString());
         bool result = false;
-        if (_memoryCache.TryGetValue(cacheKey, out RuleBDto cacheValue))
+
+        var cacheValue = _memoryCacheService.Get<RuleBDto>(cacheKey);
+
+        if (cacheValue != null)
         {
 
-            if (cacheValue != null)
+
+            var datetimeNow = DateTime.UtcNow;
+            DateTime certainTime = cacheValue.LastCallDateTime.Add(_optionsMonitor.RuleB.MinTimespanBetweenCallsSeconds);
+            if (datetimeNow <= certainTime)
             {
-
-
-                var datetimeNow = DateTime.UtcNow;
-                DateTime certainTime = cacheValue.LastCallDateTime.Add(_optionsMonitor.RuleB.MinTimespanBetweenCallsSeconds);
-                if (datetimeNow <= certainTime)
-                {
-                    result = true;
-
-                }
-                else
-                {
-                    cacheValue.LastCallDateTime = datetimeNow;
-
-                    _memoryCache.Set(cacheKey, cacheValue);
-
-                }
-
+                result = true;
 
             }
+            else
+            {
+                cacheValue.LastCallDateTime = datetimeNow;
+
+                _memoryCacheService.Set(cacheKey, cacheValue);
+
+            }
+
 
         }
         else
@@ -59,7 +57,7 @@ public class RateLimitRuleBService : IRateLimitRule
                 LastCallDateTime = DateTime.UtcNow
             };
 
-            _memoryCache.Set(cacheKey, newCacheValue, _cacheEntryOptions);
+            _memoryCacheService.Set(cacheKey, newCacheValue, _cacheEntryOptions);
         }
 
         return Task.FromResult(result);

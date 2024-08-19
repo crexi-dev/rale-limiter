@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Caching.Memory;
-using RateLimiter.Dtos;
+﻿using RateLimiter.Dtos;
 using RateLimiter.Enums;
 using RateLimiter.Interfaces;
 using RateLimiter.Options;
@@ -8,7 +7,6 @@ namespace RateLimiter.Services;
 
 public class RateLimitRuleCService : IRateLimitRule
 {
-    private readonly IMemoryCache _memoryCache;
     private readonly RateLimiterOptions _optionsMonitor;
     private readonly Func<RateLimitRules, IRateLimitRule> _func;
 
