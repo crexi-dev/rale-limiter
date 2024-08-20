@@ -8,7 +8,7 @@ namespace RateLimiter.Configurations
     [ExcludeFromCodeCoverageAttribute]
     public static class FactoryServiceConfigs
     {
-        public static IServiceCollection AddRateLimiterFactoryServices(this IServiceCollection services)
+        internal static IServiceCollection AddRateLimiterFactoryServices(this IServiceCollection services)
         {
             services.AddScoped<RateLimitRuleAService>();
             services.AddScoped<RateLimitRuleBService>();
@@ -20,6 +20,7 @@ namespace RateLimiter.Configurations
                 {
                     RateLimitRules.RuleA => serviceProvider.GetRequiredService<RateLimitRuleAService>(),
                     RateLimitRules.RuleB => serviceProvider.GetRequiredService<RateLimitRuleBService>(),
+                    RateLimitRules.RuleC => serviceProvider.GetRequiredService<RateLimitRuleCService>(),
                     _ => throw new NotSupportedException($"Service with key '{key}' not found.")
                 };
             });
