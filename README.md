@@ -1,4 +1,88 @@
-﻿**Rate-limiting pattern**
+﻿
+# RateLimiter Library
+
+The RateLimiter is a reusable class library that can be cloned into any project and referenced to utilize rate-limiting functionalities.
+
+# Project Setup
+#### 1. Clone the RateLimiter Project:
+Clone the RateLimiter project into your solution.
+
+#### 2. Add Project Reference:
+Add the RateLimiter project as a reference in your project.
+
+#### 3. Configure Rate Limiter Settings:
+Copy the ratelimitersettings.json file into your project, or create a new JSON file using the following format:
+
+
+```bash
+  
+{
+  "RateLimiter": {
+    "RuleA": {
+      "RequestsPerTimespan": 5,
+      "TimespanSeconds": "00:00:20"
+    },
+    "RuleB": {
+      "MinTimespanBetweenCallsSeconds": "00:00:30"
+    }
+  }
+}
+```
+
+
+#### 4. Register Dependencies:
+Register the RateLimiter dependencies in your IoC container as shown below:
+
+
+```bash
+  builder.Services.AddRateLimiter(builder.Configuration);
+  ```
+#### 5. Inject and Use Rate Limit Rules:
+Inject the registered factory service into your target class and use the rate limit rules as follows:
+```bash
+private readonly Func<RateLimitRules, IRateLimitRule> _func;
+
+public Resource(Func<RateLimitRules, IRateLimitRule> func)
+{
+    _func = func;
+}
+
+var ruleAService = _func(RateLimitRules.RuleA);
+
+RateLimitRuleRequestDto userInfo = new()
+{
+    UserId = 1,
+    UserLocale = "US"
+};
+
+bool isAllowed = ruleAService.IsRequestAllowed(userInfo);
+ ```
+#### Note: 
+To access different services, use the following enum service key indicators:
+```bash
+public enum RateLimitRules
+{
+    RuleA,
+    RuleB,
+    RuleC
+}
+ ```
+
+### Usage in APIs
+For API resources, the rate limit logic can be applied via direct injection, an attribute on the resource, or middleware in the pipeline. A sample attribute implementation is shown below:
+```bash
+[RateLimitAttribute(new RateLimitRules[] { RateLimitRules.RuleA })]
+[RateLimitAttribute(new RateLimitRules[] { RateLimitRules.RuleA, RateLimitRules.RuleB, RateLimitRules.RuleC })]
+ ```
+
+#### Note: The attribute constructor accepts the rules enum to apply the specified rules.
+
+
+
+
+
+
+**Rate-limiting pattern**
 
 Rate limiting involves restricting the number of requests that a client can make.
 A client is identified with an access token, which is used for every request to a resource.
