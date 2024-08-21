@@ -17,7 +17,7 @@ public class RateLimiterTest
 		var resourceA = "/testA/";
         var rules = new List<Rule>();
         var rule = new Rule();
-        rule.RuleAlg = new WindowCounterRule(3, 3);
+        rule.RuleAlg = new WindowCounterRuleAlg(3, 3);
 
 		rules.Add(rule);
 
@@ -40,7 +40,7 @@ public class RateLimiterTest
         var resourceA = "/testA/";
         var rules = new List<Rule>();
         var rule = new Rule();
-        rule.RuleAlg = new WindowCounterRule(3, 3);
+        rule.RuleAlg = new WindowCounterRuleAlg(3, 3);
 
         rules.Add(rule);
 
@@ -63,7 +63,7 @@ public class RateLimiterTest
         var resourceA = "/testA/";
         var rules = new List<Rule>();
         var rule = new Rule();
-        rule.RuleAlg = new WindowCounterRule(3, 3);
+        rule.RuleAlg = new WindowCounterRuleAlg(3, 3);
 
         rules.Add(rule);
 
@@ -168,7 +168,7 @@ public class RateLimiterTest
         var resourceA = "/testA/";
         var rules = new List<Rule>();
         var ruleA = new Rule();
-        ruleA.RuleAlg = new WindowCounterRule(3, 3);
+        ruleA.RuleAlg = new WindowCounterRuleAlg(3, 3);
         var ruleB = new Rule();
         ruleB.RuleAlg = new BasicTimeSpanRule(TimeSpan.FromSeconds(1));
 
@@ -204,7 +204,7 @@ public class RateLimiterTest
         var resourceA = "/testA/";
         var rules = new List<Rule>();
         var ruleA = new Rule();
-        ruleA.RuleAlg = new WindowCounterRule(3, 3);
+        ruleA.RuleAlg = new WindowCounterRuleAlg(3, 3);
         var ruleB = new Rule();
         ruleB.RuleAlg = new BasicTimeSpanRule(TimeSpan.FromSeconds(1));
 
@@ -230,7 +230,7 @@ public class RateLimiterTest
         var resourceA = "/testA/";
         var rules = new List<Rule>();
         var ruleA = new Rule();
-        ruleA.RuleAlg = new WindowCounterRule(4, 2);
+        ruleA.RuleAlg = new WindowCounterRuleAlg(4, 2);
         var ruleB = new Rule();
         ruleB.RuleAlg = new BasicTimeSpanRule(TimeSpan.FromSeconds(1));
 
@@ -270,7 +270,7 @@ public class RateLimiterTest
         var rules = new List<Rule>();
         var ruleA = new Rule();
         ruleA.LocationFilter = new List<string>() { "US" };
-        ruleA.RuleAlg = new WindowCounterRule(3, 3);
+        ruleA.RuleAlg = new WindowCounterRuleAlg(3, 3);
         var ruleB = new Rule();
         ruleB.LocationFilter = new List<string>() { "EU" };
         ruleB.RuleAlg = new BasicTimeSpanRule(TimeSpan.FromSeconds(1));

@@ -9,7 +9,7 @@ namespace RateLimiter.Rules
     /// <summary>
     /// X requests per timespan;
     /// </summary>
-    public class WindowCounterRule : IRuleAlg
+    public class WindowCounterRuleAlg : IRuleAlg
     {
         public int IntervalSeconds { get; set; }
         public int MaxRequests { get; set; }
@@ -19,7 +19,7 @@ namespace RateLimiter.Rules
 
         private Timer timer;
 
-        public WindowCounterRule(int intervalSeconds, int maxRequests, List<string> locations = null)
+        public WindowCounterRuleAlg(int intervalSeconds, int maxRequests, List<string> locations = null)
         {
             this.IntervalSeconds = intervalSeconds;
             this.MaxRequests = maxRequests;
