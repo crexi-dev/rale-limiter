@@ -4,4 +4,17 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="RateLimitRules.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="RateLimitRules.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RateLimiter.Enums\RateLimiter.Enums.csproj" />
+  </ItemGroup>
 </Project>  

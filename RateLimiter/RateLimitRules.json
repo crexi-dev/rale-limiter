@@ -1,0 +1,29 @@
+{
+  "RateLimiterRules": [
+    {
+      "Name": "FixedNumOfRequestsRule",
+      "Active": true,
+      "Type": "Global",
+      "RuleStrategy": "FixedNumOfRequests",
+      "MaxRequests": 20,
+      "TimespanSec": 60
+    },
+    {
+      "Name": "USRegionRule",
+      "Active": true,
+      "Type": "Regional",
+      "Region": "US",
+      "RuleStrategy": "FixedNumOfRequests",
+      "MaxRequests": 15,
+      "TimespanSec": 60
+    },
+    {
+      "Name": "EURegionRule",
+      "Active": true,
+      "Type": "Regional",
+      "Region": "EU",
+      "RuleStrategy": "MinInterval",
+      "MininumIntervalSec": 30
+    }
+  ]
+}
