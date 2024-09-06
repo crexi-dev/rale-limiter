@@ -13,9 +13,12 @@ Some examples of request-limiting rules (you could imagine any others)
 * a certain timespan has passed since the last call;
 * For US-based tokens, we use X requests per timespan; for EU-based tokens, a certain timespan has passed since the last call.
 
-The goal is to design a class(-es) that manages each API resource's rate limits by a set of provided *configurable and extendable* rules. For example, for one resource, you could configure the limiter to use Rule A; for another one - Rule B; for a third one - both A + B, etc. Any combination of rules should be possible; keep this fact in mind when designing the classes.
+The goal is to design a class(-es) that manages each API resource's rate limits by a set of provided *configurable and extendable* rules. 
 
-We're more interested in the design itself than in some intelligent and tricky rate-limiting algorithm. There is no need to use a database (in-memory storage is fine) or any web framework. Do not waste time on preparing complex environment, reusable class library covered by a set of tests is more than enough.
+For example, for one resource, you could configure the limiter to use Rule A; for another one - Rule B; for a third one - both A + B, etc. Any combination of rules should be possible; keep this fact in mind when designing the classes.
+
+We're more interested in the design itself than in some intelligent and tricky rate-limiting algorithm. 
+There is no need to use a database (in-memory storage is fine) or any web framework. Do not waste time on preparing complex environment, reusable class library covered by a set of tests is more than enough.
 
 There is a Test Project set up for you to use. However, you are welcome to create your own test project and use whatever test runner you like.   
 
