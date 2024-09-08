@@ -1,12 +1,13 @@
 ﻿using RateLimiter.Model;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace RateLimiter.Repositories
 {
     public static class RuleASettings
     {
-        private static Dictionary<string, RuleAModel> Settings { get; set; } = new();
+        private static ConcurrentDictionary<string, RuleAModel> Settings { get; set; } = new();
 
         public static RuleAModel GetSetting(string resource)
         {

@@ -1,12 +1,13 @@
 ﻿using RateLimiter.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 namespace RateLimiter.Repositories
 {
     public static class RequestsData
     {
-        private static Dictionary<string, List<RequestModel>> Requests { get; set; } = new();
+        private static ConcurrentDictionary<string, List<RequestModel>> Requests { get; set; } = new();
 
         public static void SaveRequests(string resource, string token, DateTime requestTime)
         {

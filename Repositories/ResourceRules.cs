@@ -1,10 +1,11 @@
 ﻿using RateLimiter.Enums;
+using System.Collections.Concurrent;
 
 namespace RateLimiter.Repositories
 {
     public static class ResourceRules
     {
-        private static Dictionary<string, List<RulesEnum>> Rules { get; set; } = new();
+        private static ConcurrentDictionary<string, List<RulesEnum>> Rules { get; set; } = new();
 
         public static List<RulesEnum> GetRules(string resource)
         {

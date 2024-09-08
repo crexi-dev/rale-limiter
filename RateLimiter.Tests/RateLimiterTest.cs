@@ -53,8 +53,8 @@ public class RateLimiterTest
     [Test]
     public void RuleB()
     {
-        var tokenUS = "US12345";
-        var tokenEU = "EU12345";
+        var tokenUS = "US123456";
+        var tokenEU = "EU123456";
 
         var ruleB = new RuleB();
         ruleB.Configure("GET", 5);
@@ -87,8 +87,8 @@ public class RateLimiterTest
     [Test]
     public void RuleC()
     {
-        var tokenUS = "US12345";
-        var tokenEU = "EU12345";
+        var tokenUS = "US1234567";
+        var tokenEU = "EU1234567";
 
         var ruleA = new RuleA();
         ruleA.Configure("GET", 2, 5);
