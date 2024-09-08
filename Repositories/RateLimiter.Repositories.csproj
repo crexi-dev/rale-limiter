@@ -1,11 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
+    <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Models\RateLimiter.Models.csproj" />
-    <ProjectReference Include="..\Service\RateLimiter.Service.csproj" />
   </ItemGroup>
-</Project>  
+
+</Project>
