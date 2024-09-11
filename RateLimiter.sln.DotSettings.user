@@ -1,0 +1,11 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=2ac820d6_002Da695_002D4096_002Db87d_002D54a3f02fd165/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Should_Handle_Negative_WindowSize_Requests" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;xUnit::C4F9249B-010E-46BE-94B8-DD20D82F1E60::net8.0::RateLimiter.Tests.RequestCountRuleTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::C4F9249B-010E-46BE-94B8-DD20D82F1E60::net8.0::RateLimiter.Tests.TimeSpanRuleTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::C4F9249B-010E-46BE-94B8-DD20D82F1E60::net8.0::RateLimiter.Tests.RateLimiterTests.Should_Throw_Exception_For_Null_ClientId&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::C4F9249B-010E-46BE-94B8-DD20D82F1E60::net8.0::RateLimiter.Tests.RateLimiterTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::DC1AA1AA-1F0F-44FB-AEA2-ACE9C0FB7177::net8.0::TestApi.IntegrationTests.RateLimitingIntegrationTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::C4F9249B-010E-46BE-94B8-DD20D82F1E60::net8.0::RateLimiter.Tests.RateLimiterConfigTests.RateLimiterConfig_CacheExpirationInMinutes_ZeroOrNegative_ValidationFails&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
