@@ -32,12 +32,21 @@ public class RateLimitManager : IRateLimitManager
 
         var requests = _requests[token.UserName];
 
-        var resultRateLimit = CheckIfRateLimitReached(requests.ToList(), resource);
+        var requestsForUser = requests.ToList();
+        var resultRateLimit = CheckIfRateLimitReached(requestsForUser, resource);
         if (resultRateLimit)
             return false;
 
-        var resultCoolingDown = CheckIfCoolingDownIsInProgress(requests.ToList(), resource);
+        var resultCoolingDown = CheckIfCoolingDownIsInProgress(requestsForUser, resource);
         if (resultCoolingDown)
+            return false;
+
+        var resultUsRegion = CheckUsRegionLimitRate(requestsForUser, resource);
+        if (resultUsRegion)
+            return false;
+
+        var resultEuRegion = CheckEuRegionLimitRate(requestsForUser, resource);
+        if (resultEuRegion)
             return false;
 
         requests.Add(DateTime.Now); //new request made
@@ -48,6 +57,19 @@ public class RateLimitManager : IRateLimitManager
     private bool CheckIfCoolingDownIsInProgress(List<DateTime> requests, MethodInfo resource)
     {
         //the logic for cooling down goes here
+        return false;
+    }
+
+
+    private bool CheckUsRegionLimitRate(List<DateTime> requests, MethodInfo resource)
+    {
+        //the logic for Us region goes here
+        return false;
+    }
+
+    private bool CheckEuRegionLimitRate(List<DateTime> requests, MethodInfo resource)
+    {
+        //the logic for Eu region goes here
         return false;
     }
 
