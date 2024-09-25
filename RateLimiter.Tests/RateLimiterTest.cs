@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using RateLimiter.Attributes;
 
 namespace RateLimiter.Tests;
 
@@ -6,8 +7,15 @@ namespace RateLimiter.Tests;
 public class RateLimiterTest
 {
 	[Test]
-	public void Example()
+	public void Requests_Per_Timespan_Exceeded()
 	{
-		Assert.That(true, Is.True);
+        //arrange
+        var rlm = new RateLimitManager();
+
+        //act
+        var result = rlm.IsRequestAllowed(new RequestsPerTimespanAttribute(1, 2), "");
+
+        //assert
+        Assert.IsFalse(result);
 	}
 }
