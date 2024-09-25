@@ -1,5 +1,9 @@
+using System.Reflection;
+using Example.Api.Helpers;
+using Example.Api.Managers;
 using Example.Api.Middleware;
-using RateLimiter;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,7 +14,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IRateLimitManager, RateLimitManager>();
+var rlm = new RateLimitManager();
+builder.Services.AddSingleton<IRateLimitManager>(rlm);
+
+builder.Services.RegisterControllers(rlm);
+
 
 var app = builder.Build();
 

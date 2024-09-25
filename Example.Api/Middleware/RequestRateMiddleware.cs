@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc.Controllers;
-using RateLimiter;
-using RateLimiter.Attributes;
+﻿using Example.Api.Managers;
+using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Globalization;
 using System.Reflection;
+using Example.Api.Attributes;
 
 namespace Example.Api.Middleware;
 
@@ -17,6 +17,17 @@ public class RequestRateMiddleware
 
     public async Task InvokeAsync(HttpContext context, IRateLimitManager limitManager)
     {
+        if (!context.Request.Headers.ContainsKey("UserName") || !context.Request.Headers.ContainsKey("Origin"))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("No username or origin is provided");
+            return;
+        }
+
+        var userName = context.Request.Headers["UserName"].ToString();
+        var origin = context.Request.Headers["Origin"].ToString();
+
+
         var endpoint = context.GetEndpoint();
 
         var actionDescriptor = endpoint?.Metadata.GetMetadata<ControllerActionDescriptor>();
@@ -25,18 +36,12 @@ public class RequestRateMiddleware
         {
             var methodInfo = actionDescriptor.MethodInfo;
 
-            var attributes = methodInfo.GetCustomAttributes().Where(x=> x is IRateLimit);
-
-            foreach (var attribute in attributes)
+            var result = limitManager.CanPerformRequest($"{methodInfo.DeclaringType.Name}.{methodInfo.Name}", new UserToken(userName, origin));
+            if (result == false)
             {
-                var rla = attribute as IRateLimit;
-                var result = limitManager.IsRequestAllowed(rla, "");
-                if (result == false)
-                {
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    await context.Response.WriteAsync("Rate limit exceeded. Please try again later");
-                    return;
-                }
+                context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                await context.Response.WriteAsync("Rate limit exceeded. Please try again later");
+                return;
             }
         }
 

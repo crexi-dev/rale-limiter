@@ -1,5 +1,5 @@
+using Example.Api.Attributes;
 using Microsoft.AspNetCore.Mvc;
-using RateLimiter.Attributes;
 
 namespace Example.Api.Controllers
 {
@@ -9,7 +9,9 @@ namespace Example.Api.Controllers
     {
 
         [CooldownPeriod(2000)]
-        [RequestsPerTimespan(1, 1, "Allowed request exceeded")]
+        [RequestsPerTimespan(1, 2000, "Allowed request exceeded")]
+        [EuOriginUser(1000)]
+        [UsOriginUser(1000, 10)]
         [HttpGet]
         public IActionResult Get()
         {
