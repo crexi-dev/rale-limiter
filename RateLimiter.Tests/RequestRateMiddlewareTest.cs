@@ -61,7 +61,7 @@ public class RequestRateMiddlewareTest
                 ActionName = "Get",
                 ControllerName = "WeatherForecastController"
             },
-            new RequestsPerTimespanAttribute(5, 1)
+            new RequestsPerTimespanAttribute(5, 1, "Error")
         );
     }
 }

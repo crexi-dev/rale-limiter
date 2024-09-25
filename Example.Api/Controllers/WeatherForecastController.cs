@@ -8,8 +8,8 @@ namespace Example.Api.Controllers
     public class WeatherForecastController : ControllerBase
     {
 
-
-        [RequestsPerTimespan(10, 10)]
+        [CooldownPeriod(2000)]
+        [RequestsPerTimespan(1, 1, "Allowed request exceeded")]
         [HttpGet]
         public IActionResult Get()
         {

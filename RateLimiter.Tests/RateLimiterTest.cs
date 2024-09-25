@@ -13,7 +13,7 @@ public class RateLimiterTest
         var rlm = new RateLimitManager();
 
         //act
-        var result = rlm.IsRequestAllowed(new RequestsPerTimespanAttribute(1, 2), "");
+        var result = rlm.IsRequestAllowed(new RequestsPerTimespanAttribute(1, 2, "ErrorMsg"), "");
 
         //assert
         Assert.IsFalse(result);

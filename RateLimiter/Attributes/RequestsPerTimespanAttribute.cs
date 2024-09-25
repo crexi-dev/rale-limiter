@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace RateLimiter.Attributes;
 
@@ -13,16 +7,26 @@ public class RequestsPerTimespanAttribute : Attribute, IRateLimit
 {
     public int Rate { get; }
     public int Seconds { get; }
+    public string ErrorMessage { get; }
 
     public RequestsPerTimespanAttribute(int rate, int seconds)
     {
         Rate = rate;
         Seconds = seconds;
+        ErrorMessage = "Allowed requests exceeded";
     }
-}
 
+    public RequestsPerTimespanAttribute(int rate, int seconds, string errorMessage)
+    {
+        Rate = rate;
+        Seconds = seconds;
+        ErrorMessage = errorMessage;
+    }
+
+}
 
 public interface IRateLimit
 {
+    string ErrorMessage { get; }
 
 }
