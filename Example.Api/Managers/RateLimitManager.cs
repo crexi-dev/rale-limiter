@@ -62,13 +62,17 @@ public class RateLimitManager : IRateLimitManager
         var dateTime = DateTime.Now.AddMilliseconds(milliseconds);
 
         var cnt = 0;
-        for (var i = requests.Count - 1; i >= 0; i--)
+        foreach (var r in requests)
         {
-             var request = requests[i];
-             if (request > dateTime)
-                 cnt++;
-             else
-                 break;
+            if (r > dateTime)
+            {
+                if (cnt >= attribute.Rate)
+                    return true;
+
+                cnt++;
+            }
+            else
+                break;
         }
 
         return cnt>= attribute.Rate;
