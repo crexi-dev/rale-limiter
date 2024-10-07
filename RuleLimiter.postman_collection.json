@@ -1,0 +1,40 @@
+{
+	"info": {
+		"_postman_id": "eae9ef78-51e1-4495-9f0f-8f9d8f8f029d",
+		"name": "RuleLimiter",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "1058055"
+	},
+	"item": [
+		{
+			"name": "http://localhost:5243/weatherforecast",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Access-Token",
+						"value": "EU-Token",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:5243/weatherforecast"
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:5243/weatherforecast Copy",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "X-Access-Token",
+						"value": "US-Token",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:5243/weatherforecast"
+			},
+			"response": []
+		}
+	]
+}
