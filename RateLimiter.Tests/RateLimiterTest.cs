@@ -44,56 +44,31 @@ public class RateLimiterTest
     }
 
     [Test]
-    public void OnActionExecuting_WhenAccessTokenIsMissing_ReturnsBadRequestResult()
-    {
-        var context = GetExecutingContext();
-        _rateLimiterRule = new RequestRateLimiterRule(_memoryStorage, MaxRequests, TimeSpan);
-        _rateLimiterRule.OnActionExecuting(context);
-        Assert.IsInstanceOf<BadRequestObjectResult>(context.Result);
-    }
-
-    [Test]
     public void OnActionExecuting_WhenRequestIsAllowed_SetsAccessToken()
     {
         var accessToken = "test-token";
-        var context = GetExecutingContext(true);
-
         var cacheEntry = new CountBasedStorageEntry { Count = 0, LastAccessTime = DateTime.UtcNow };
-
         _memoryStorage.Set(accessToken, cacheEntry);
         _rateLimiterRule = new RequestRateLimiterRule(_memoryStorage, MaxRequests, TimeSpan);
-
-        // Act
-        _rateLimiterRule.OnActionExecuting(context);
-
-        // Assert
-        Assert.IsNull(context.Result);
-        Assert.AreEqual(accessToken, _rateLimiterRule.AccessToken);
+        var result = _rateLimiterRule.Execute(accessToken);
+        Assert.IsTrue(result.Item1);
     }
 
     [Test]
     public void OnActionExecuting_WhenRateLimitExceeded_ReturnsTooManyRequestsResult()
     {
-        // Arrange
         var accessToken = "test-token";
-        var context = GetExecutingContext(true);
 
         var cacheEntry = new CountBasedStorageEntry { Count = MaxRequests, LastAccessTime = DateTime.UtcNow };
         _memoryStorage.Set($"{nameof(RequestRateLimiterRule)}_{accessToken}", cacheEntry);
         _rateLimiterRule = new RequestRateLimiterRule(_memoryStorage, MaxRequests, TimeSpan);
-        _rateLimiterRule.OnActionExecuting(context);
-
-        // Assert
-        Assert.IsInstanceOf<ContentResult>(context.Result);
-        var result = context.Result as ContentResult;
-        Assert.AreEqual((int)HttpStatusCode.TooManyRequests, result.StatusCode);
-        Assert.AreEqual("Rate limit exceeded.", result.Content);
+        var result = _rateLimiterRule.Execute(accessToken);
+        Assert.IsFalse(result.Item1);
     }
 
     [Test]
     public void IsRequestAllowed_WhenCalled_TracksRequestCount()
     {
-        // Arrange
         var accessToken = "test-token";
         var cacheEntry = new CountBasedStorageEntry { Count = 0, LastAccessTime = DateTime.UtcNow };
         _memoryStorage.Set($"{nameof(RequestRateLimiterRule)}_{accessToken}", cacheEntry);
@@ -102,10 +77,7 @@ public class RateLimiterTest
             AccessToken = accessToken
         };
 
-        // Act
         var result = _rateLimiterRule.IsRequestAllowed();
-
-        // Assert
         Assert.IsTrue(result.Success);
         Assert.AreEqual(1, cacheEntry.Count);
     }
@@ -113,7 +85,6 @@ public class RateLimiterTest
     [Test]
     public void IsRequestAllowed_WhenRateLimitExceeded_ReturnsSuccessFalse()
     {
-        // Arrange
         var accessToken = "test-token";
         var cacheEntry = new CountBasedStorageEntry { Count = MaxRequests, LastAccessTime = DateTime.UtcNow };
         _memoryStorage.Set($"{nameof(RequestRateLimiterRule)}_{accessToken}", cacheEntry);
@@ -121,10 +92,7 @@ public class RateLimiterTest
         {
             AccessToken = accessToken
         };
-
         var result = _rateLimiterRule.IsRequestAllowed();
-
-        // Assert
         Assert.IsFalse(result.Success);
         Assert.AreEqual(cacheEntry, result.StorageEntry);
     }
@@ -132,86 +100,56 @@ public class RateLimiterTest
     [Test]
     public void OnActionExecuting_WhenRateLimitResetsAfterWait_AllowsRequestAfterTimeout()
     {
-        // Arrange
-        var context = GetExecutingContext(true);
-
+        var accessToken = "test-token";
         _rateLimiterRule = new RequestRateLimiterRule(_memoryStorage, 2, TimeSpan.FromSeconds(5)); // 2 requests every 5 seconds
-
-        // Simulate first valid request (should succeed)
-        _rateLimiterRule.OnActionExecuting(context);
-
-        // Assert no rate limit exceeded
-        Assert.IsNull(context.Result); // No result means the request was allowed
-
+        var result = _rateLimiterRule.Execute(accessToken);
+        Assert.IsTrue(result.Item1);
+        result = _rateLimiterRule.Execute(accessToken);
+        Assert.IsTrue(result.Item1);
         // Simulate hitting the rate limit on the next request
-        _rateLimiterRule.OnActionExecuting(context);
-
-        Assert.IsNull(context.Result); // No result means the request was allowed
-
-        // Simulate hitting the rate limit on the next request
-        _rateLimiterRule.OnActionExecuting(context);
-
+        result = _rateLimiterRule.Execute(accessToken);
         // Assert rate limit exceeded
-        Assert.IsInstanceOf<ContentResult>(context.Result);
-
-        ParseAndWait(context);
-
-        // Clear previous result to simulate new request
-        context.Result = null;
-
-        // After waiting, make a new request (this should succeed)
-        _rateLimiterRule.OnActionExecuting(context);
-
-        // Assert no rate limit error after wait
-        Assert.IsNull(context.Result); // No result means the request was allowed
+        Assert.IsFalse(result.Item1);
+        ParseAndWait(result);
+        //// After waiting, make a new request (this should succeed)
+        result = _rateLimiterRule.Execute(accessToken);
+        //// Assert no rate limit error after wait
+        Assert.IsTrue(result.Item1);
     }
 
     [Test]
     public void OnActionExecuting_WhenRateLimitResetsAfterWait_AllowsRequestAfterTimeout_2()
     {
-        // Arrange
-        var context = GetExecutingContext(true);
-
+        var accessToken = "test-token";
         _timeLimiterRule = new TimeRateLimiterRule(_memoryStorage, TimeSpan.FromSeconds(5)); // 1 request every 5 seconds
-
         // Simulate first valid request (should succeed)
-        _timeLimiterRule.OnActionExecuting(context);
-
+        var result = _timeLimiterRule.Execute(accessToken);
         // Assert no rate limit exceeded
-        Assert.IsNull(context.Result); // No result means the request was allowed
-
+        Assert.IsTrue(result.Item1);
         // Simulate hitting the rate limit on the next request
-        _timeLimiterRule.OnActionExecuting(context);
-
+        result = _timeLimiterRule.Execute(accessToken);
         // Assert rate limit exceeded
-        Assert.IsInstanceOf<ContentResult>(context.Result);
-
-        ParseAndWait(context);
-
-        // Clear previous result to simulate new request
-        context.Result = null;
-
+        Assert.IsFalse (result.Item1);
+        ParseAndWait(result);
         // After waiting, make a new request (this should succeed)
-        _timeLimiterRule.OnActionExecuting(context);
-
+        result = _timeLimiterRule.Execute(accessToken);
         // Assert no rate limit error after wait
-        Assert.IsNull(context.Result); // No result means the request was allowed
+        Assert.IsTrue(result.Item1);
     }
 
     [Test]
     public void OnActionExecuting_WhenTokenRuleRefillsFasterThanTheRequests()
     {
         // Arrange
-        var context = GetExecutingContext(true);
-
+        var accessToken = "test-token";
         _tokenBucketRateLimiterRule = new TokenBucketRateLimiterRule(_memoryStorage, 10, 3, TimeSpan.FromMilliseconds(0.01)); 
         //10 max requests, but the requests refill at a rate of a 3 request every 0.01 of a millisecond. so doing 13 should be fine
 
         //exhaust the tokens
         for(var i = 0; i < 13; i++)
         {
-            _tokenBucketRateLimiterRule.OnActionExecuting(context);
-            Assert.IsNull(context.Result);
+            var result = _tokenBucketRateLimiterRule.Execute(accessToken);
+            Assert.IsTrue(result.Item1);
         }
     }
 
@@ -277,6 +215,11 @@ public class RateLimiterTest
 
         // Simulate waiting until the rate limit window expires
         Thread.Sleep(retryAfterSeconds * 1000); // Sleep for the amount of time in Retry-After
+    }
+
+    private static void ParseAndWait(Tuple<bool, double> result)
+    {
+        Thread.Sleep((int)result.Item2 * 1500); // Sleepin a little longer because to allow the cache to cleanup
     }
 
     private IRateLimiterRule GetRandomRateLimiterRule()

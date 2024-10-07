@@ -1,14 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Filters;
-using RateLimiter.Interfaces;
-using System.Net;
+﻿using RateLimiter.Interfaces;
+using System;
 
 namespace RateLimiter.Rules;
 
 /// <summary>
 /// Abstract Rate Limiter Rule
 /// </summary>
-public abstract class AbstractRateLimiterRule<T, U> : IRateLimiterRule<U>, IActionFilter, IRateLimiterRule where T : IRateLimiterStorageEntry where U: IRateLimiterResult
+public abstract class AbstractRateLimiterRule<T, U> : IRateLimiterRule<U>, IRateLimiterRule where T : IRateLimiterStorageEntry where U: IRateLimiterResult
 {
     #region Constructor
     /// <summary>
@@ -49,10 +47,6 @@ public abstract class AbstractRateLimiterRule<T, U> : IRateLimiterRule<U>, IActi
     /// Storage
     /// </summary>
     private readonly IRateLimiterStorage _storage;
-    /// <summary>
-    /// Expected header on the request
-    /// </summary>
-    private readonly string _accessTokenHeader = Resource1.AccessTokenHeader;
     #endregion
 
     #region Properties
@@ -69,46 +63,23 @@ public abstract class AbstractRateLimiterRule<T, U> : IRateLimiterRule<U>, IActi
     IRateLimiterResult IRateLimiterRule.IsRequestAllowed() => IsRequestAllowed();
     #endregion
 
-    #region IActionFilter Implementation
-    /// <summary>
-    /// not used
-    /// </summary>
-    /// <param name="context"></param>
-    public void OnActionExecuted(ActionExecutedContext context)
-    {
-    }
-
+    #region Implementation
     /// <summary>
     /// Sniffs a request and if its not allowed by a given rule, it will return the proper error with the retry-after header
     /// </summary>
     /// <param name="context"></param>
-    public void OnActionExecuting(ActionExecutingContext context)
+    public Tuple<bool, double> Execute(string token)
     {
-        if (!context.HttpContext.Request.Headers.TryGetValue(_accessTokenHeader, out var accessToken) ||
-            string.IsNullOrWhiteSpace(accessToken)
-        )
-        {
-            context.Result = new BadRequestObjectResult($"Missing {_accessTokenHeader}");
-            return;
-        }
-
-        AccessToken = accessToken;
+        AccessToken = token;
 
         var result = IsRequestAllowed();
 
         if (!result.Success)
         {
-            context.Result = new ContentResult
-            {
-                StatusCode = (int)HttpStatusCode.TooManyRequests,
-                Content = "Rate limit exceeded.",
-                ContentType = "text/plain"
-            };
-
-            context.HttpContext.Response.Headers["Retry-After"] = CaculateRetryAfter(result).ToString("F0");
-
-            return;
+            return new Tuple<bool, double>(false, CaculateRetryAfter(result));
         }
+
+        return new Tuple<bool, double>(true, 0);
     }
     #endregion
 }

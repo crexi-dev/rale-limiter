@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using RateLimiter.Interfaces;
+using System;
+using System.Net;
 
 namespace RateLimiter;
 
@@ -35,13 +37,27 @@ public sealed class RegionBasedRateLimiterDelegator : IActionFilter
 
         var token = accessToken.ToString();
 
+        Tuple<bool, double> result;
+
         if (token.StartsWith("US"))
         {
-            _usRateLimiterRule.OnActionExecuting(context);
+            result = _usRateLimiterRule.Execute(token);
         }
         else
         {
-            _otherRateLimiterRule.OnActionExecuting(context);
+            result = _otherRateLimiterRule.Execute(token);
+        }
+
+        if(!result.Item1)
+        {
+            context.Result = new ContentResult
+            {
+                StatusCode = (int)HttpStatusCode.TooManyRequests,
+                Content = "Rate limit exceeded.",
+                ContentType = "text/plain"
+            };
+
+            context.HttpContext.Response.Headers["Retry-After"] = result.Item2.ToString("F0");
         }
     }
 

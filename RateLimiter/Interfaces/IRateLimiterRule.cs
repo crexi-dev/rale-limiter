@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 
 namespace RateLimiter.Interfaces;
 
@@ -20,5 +21,5 @@ public interface IRateLimiterRule<T> where T : IRateLimiterResult
 public interface IRateLimiterRule
 {
     IRateLimiterResult IsRequestAllowed();
-    void OnActionExecuting(ActionExecutingContext context);
+    Tuple<bool, double> Execute(string token);
 }
