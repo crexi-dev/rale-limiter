@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<RateLimits>
+    <Tokens>
+        <Token Value="token1">
+            <Rules>
+                <Rule Type="RequestsPerTimeSpan">
+                    <MaxRequests>5</MaxRequests>
+                    <TimeSpanMinutes>1</TimeSpanMinutes>
+                </Rule>
+                <Rule Type="TimeSpanSinceLastRequest">
+                    <MinTimeSpanSeconds>2</MinTimeSpanSeconds>
+                </Rule>
+            </Rules>
+        </Token>
+        <Token Value="token2">
+            <Rules>
+                <Rule Type="TimeSpanSinceLastRequest">
+                    <MinTimeSpanSeconds>2</MinTimeSpanSeconds>
+                </Rule>
+            </Rules>
+        </Token>
+        <Token Value="token3">
+            <Rules>
+                <Rule Type="RequestsPerTimeSpan">
+                    <MaxRequests>3</MaxRequests>
+                    <TimeSpanMinutes>1</TimeSpanMinutes>
+                </Rule>
+            </Rules>
+        </Token>
+    </Tokens>
+</RateLimits>
