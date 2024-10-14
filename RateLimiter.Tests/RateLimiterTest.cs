@@ -19,20 +19,20 @@ public class RateLimiterTest
     }
 
     [Test]
-    public void ValidTokenWithMultipleRules_ShouldAllowRequests_UnderLimit()
+    public async Task ValidTokenWithMultipleRules_ShouldAllowRequests_UnderLimit()
     {
         //max 5 requests per 1 minute and min 2 seconds between requests allowed
         string token = "token1";
 
         for (int i = 0; i < 5; i++)
         {
-            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3));
-            Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
+            await Task.Delay(TimeSpan.FromSeconds(3));
+            Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
         }
     }
 
     [Test]
-    public void ValidTokenWithMultipleRules_ShouldDenyRequests_OverLimit()
+    public  async Task ValidTokenWithMultipleRules_ShouldDenyRequests_OverLimit()
     {
         //max 5 requests per 1 minute and min 2 seconds between requests allowed
         string token = "token1";
@@ -41,16 +41,16 @@ public class RateLimiterTest
         {
             if (i == 0)
             {
-                Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
+                Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
             }
-            Assert.IsFalse(_rateLimiter!.IsRequestAllowed(token));
+            Assert.IsFalse(await _rateLimiter!.IsRequestAllowedAsync(token));
         }
         // The sixth request should be denied
-        Assert.IsFalse(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsFalse(await _rateLimiter!.IsRequestAllowedAsync(token));
     }
 
     [Test]
-    public void ConcurrentRequests_ShouldBeHandledCorrectly()
+    public  async Task ConcurrentRequests_ShouldBeHandledCorrectly()
     {
         // max 3 requests per 1 minute allowed
         string token = "token3";
@@ -60,7 +60,7 @@ public class RateLimiterTest
         // Fire multiple requests concurrently
         for (int i = 0; i < 6; i++)
         {
-            tasks.Add(Task.Run(() => _rateLimiter!.IsRequestAllowed(token)));
+            tasks.Add(Task.Run(() => _rateLimiter!.IsRequestAllowedAsync(token)));
         }
 
         Task.WhenAll(tasks).Wait();
@@ -70,69 +70,69 @@ public class RateLimiterTest
     }
 
     [Test]
-    public void ValidTokenWithMultipleRules_ShouldAllowRequests_AfterWait()
+    public async Task ValidTokenWithMultipleRules_ShouldAllowRequests_AfterWait()
     {
         //max 5 requests per 1 minute and min 2 seconds between requests allowed
         string token = "token1";
 
         // First request -> should be allowed
-        Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
         // Second request (immediately) -> should be denied
-        Assert.IsFalse(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsFalse(await _rateLimiter!.IsRequestAllowedAsync(token));
         // Sleep for 2 seconds
-        System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+        await Task.Delay(TimeSpan.FromSeconds(2));
         // Now it should be allowed
-        Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
     }
     [Test]
-    public void ValidTokenWithTimeSpanSinceLastRequestRule_ShouldEnforceRule()
+    public  async Task ValidTokenWithTimeSpanSinceLastRequestRule_ShouldEnforceRule()
     {
         // min 2 seconds between requests allowed
         string token = "token2";
         // First request -> should be allowed
-        Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
         // Second request (immediately) -> should be denied
-        Assert.IsFalse(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsFalse(await _rateLimiter!.IsRequestAllowedAsync(token));
         // Sleep for 2 seconds
-        System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2));
+        await Task.Delay(TimeSpan.FromSeconds(2));
         // Now next requests should be allowed and denied
-        Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
-        Assert.IsFalse(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
+        Assert.IsFalse(await _rateLimiter!.IsRequestAllowedAsync(token));
 
     }
 
     [Test]
-    public void ValidTokenWithRequestsPerTimeSpanRule_ShouldEnforceRule()
+    public  async Task ValidTokenWithRequestsPerTimeSpanRule_ShouldEnforceRule()
     {
         // max 3 requests per 1 minute allowed
         string token = "token3";
 
         // First request -> should be allowed
-        Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
 
         // Second request -> should be allowed
-        Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
 
         // Third request -> should be allowed
-        Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
 
         // Fourth request -> should be denied  (exceeding the limit of 3 requests within 1 minute)
-        Assert.IsFalse(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsFalse(await _rateLimiter!.IsRequestAllowedAsync(token));
 
         // Wait for the timespan of 1 minute
-        System.Threading.Thread.Sleep(TimeSpan.FromMinutes(1));
+        await Task.Delay(TimeSpan.FromMinutes(1));
 
         // restriction should be lifted and next 3 requests should be allowed now and 4th request should be denied
-        Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
-        Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
-        Assert.IsTrue(_rateLimiter!.IsRequestAllowed(token));
-        Assert.IsFalse(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
+        Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
+        Assert.IsTrue(await _rateLimiter!.IsRequestAllowedAsync(token));
+        Assert.IsFalse(await _rateLimiter!.IsRequestAllowedAsync(token));
     }
 
     [Test]
-    public void InvalidToken_ShouldDenyRequests()
+    public async Task InvalidToken_ShouldDenyRequests()
     {
         string token = "invalid_token";
-        Assert.IsFalse(_rateLimiter!.IsRequestAllowed(token));
+        Assert.IsFalse(await _rateLimiter!.IsRequestAllowedAsync(token));
     }
 }

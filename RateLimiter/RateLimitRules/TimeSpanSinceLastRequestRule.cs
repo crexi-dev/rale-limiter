@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace RateLimiterNS.RateLimitRules
 {
@@ -8,17 +11,20 @@ namespace RateLimiterNS.RateLimitRules
     {
         private readonly TimeSpan _minTimeSpan;
         private readonly ConcurrentDictionary<string, DateTime> _lastRequestTimes = new();
+        private readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
         public TimeSpanSinceLastRequestRule(TimeSpan minTimeSpan)
         {
             _minTimeSpan = minTimeSpan;
         }
 
-        public bool IsRequestAllowed(string token, DateTime requestTime)
+        public async Task<bool> IsRequestAllowedAsync(string token, DateTime requestTime)
         {
-            var lastRequestTime = _lastRequestTimes.GetValueOrDefault(token);
-            lock (_lastRequestTimes)
+            await _semaphore.WaitAsync();
+            try
             {
+                var lastRequestTime = _lastRequestTimes.GetValueOrDefault(token);
+
                 if (lastRequestTime == default || requestTime - lastRequestTime >= _minTimeSpan)
                 {
                     _lastRequestTimes[token] = requestTime;
@@ -26,6 +32,10 @@ namespace RateLimiterNS.RateLimitRules
                 }
 
                 return false;
+            }
+            finally
+            {
+                _semaphore.Release();
             }
         }
     }

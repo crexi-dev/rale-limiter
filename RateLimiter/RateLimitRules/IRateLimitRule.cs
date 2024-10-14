@@ -1,9 +1,10 @@
 using System;
+using System.Threading.Tasks;
 
 namespace RateLimiterNS.RateLimitRules
 {
     public interface IRateLimitRule
     {
-        bool IsRequestAllowed(string token, DateTime requestTime);
+         Task<bool> IsRequestAllowedAsync(string token, DateTime requestTime);
     }
 }

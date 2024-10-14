@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using RateLimiterNS.RateLimitRules;
 using System.Xml.Linq;
+using System.Threading.Tasks;
 
 namespace RateLimiterNS.RateLimiter
 {
@@ -15,17 +16,20 @@ namespace RateLimiterNS.RateLimiter
             _tokenRules = tokenRules;
         }
 
-        public bool IsRequestAllowed(string token)
-        {
-            if (!_tokenRules.ContainsKey(token))
+            public async Task<bool> IsRequestAllowedAsync(string token)
             {
-                Console.WriteLine($"Invalid token: {token}");
-                return false;
-            }
+                if (!_tokenRules.ContainsKey(token))
+                {
+                    Console.WriteLine($"Invalid token: {token}");
+                    return false;
+                }
 
-            var requestTime = DateTime.UtcNow;
-            return _tokenRules[token].All(rule => rule.IsRequestAllowed(token, requestTime));
-        }
+                var requestTime = DateTime.UtcNow;
+                var tasks = _tokenRules[token].Select(rule => rule.IsRequestAllowedAsync(token, requestTime));
+                
+                var results = await Task.WhenAll(tasks);
+                return results.All(result => result);
+            }
 
         public static RateLimiter LoadFromConfiguration(string xmlFilePath)
         {
@@ -34,11 +38,11 @@ namespace RateLimiterNS.RateLimiter
 
             foreach (var tokenElement in doc.Descendants("Token"))
             {
-                // Ensure token is non-null
+            
                 string? token = tokenElement.Attribute("Value")?.Value;
                 if (string.IsNullOrEmpty(token))
                 {
-                    continue; // Skip this token if it's null or empty
+                    continue;
                 }
 
                 var rules = new List<IRateLimitRule>();
