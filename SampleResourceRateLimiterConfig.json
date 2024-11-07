@@ -1,0 +1,114 @@
+{
+  "ResourceLimitConfig": [
+    {
+      "Name": "ResourceConcurrency",
+      "Limiters": [
+        {
+          "LimiterType": "ConcurrencyLimiter",
+          "MinPermits": 0,
+          "PermitLimit": 10,
+          "QueueLimit": 5,
+          "WindowMinutes": 0,
+          "TokensPerPeriod": 0,
+          "ReplenishmentPeriodSeconds": 0,
+          "SlidingWindowSegments": 0
+        }
+      ]
+    },
+    {
+      "Name": "ResourceFixedWindow",
+      "Limiters": [
+        {
+          "LimiterType": "FixedWindowRateLimiter",
+          "MinPermits": 0,
+          "PermitLimit": 20,
+          "QueueLimit": 10,
+          "WindowMinutes": 1,
+          "TokensPerPeriod": 0,
+          "ReplenishmentPeriodSeconds": 0,
+          "SlidingWindowSegments": 0
+        }
+      ]
+    },
+    {
+      "Name": "ResourceRandom",
+      "Limiters": [
+        {
+          "LimiterType": "RandomRateLimiter",
+          "MinPermits": 5,
+          "PermitLimit": 15,
+          "QueueLimit": 0,
+          "WindowMinutes": 0,
+          "TokensPerPeriod": 0,
+          "ReplenishmentPeriodSeconds": 0,
+          "SlidingWindowSegments": 0
+        }
+      ]
+    },
+    {
+      "Name": "ResourceSlidingWindow",
+      "Limiters": [
+        {
+          "LimiterType": "SlidingWindowRateLimiter",
+          "MinPermits": 0,
+          "PermitLimit": 30,
+          "QueueLimit": 15,
+          "WindowMinutes": 2,
+          "TokensPerPeriod": 0,
+          "ReplenishmentPeriodSeconds": 0,
+          "SlidingWindowSegments": 4
+        }
+      ]
+    },
+    {
+      "Name": "ResourceTokenBucket",
+      "Limiters": [
+        {
+          "LimiterType": "TokenBucketRateLimiter",
+          "MinPermits": 0,
+          "PermitLimit": 25,
+          "QueueLimit": 10,
+          "WindowMinutes": 0,
+          "TokensPerPeriod": 5,
+          "ReplenishmentPeriodSeconds": 60,
+          "SlidingWindowSegments": 0
+        }
+      ]
+    },
+    {
+      "Name": "ResourceChained",
+      "Limiters": [
+        {
+          "LimiterType": "ConcurrencyLimiter",
+          "MinPermits": 0,
+          "PermitLimit": 10,
+          "QueueLimit": 5,
+          "WindowMinutes": 0,
+          "TokensPerPeriod": 0,
+          "ReplenishmentPeriodSeconds": 0,
+          "SlidingWindowSegments": 0
+        },
+        {
+          "LimiterType": "FixedWindowRateLimiter",
+          "MinPermits": 0,
+          "PermitLimit": 20,
+          "QueueLimit": 10,
+          "WindowMinutes": 1,
+          "TokensPerPeriod": 0,
+          "ReplenishmentPeriodSeconds": 0,
+          "SlidingWindowSegments": 0
+        },
+        {
+          "LimiterType": "RandomRateLimiter",
+          "MinPermits": 5,
+          "PermitLimit": 15,
+          "QueueLimit": 0,
+          "WindowMinutes": 0,
+          "TokensPerPeriod": 0,
+          "ReplenishmentPeriodSeconds": 0,
+          "SlidingWindowSegments": 0
+        }
+      ]
+    }
+  ]
+}
