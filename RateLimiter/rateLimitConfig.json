@@ -1,0 +1,56 @@
+[
+  {
+    "resourceIdentifier": "/api/property",
+    "ruleTypes": ["RequestPerTimespan"],
+    "requestLimit": 5,
+    "timespan": "00:10:00",
+    "region": "US"
+  },
+  {
+    "resourceIdentifier": "/api/property",
+    "ruleTypes": ["TimeSinceLastCall"],
+    "minIntervalBetweenRequests": "00:00:10",
+    "region": "EU"
+  },
+  {
+    "resourceIdentifier": "/api/property/{id}",
+    "ruleTypes": ["TimeSinceLastCall"],
+    "minIntervalBetweenRequests": "00:00:15",
+    "region": "US"
+  },
+  {
+    "resourceIdentifier": "/api/property/{id}",
+    "ruleTypes": ["TimeSinceLastCall"],
+    "minIntervalBetweenRequests": "00:00:05",
+    "region": "EU"
+  },
+  {
+    "resourceIdentifier": "/api/user",
+    "ruleTypes": ["RequestPerTimespan", "TimeSinceLastCall"],
+    "requestLimit": 10,
+    "timespan": "00:05:00",
+    "minIntervalBetweenRequests": "00:00:10",
+    "region": "US"
+  },
+  {
+    "resourceIdentifier": "/api/user",
+    "ruleTypes": ["RequestPerTimespan", "TimeSinceLastCall"],
+    "requestLimit": 200,
+    "timespan": "00:05:00",
+    "minIntervalBetweenRequests": "00:00:10",
+    "region": "EU"
+  },
+  {
+    "resourceIdentifier": "/api/user/{id}",
+    "ruleTypes": ["RequestPerTimespan"],
+    "requestLimit": 200,
+    "timespan": "00:05:00",
+    "region": "US"
+  },
+  {
+    "resourceIdentifier": "/api/user/{id}",
+    "ruleTypes": ["TimeSinceLastCall"],
+    "minIntervalBetweenRequests": "00:00:10",
+    "region": "EU"
+  }
+]
