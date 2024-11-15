@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35506.116 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiter", "RateLimiter\RateLimiter.csproj", "{36F4BDC6-D3DA-403A-8DB7-0C79F94B938F}"
 EndProject
@@ -11,6 +11,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crexi.Data.Models", "Crexi.Models\Crexi.Data.Models.csproj", "{C1A2CAED-42D3-4A70-ACC0-3717032EBF99}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiter.Models", "RateLimiter.Models\RateLimiter.Models.csproj", "{B6DAE4DC-9673-4D77-8674-D97C962F3E76}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crexi.RulesService", "Crexi.RulesEngine\Crexi.RulesService.csproj", "{F49B7F6C-C531-432E-8076-0FA26FEEFA65}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crexi.RulesService.Models", "Crexi.RulesEngine.Models\Crexi.RulesService.Models.csproj", "{921C3DFC-57AA-4A27-97FD-89176B74A55C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +34,22 @@ Global
 		{C4F9249B-010E-46BE-94B8-DD20D82F1E60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4F9249B-010E-46BE-94B8-DD20D82F1E60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4F9249B-010E-46BE-94B8-DD20D82F1E60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1A2CAED-42D3-4A70-ACC0-3717032EBF99}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1A2CAED-42D3-4A70-ACC0-3717032EBF99}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1A2CAED-42D3-4A70-ACC0-3717032EBF99}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1A2CAED-42D3-4A70-ACC0-3717032EBF99}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6DAE4DC-9673-4D77-8674-D97C962F3E76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6DAE4DC-9673-4D77-8674-D97C962F3E76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6DAE4DC-9673-4D77-8674-D97C962F3E76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6DAE4DC-9673-4D77-8674-D97C962F3E76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F49B7F6C-C531-432E-8076-0FA26FEEFA65}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F49B7F6C-C531-432E-8076-0FA26FEEFA65}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F49B7F6C-C531-432E-8076-0FA26FEEFA65}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F49B7F6C-C531-432E-8076-0FA26FEEFA65}.Release|Any CPU.Build.0 = Release|Any CPU
+		{921C3DFC-57AA-4A27-97FD-89176B74A55C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{921C3DFC-57AA-4A27-97FD-89176B74A55C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{921C3DFC-57AA-4A27-97FD-89176B74A55C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{921C3DFC-57AA-4A27-97FD-89176B74A55C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

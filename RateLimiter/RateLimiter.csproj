@@ -4,4 +4,15 @@
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="RulesEngine" Version="5.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="RulesJson\RateLimiterRules.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
 </Project>  

@@ -1,0 +1,33 @@
+[
+  {
+    "WorkflowName": "RateLimiter",
+    "Rules": [
+      {
+        "RuleName": "Default",
+        "Enabled": "True",
+        "SuccessEvent": "5",
+        "ErrorMessage": "One or more adjust rules failed.",
+        "ErrorType": "Error",
+        "Expression": "input1.Client.ClientAttributes.Tier == \"Default\" and input1.Client.ClientAttribute.CountryCode = \"US\""
+
+      },
+      {
+        "RuleName": "Tier10",
+        "Enabled": "True",
+        "SuccessEvent": "10",
+        "ErrorMessage": "One or more adjust rules failed.",
+        "ErrorType": "Error",
+        "Expression": "input1.Client.ClientAttributes.Tier == \"Tier10\""
+
+      },
+      {
+        "RuleName": "Tier20",
+        "Enabled": "True",
+        "SuccessEvent": "20",
+        "ErrorMessage": "One or more adjust rules failed.",
+        "ErrorType": "Error",
+        "Expression": "input1.Client.ClientAttributes.Tier == \"Tier20\""
+      }
+    ]
+  }
+] 
