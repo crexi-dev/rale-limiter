@@ -7,10 +7,10 @@
         ValidationError = 600
     }
 
-   public enum RatePeriodTypeEnum
+   public enum RateSpanTypeEnum
     {
-        Seconds = 1,
-        Minutes = 60,
-        Hours = 3600
+        Second = 1,
+        Minute = 60,
+        Hour = 3600
     }
 }

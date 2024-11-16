@@ -1,0 +1,59 @@
+[
+  {
+    "WorkflowName": "RateLimiter",
+    "Rules": [
+      {
+        "RuleName": "Default",
+        "Enabled": true,
+        "SuccessEvent": "5",
+        "ErrorMessage": "One or more adjust rules failed.",
+        "ErrorType": "Error",
+        "Expression": "input1.Client.ClientAttributes.Tier == \"Default\" and input1.Client.ClientAttribute.CountryCode = \"US\"",
+        "Properties": {
+          "RateRule": {
+            "MaxRate": {
+              "RateSpanType": "Hour",
+              "RatePeriod": "1",
+              "Rate": "10"
+            },
+            "VelocityRate": {
+              "RateSpanType": "Minute",
+              "RatePeriod": "1",
+              "Rate": "1"
+            }
+          }
+        }
+      },
+      {
+        "RuleName": "Tier10",
+        "Enabled": true,
+        "SuccessEvent": "10",
+        "ErrorMessage": "One or more adjust rules failed.",
+        "ErrorType": "Error",
+        "Expression": "input1.Client.ClientAttributes.Tier == \"Tier10\"",
+        "Properties": {
+          "RateRule": {
+            "MaxRate": {
+              "RateSpanType": "Hour",
+              "RatePeriod": "1",
+              "Rate": "100"
+            },
+            "VelocityRate": {
+              "RateSpanType": "Minute",
+              "RatePeriod": "1",
+              "Rate": "10"
+            }
+          }
+        }
+      },
+      {
+        "RuleName": "Tier20",
+        "Enabled": true,
+        "SuccessEvent": "20",
+        "ErrorMessage": "One or more adjust rules failed.",
+        "ErrorType": "Error",
+        "Expression": "input1.Client.ClientAttributes.Tier == \"Tier20\""
+      }
+    ]
+  }
+]

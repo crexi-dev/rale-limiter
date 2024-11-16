@@ -7,6 +7,7 @@ public class RulesResult
     public string? SuccessEvent { get; set; }
     public string? ErrorMessage { get; set; }
     public bool Enabled { get; set; } = true;
+    public Dictionary<string, object>? Properties { get; set; }
     public RulesResult()
     {
             

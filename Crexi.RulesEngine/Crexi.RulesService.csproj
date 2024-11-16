@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Crexi.RulesEngine.Models\Crexi.RulesService.Models.csproj" />
+    <ProjectReference Include="..\Crexi.Utilities\Crexi.Utilities.csproj" />
   </ItemGroup>
 
 </Project>

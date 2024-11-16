@@ -2,13 +2,13 @@
 
 namespace Crexi.RulesService.Models.Requests;
 
-public class BaseResponse
+public class GetRulesResponse
 {
     public ResponseCodeEnum ResponseCode { get; set; }
     public string? ResponseMessage { get; set; }
     public string? RuleUsed { get; set; }
     public List<RulesResult> RulesResults{ get; set; }
-    public BaseResponse()
+    public GetRulesResponse()
     {
         ResponseCode = ResponseCodeEnum.Success;
         RulesResults = new();

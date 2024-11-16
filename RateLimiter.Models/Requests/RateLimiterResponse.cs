@@ -8,8 +8,9 @@ public class RateLimiterResponse
     public string? ResponseMessage { get; set; }
     public string? RuleUsed { get; set; }
     public bool IsRateExceeded { get; set; }
+    public bool IsRequestAllowed { get; set; }
     public double RateLimit { get; set; }
-    public RatePeriodTypeEnum RatePeriodType { get; set; }
+    public RateSpanTypeEnum RatePeriodType { get; set; }
     public double CurrentPeriodRequestsNumber {  get; set; }
 
 }

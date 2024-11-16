@@ -8,11 +8,20 @@
     <PackageReference Include="RulesEngine" Version="5.0.3" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="RulesJson\RateLimiterRulesEU.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="RulesJson\RateLimiterRulesUS.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="RulesJson\RateLimiterRules.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interfaces\" />
+    <ProjectReference Include="..\Crexi.Models\Crexi.Data.Models.csproj" />
+    <ProjectReference Include="..\Crexi.RulesEngine\Crexi.RulesService.csproj" />
+    <ProjectReference Include="..\Crexi.Utilities\Crexi.Utilities.csproj" />
+    <ProjectReference Include="..\RateLimiter.Models\RateLimiter.Models.csproj" />
   </ItemGroup>
 </Project>  

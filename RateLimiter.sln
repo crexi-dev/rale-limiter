@@ -20,6 +20,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crexi.RulesService", "Crexi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crexi.RulesService.Models", "Crexi.RulesEngine.Models\Crexi.RulesService.Models.csproj", "{921C3DFC-57AA-4A27-97FD-89176B74A55C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Crexi.Utilities", "Crexi.Utilities\Crexi.Utilities.csproj", "{88BD8CDB-E94C-490F-B7F5-97B14BE46A29}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -50,6 +52,10 @@ Global
 		{921C3DFC-57AA-4A27-97FD-89176B74A55C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{921C3DFC-57AA-4A27-97FD-89176B74A55C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{921C3DFC-57AA-4A27-97FD-89176B74A55C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{88BD8CDB-E94C-490F-B7F5-97B14BE46A29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88BD8CDB-E94C-490F-B7F5-97B14BE46A29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88BD8CDB-E94C-490F-B7F5-97B14BE46A29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88BD8CDB-E94C-490F-B7F5-97B14BE46A29}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

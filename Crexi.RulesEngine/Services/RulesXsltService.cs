@@ -5,7 +5,7 @@ namespace Crexi.RulesService.Services;
 
 public class RulesXsltService : IRulesService
 {
-    public Task<BaseResponse> GetRulesAsync(BaseRequest request)
+    public Task<GetRulesResponse> GetRulesAsync(GetRulesRequest request)
     {
         throw new NotImplementedException();
     }

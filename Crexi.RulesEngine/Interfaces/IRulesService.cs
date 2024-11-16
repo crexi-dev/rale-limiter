@@ -2,7 +2,7 @@
 
 namespace Crexi.RulesService.Interfaces;
 
-internal interface IRulesService
+public interface IRulesService
 {
-    Task<BaseResponse> GetRulesAsync(BaseRequest request);
+    Task<GetRulesResponse> GetRulesAsync(GetRulesRequest request);
 }
