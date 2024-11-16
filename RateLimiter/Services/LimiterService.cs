@@ -19,7 +19,7 @@ namespace RateLimiter.Services
             _requestAuditService = requestAuditService;
         }
 
-        public async Task<bool> LimitAccess(int ResourceId, int UserId)
+        public async Task<bool> AllowAccess(int ResourceId, int UserId)
         {
             throw new NotImplementedException();
         }

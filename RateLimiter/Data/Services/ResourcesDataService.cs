@@ -11,40 +11,64 @@ namespace RateLimiter.Services
 {
     public class ResourcesDataService : IDataService<Resource>
     {
-        private readonly DbRepository<Resource> _resourceRepository;
+        private readonly DbRepository<Resource> _resourcesRepository;
 
-        public ResourcesDataService(DbRepository<Resource> resourceRepository)
+        public ResourcesDataService(DbRepository<Resource> resourcesRepository)
         {
-            _resourceRepository = resourceRepository;
+            _resourcesRepository = resourcesRepository;
         }
 
-        public async Task<List<Resource>> Get()
+        public async Task<List<Resource>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            string[] includes = new string[] { "" };
+
+            var resources = await _resourcesRepository.GetAllAsync(includes);
+
+            return resources;
         }
-        public async Task<List<Resource>> Get(BaseModel searchCriteria)
+        public async Task<Resource> SingleAsync(int id)
         {
-            throw new NotImplementedException();
+            string[] includes = new string[] { "" };
+
+            var resource = await _resourcesRepository.SingleAsync(id, includes);
+
+            return resource;
         }
-        public async Task<Resource> Get(int id)
+        public async Task<Resource> SingleAsync(string identifier)
         {
-            throw new NotImplementedException();
+            string[] includes = new string[] { "" };
+
+            var resource = await _resourcesRepository.SingleAsync(identifier, includes);
+
+            return resource;
         }
-        public async Task<Resource> Get(string identifier)
+        public async Task<bool> AddAsync(Resource resource)
         {
-            throw new NotImplementedException();
+            var newResource = await _resourcesRepository.AddAsync(resource);
+
+            return true;
         }
-        public async Task<bool> Add(Resource resource)
+        public async Task<bool> UpdateAsync(int id, Resource resource)
         {
-            throw new NotImplementedException();
+            string[] includes = new string[] { "" };
+
+            var existingResource = await _resourcesRepository.SingleAsync(id, includes);
+
+            existingResource.Name = resource.Name; 
+            existingResource.Description = resource.Description;
+            existingResource.StatusId = resource.StatusId;
+            existingResource.UpdatedBy = resource.UpdatedBy;
+            existingResource.UpdatedDate = DateTime.Now;
+
+            await _resourcesRepository.UpdateAsync(existingResource);
+
+            return true;
         }
-        public async Task<bool> Update(int id, Resource resource)
+        public async Task<bool> RemoveAsync(int id)
         {
-            throw new NotImplementedException();
-        }
-        public async Task<bool> Delete(int id)
-        {
-            throw new NotImplementedException();
+            var newResource = await _resourcesRepository.RemoveAsync(id);
+
+            return true;
         }
     }
 }

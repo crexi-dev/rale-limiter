@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 namespace RateLimiter.Tests;
 
 [TestFixture]
-public class RequestsAuditServiceTest
+public class RequestsHandlerServiceTest
 {
     ServiceProvider _serviceProvider;
 

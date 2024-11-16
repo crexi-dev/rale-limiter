@@ -33,7 +33,6 @@ namespace M42.Data.Repositories
 
             return await dbSet.ToListAsync();
         }
-
         public async Task<Entity> SingleAsync(int id, string[] includes)
         {
 
@@ -94,28 +93,44 @@ namespace M42.Data.Repositories
             return entity;
         }
         
-        public async Task<bool> Add(Entity entity)
+        public async Task<bool> AddAsync(Entity entity)
         {
+            // Need to add logic that insures unique Identifer
+
+
             var result = _dbSet.Add(entity);
-
-            return true;
-        }
-
-        public async Task<bool> Update(Entity entity)
-        {
-            var result = _dbSet.Update(entity);
-
-            return true;
-        }
-
-        public async Task<bool> Remove(Entity entity)
-        {
-            throw new NotImplementedException("Audit data should not be deleted.");
-        }
-
-        public async Task SaveChangesAsync()
-        {
             await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> UpdateAsync(Entity entity)
+        {
+            var existing = await _dbSet.SingleOrDefaultAsync(x => x.Id == entity.Id);
+
+            if (existing == null)
+            {
+                throw new ArgumentException("Invalid id provided.");
+            }
+
+            var result = _dbSet.Update(entity);  // do i need to copy to existing?
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> RemoveAsync(int id)
+        {
+            var entity = await _dbSet.SingleOrDefaultAsync(x => x.Id == id);
+
+            if ( entity == null)
+            {
+                throw new ArgumentException("Invalid id provided.");
+            }
+            _context.Remove(entity);
+            _context.SaveChanges();
+
+            return true;
         }
 
     }

@@ -20,7 +20,7 @@ namespace RateLimiter.Models
 
         [Required]
         public string CreatedBy { get; set; }
-        public DateTime? Updated { get; set; }
+        public DateTime? UpdatedDate { get; set; }
         public string? UpdatedBy { get; set; }
     }
 }

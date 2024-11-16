@@ -7,11 +7,13 @@ using RateLimiter.Data.Interfaces;
 using RateLimiter.Models;
 using RateLimiter.Services;
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace RateLimiter.Tests;
 
 [TestFixture]
-public class StatusesDataServiceTest
+public class ConfigServiceTest
 {
     ServiceProvider _serviceProvider;
 
@@ -22,7 +24,9 @@ public class StatusesDataServiceTest
 
         services.AddDbContext<RateLimiterDbContext>(options => options.UseInMemoryDatabase(databaseName: "RateLimitertDatabase"));
         services.AddTransient(typeof(DbRepository<>));
-        services.AddScoped<IDataService<Status>, StatusesDataService>();
+        services.AddScoped<IDataService<Request>, RequestsDataService>();
+        services.AddScoped<IDataService<Resource>, ResourcesDataService>();
+        services.AddScoped<IDataService<User>, UsersDataService>();
 
         _serviceProvider = services.BuildServiceProvider();
 
@@ -30,11 +34,11 @@ public class StatusesDataServiceTest
     [Test]
 	public void GetTest()
 	{
-        var statusesDataService = _serviceProvider.GetService<IDataService<Status>>();
+        var requestsDataService = _serviceProvider.GetService<IDataService<Request>>();
 
         try
         {
-            var requests = statusesDataService.Get();
+            var requests = requestsDataService.Get();
 
             Assert.That(true, Is.False);
         }

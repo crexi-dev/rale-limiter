@@ -1,4 +1,6 @@
-﻿using RateLimiter.Data.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using RateLimiter.Data;
+using RateLimiter.Data.Interfaces;
 using RateLimiter.Interfaces;
 using RateLimiter.Models;
 using System;
@@ -11,28 +13,63 @@ namespace RateLimiter.Services
 {
     public class ConfigService : IConfigService
     {
-        private readonly IDataService<Resource> _resourceDataService;
-        private readonly IDataService<User> _userDataService;
-        private readonly IDataService<Status> _statusesDataService;
+        private readonly RateLimiterDbContext _context;
 
-        public ConfigService(IDataService<Resource> resourceDataService, IDataService<User> userDataService, IDataService<Status> statusesDataService)
+        public ConfigService(RateLimiterDbContext context)
         {
-            _resourceDataService = resourceDataService;
-            _userDataService = userDataService;
-            _statusesDataService = statusesDataService;
-        }
+            _context = context;
 
-        public async Task<bool> SeedStatuses(List<Status> statuses)
-        {
-            throw new NotImplementedException();
+            // Make sure statuses are in the db.  Should be handled in a db initializer but ran out of time.
+            var statusesCount = _context.Statuses.Count();
+
+            if (statusesCount == 0)
+            {
+                foreach (var status in CodeValues.Statuses)
+                {
+                    _context.Statuses.Add(status);
+                }
+                _context.SaveChanges();
+            }
         }
-        public async Task<bool> SeedResources(List<Resource> resources)
+        public async Task Reset()
         {
-            throw new NotImplementedException();
+            foreach (var request in _context.Requests)
+            {
+                _context.Requests.Remove(request);
+            }
+            foreach (var resource in  _context.Resources)
+            {
+                _context.Resources.Remove(resource);
+            }
+            foreach (var user in _context.Users)
+            {
+                _context.Users.Remove(user);
+            }
+            await _context.SaveChangesAsync();
         }
-        public async Task<bool> SeedUsers(List<User> users)
+        public async Task SeedResources(List<Resource> resources)
         {
-            throw new NotImplementedException();
+            foreach (var resource in resources)
+            {
+                _context.Resources.Add(resource);
+            }
+            await _context.SaveChangesAsync();
+        }
+        public async Task SeedUsers(List<User> users)
+        {
+            foreach (var user in users)
+            {
+                _context.Users.Add(user);
+            }
+            await _context.SaveChangesAsync();
+        }
+        public async Task SeedRequests(List<Request> requests)
+        {
+            foreach (var request in requests)
+            {
+                _context.Add(request);
+            };
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -8,6 +8,6 @@ namespace RateLimiter.Interfaces
 {
     public interface ILimiterService
     {
-        public Task<bool> LimitAccess(int ResourceId, int UserId);
+        public Task<bool> AllowAccess(int ResourceId, int UserId);
     }
 }

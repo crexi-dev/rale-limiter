@@ -11,40 +11,64 @@ namespace RateLimiter.Services
 {
     public class UsersDataService : IDataService<User>
     {
-        private readonly DbRepository<User> _userRepository;
+        private readonly DbRepository<User> _usersRepository;
 
-        public UsersDataService(DbRepository<User> userRepository)
+        public UsersDataService(DbRepository<User> usersRepository)
         {
-            _userRepository = userRepository;
+            _usersRepository = usersRepository;
         }
 
-        public async Task<List<User>> Get()
+        public async Task<List<User>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            string[] includes = new string[] { "" };
+
+            var users = await _usersRepository.GetAllAsync(includes);
+
+            return users;
         }
-        public async Task<List<User>> Get(BaseModel searchCriteria)
+        public async Task<User> SingleAsync(int id)
         {
-            throw new NotImplementedException();
+            string[] includes = new string[] { "" };
+
+            var user = await _usersRepository.SingleAsync(id, includes);
+
+            return user;
         }
-        public async Task<User> Get(int id)
+        public async Task<User> SingleAsync(string identifier)
         {
-            throw new NotImplementedException();
+            string[] includes = new string[] { "" };
+
+            var user = await _usersRepository.SingleAsync(identifier, includes);
+
+            return user;
         }
-        public async Task<User> Get(string identifier)
+        public async Task<bool> AddAsync(User user)
         {
-            throw new NotImplementedException();
+            var newUser = await _usersRepository.AddAsync(user);
+
+            return true;
         }
-        public async Task<bool> Add(User user)
+        public async Task<bool> UpdateAsync(int id, User user)
         {
-            throw new NotImplementedException();
+            string[] includes = new string[] { "" };
+
+            var existingUser = await _usersRepository.SingleAsync(id, includes);
+
+            existingUser.Name = user.Name;
+            existingUser.Email = user.Email;
+            existingUser.Token = user.Token;
+            existingUser.UpdatedBy = user.UpdatedBy;
+            existingUser.UpdatedDate = DateTime.Now;
+
+            await _usersRepository.UpdateAsync(existingUser);
+
+            return true;
         }
-        public async Task<bool> Update(int id, User user)
+        public async Task<bool> RemoveAsync(int id)
         {
-            throw new NotImplementedException();
-        }
-        public async Task<bool> Delete(int id)
-        {
-            throw new NotImplementedException();
+            var newUser = await _usersRepository.RemoveAsync(id);
+
+            return true;
         }
     }
 }

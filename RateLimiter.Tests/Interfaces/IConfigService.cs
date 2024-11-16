@@ -7,10 +7,13 @@ using System.Threading.Tasks;
 
 namespace RateLimiter.Interfaces
 {
+    // The config service is intended to add data to the database
+    // for testing purposes.
+
     public interface IConfigService
     {
-        public Task<bool> SeedStatuses(List<Status> statuses);
-        public Task<bool> SeedResources(List<Resource> resources);
-        public Task<bool> SeedUsers(List<User> users);
+        public Task Reset();
+        public Task SeedResources(List<Resource> resources);
+        public Task SeedUsers(List<User> users);
     }
 }

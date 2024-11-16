@@ -9,16 +9,11 @@ namespace RateLimiter.Data.Interfaces
 {
     public interface IDataService<T> where T : BaseModel
     {
-        public Task<List<T>> Get();
-
-        public Task<List<T>> Get(BaseModel searchCriteria);
-
-        public Task<T> Get(int id);
-
-        public Task<T> Get(string identifier);
-
-        public Task<bool> Add(T entity);
-        public Task<bool> Update(int id, T entity);
-        public Task<bool> Delete(int id); 
+        public Task<List<T>> GetAllAsync();
+        public Task<T> SingleAsync(int id);
+        public Task<T> SingleAsync(string identifier);
+        public Task<bool> AddAsync(T entity);
+        public Task<bool> UpdateAsync(int id, T entity);
+        public Task<bool> RemoveAsync(int id); 
     }
 }
