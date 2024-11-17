@@ -1,4 +1,5 @@
-﻿using RateLimiter.Models;
+﻿using RateLimiter.Data.Models.Data;
+using RateLimiter.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace RateLimiter.Tests.Interfaces
     {
         public Request GenerateRequest(int id, Resource resource, User user, string identifier, bool wasHandled);
         public Resource GenerateResource(int id, string name, Status status);
-        public User GenerateUser(int id, string name, Guid token);
+        public User GenerateUser(int id, string name, Guid token, string tokenSource);
+        public LimiterRule GenerateLimiterRule(int id, string name, string? tokenSource, int? resourceStatusId, int numPerTimespan, int numSeconds);
     }
 }

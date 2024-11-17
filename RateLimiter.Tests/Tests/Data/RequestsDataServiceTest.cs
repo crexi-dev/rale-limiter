@@ -66,8 +66,8 @@ public class RequestsDataServiceTest
 
         await _configService.SeedResources(seedResources);
 
-        user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid());
-        user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid());
+        user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US");
+        user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US");
         var seedUsers = new List<User>()
         {
             user1,

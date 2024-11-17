@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RateLimiter.Data.Models.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,12 +12,9 @@ namespace RateLimiter.Models
         public string Name { get; set; }
         public int StatusId { get; set; }
         public string Description { get; set; }
-
-        // Need to put the rules that will deterine whether to limit 
-        // usage of a resource
-
-        //public List<LimiterRule> LimiterRules { get; set; }
-
         public Status Status { get; set; }
+
+        public List<LimiterRule> LimiterRules { get; set; }
+
     }
 }

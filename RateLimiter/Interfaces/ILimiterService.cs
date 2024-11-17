@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RateLimiter.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,6 @@ namespace RateLimiter.Interfaces
 {
     public interface ILimiterService
     {
-        public Task<bool> AllowAccess(int ResourceId, int UserId);
+        public Task<bool> AllowAccess(Request request);
     }
 }

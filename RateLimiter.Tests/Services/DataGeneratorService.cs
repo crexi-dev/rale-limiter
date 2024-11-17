@@ -1,4 +1,5 @@
-﻿using RateLimiter.Models;
+﻿using RateLimiter.Data.Models.Data;
+using RateLimiter.Models;
 using RateLimiter.Tests.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -41,7 +42,7 @@ namespace RateLimiter.Tests.Services
 
             return resource;
         }
-        public User GenerateUser(int id, string username, Guid token)
+        public User GenerateUser(int id, string username, Guid token, string tokenSource)
         {
             var user = new User
             {
@@ -49,12 +50,30 @@ namespace RateLimiter.Tests.Services
                 Identifier = username,
                 Name = username,  
                 Token = token.ToString(),
+                TokenSource = tokenSource,
                 Email = string.Format("{0}@phonyEmail.com", username),
                 CreatedBy = "DataGenerator",
                 CreatedDate = DateTime.Now
             };
 
             return user;
+        }
+        public LimiterRule GenerateLimiterRule(int id, string name, string? tokenSource, int? resourceStatusId, int numPerTimespan, int numSeconds)
+        {
+            var limiterRule = new LimiterRule
+            {
+                Id = id ,
+                Identifier = name ,
+                Name = name ,
+                TokenSource = tokenSource ,
+                ResourceStatusId = resourceStatusId ,
+                NumPerTimespan = numPerTimespan ,
+                NumSeconds = numSeconds,
+                CreatedBy = "DataGenerator",
+                CreatedDate = DateTime.Now
+            };
+
+            return limiterRule;
         }
     }
 }

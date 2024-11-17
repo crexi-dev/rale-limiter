@@ -1,4 +1,5 @@
-﻿using RateLimiter.Models;
+﻿using RateLimiter.Data.Models.Data;
+using RateLimiter.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,5 +17,6 @@ namespace RateLimiter.Interfaces
         public Task SeedResources(List<Resource> resources);
         public Task SeedUsers(List<User> users);
         public Task SeedRequests(List<Request> requests);
+        public Task SeedLimiterRules(List<LimiterRule> limiterRules);
     }
 }

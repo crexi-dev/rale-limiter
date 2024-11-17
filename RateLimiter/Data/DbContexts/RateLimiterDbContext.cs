@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using RateLimiter.Data.Models.Data;
 using RateLimiter.Models;
 using System;
 using System.Collections.Generic;
@@ -18,5 +19,6 @@ namespace RateLimiter.Data
         public DbSet<Resource> Resources { get; set; }
         public DbSet<Request> Requests { get; set; }
         public DbSet<Status> Statuses { get; set; }
+        public DbSet<LimiterRule> LimiterRules { get; set; }
     }
 }

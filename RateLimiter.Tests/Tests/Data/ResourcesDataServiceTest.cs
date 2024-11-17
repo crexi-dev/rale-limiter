@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RateLimiter.Data;
 using RateLimiter.Data.Interfaces;
+using RateLimiter.Data.Models.Data;
 using RateLimiter.Interfaces;
 using RateLimiter.Models;
 using RateLimiter.Services;
@@ -22,6 +23,7 @@ public class ResourcesDataServiceTest
     ServiceProvider _serviceProvider;
 
     private readonly IDataService<Resource> _resourcesDataService;
+    private readonly IDataService<LimiterRule> _limiterRulesDataService;
     private readonly IDataGeneratorService _dataGeneratorService;
     private readonly IConfigService _configService;
 
@@ -32,12 +34,14 @@ public class ResourcesDataServiceTest
         services.AddDbContext<RateLimiterDbContext>(options => options.UseInMemoryDatabase(databaseName: "ResourcesTest"));
         services.AddTransient(typeof(DbRepository<>));
         services.AddScoped<IDataService<Resource>, ResourcesDataService>();
+        services.AddScoped<IDataService<LimiterRule>, LimiterRulesDataService>();
         services.AddScoped<IDataGeneratorService, DataGeneratorService>();
         services.AddScoped<IConfigService, ConfigService>();
 
         _serviceProvider = services.BuildServiceProvider();
 
         _resourcesDataService = _serviceProvider.GetService<IDataService<Resource>>();
+        _limiterRulesDataService = _serviceProvider.GetService<IDataService<LimiterRule>>();
         _dataGeneratorService = _serviceProvider.GetService<IDataGeneratorService>();
         _configService = _serviceProvider.GetService<IConfigService>();
 
@@ -150,10 +154,12 @@ public class ResourcesDataServiceTest
     public async Task AddTest()
     { 
         var resourceToAdd = _dataGeneratorService.GenerateResource(1, "ResourceToAdd", CodeValues.Statuses.Single(x => x.Name == "Normal"));
+        var limiterRule = _dataGeneratorService.GenerateLimiterRule(1, "Maintenance", null, CodeValues.Statuses.Single(x => x.Name == "Maintenance").Id, 1, 5);
+        resourceToAdd.LimiterRules = new List<LimiterRule> { limiterRule };
 
         try
         {
-            var resource = await _resourcesDataService.AddAsync(resourceToAdd);
+            var result = await _resourcesDataService.AddAsync(resourceToAdd);
 
             var retrievedResource = await _resourcesDataService.SingleAsync(resourceToAdd.Id);
 

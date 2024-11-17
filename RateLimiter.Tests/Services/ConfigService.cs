@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RateLimiter.Data;
 using RateLimiter.Data.Interfaces;
+using RateLimiter.Data.Models.Data;
 using RateLimiter.Interfaces;
 using RateLimiter.Models;
 using System;
@@ -45,6 +46,10 @@ namespace RateLimiter.Services
             {
                 _context.Users.Remove(user);
             }
+            foreach (var limiterRule in _context.LimiterRules)
+            {
+                _context.LimiterRules.Remove(limiterRule);
+            }
             await _context.SaveChangesAsync();
         }
         public async Task SeedResources(List<Resource> resources)
@@ -67,7 +72,15 @@ namespace RateLimiter.Services
         {
             foreach (var request in requests)
             {
-                _context.Add(request);
+                _context.Requests.Add(request);
+            };
+            await _context.SaveChangesAsync();
+        }
+        public async Task SeedLimiterRules(List<LimiterRule> limiterRules)
+        {
+            foreach (var limiterRule in limiterRules)
+            {
+                _context.LimiterRules.Add(limiterRule);
             };
             await _context.SaveChangesAsync();
         }
