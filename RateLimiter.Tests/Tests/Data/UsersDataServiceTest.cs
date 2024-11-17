@@ -12,6 +12,7 @@ using RateLimiter.Tests.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RateLimiter.Tests;
 
@@ -28,7 +29,7 @@ public class UsersDataServiceTest
     {
         var services = new ServiceCollection();
 
-        services.AddDbContext<RateLimiterDbContext>(options => options.UseInMemoryDatabase(databaseName: "RateLimitertDatabase"));
+        services.AddDbContext<RateLimiterDbContext>(options => options.UseInMemoryDatabase(databaseName: "UsersDataServiceTest"));
         services.AddTransient(typeof(DbRepository<>));
         services.AddScoped<IDataService<User>, UsersDataService>();
         services.AddScoped<IDataGeneratorService, DataGeneratorService>();
@@ -43,23 +44,27 @@ public class UsersDataServiceTest
     }
 
     [SetUp]
-    public void SetUp()
+    public async Task SetUp()
     {
-        _configService.Reset();
+        await _configService.Reset();
     }
 
 
     [Test]
-    public async void GetAllTest()
+    public async Task GetAllTest()
     {
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid());
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid());
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid());
+
         var seedUsers = new List<User>()
             {
-                _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid()),
-                _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid()),
-                _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid())
+                user1,
+                user2,
+                user3
             };
 
-       await _configService.SeedUsers(seedUsers);
+        await _configService.SeedUsers(seedUsers);
 
         try
         {
@@ -72,84 +77,158 @@ public class UsersDataServiceTest
             Assert.That(false, Is.True);
         }
     }
-    //[Test]
-    //public void GetByIdTest()
-    //{
-    //    var usersDataService = _serviceProvider.GetService<IDataService<User>>();
+    [Test]
+    public async Task FindTest()
+    {
+        try
+        {
+            var searchCriteria = new BaseModel();
+            var users = await _usersDataService.FindAsync(searchCriteria);
 
-    //    try
-    //    {
-    //        var users = usersDataService.SingleAsync();
+            Assert.AreEqual(users.Count, -1); // should never reach this assertion
+        }
+        catch (NotImplementedException ex)
+        {
+            Assert.That(true, Is.True);       // NotImplementedException is the expected result.
+        }
+    }
+    [Test]
+    public async Task GetByIdTest()
+    {
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid());
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid());
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid());
 
-    //        Assert.That(true, Is.False);
-    //    }
-    //    catch (NotImplementedException ex)
-    //    {
-    //        Assert.That(true, Is.True);
-    //    }
-    //}
-    //[Test]
-    //public void GetByIdentifierTest()
-    //{
-    //    var usersDataService = _serviceProvider.GetService<IDataService<User>>();
+        var seedUsers = new List<User>()
+            {
+                user1,
+                user2,
+                user3
+            };
 
-    //    try
-    //    {
-    //        var users = usersDataService.SingleAsync();
+        await _configService.SeedUsers(seedUsers);
 
-    //        Assert.That(true, Is.False);
-    //    }
-    //    catch (NotImplementedException ex)
-    //    {
-    //        Assert.That(true, Is.True);
-    //    }
-    //}
-    //[Test]
-    //public void AddTest()
-    //{
-    //    var usersDataService = _serviceProvider.GetService<IDataService<User>>();
+        try
+        {
+            var retrievedUser = await _usersDataService.SingleAsync(user2.Id);
 
-    //    try
-    //    {
-    //        var users = usersDataService.AddAsync();
+            Assert.AreEqual(retrievedUser.Name, user2.Name); 
+        }
+        catch (Exception ex)
+        {
+            Assert.That(false, Is.True);
+        }
+    }
+    [Test]
+    public async Task GetByIdentifierTest()
+    {
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid());
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid());
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid());
 
-    //        Assert.That(true, Is.False);
-    //    }
-    //    catch (NotImplementedException ex)
-    //    {
-    //        Assert.That(true, Is.True);
-    //    }
-    //}
-    //[Test]
-    //public void UpdateTest()
-    //{
-    //    var usersDataService = _serviceProvider.GetService<IDataService<User>>();
+        var seedUsers = new List<User>()
+            {
+                user1,
+                user2,
+                user3
+            };
 
-    //    try
-    //    {
-    //        var users = usersDataService.UpdateAsync();
+        await _configService.SeedUsers(seedUsers);
 
-    //        Assert.That(true, Is.False);
-    //    }
-    //    catch (NotImplementedException ex)
-    //    {
-    //        Assert.That(true, Is.True);
-    //    }
-    //}
-    //[Test]
-    //public async void RemoveTest()
-    //{
-    //    var usersDataService = _serviceProvider.GetService<IDataService<User>>();
+        try
+        {
+            var retrievedUser = await _usersDataService.SingleAsync(user2.Identifier);
 
-    //    try
-    //    {
-    //        var users = await usersDataService.RemoveAsync();
+            Assert.AreEqual(retrievedUser.Id, user2.Id);
+        }
+        catch (Exception ex)
+        {
+            Assert.That(false, Is.True);
+        }
+    }
+    [Test]
+    public async Task AddTest()
+    {
+        var userToAdd = _dataGeneratorService.GenerateUser(100, "UserToAdd", Guid.NewGuid());
 
-    //        Assert.That(true, Is.False);
-    //    }
-    //    catch (NotImplementedException ex)
-    //    {
-    //        Assert.That(true, Is.True);
-    //    }
-    //}
+        try
+        {
+            var user = await _usersDataService.AddAsync(userToAdd);
+
+            var retrievedUser = await _usersDataService.SingleAsync(userToAdd.Id);
+
+            Assert.AreEqual(userToAdd.Name, retrievedUser.Name);
+        }
+        catch (Exception ex)
+        {
+            Assert.That(false, Is.True);
+        }
+    }
+    [Test]
+    public async Task UpdateTest()
+    {
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid());
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid());
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid());
+
+        var seedUsers = new List<User>()
+            {
+                user1,
+                user2,
+                user3
+            };
+
+        await _configService.SeedUsers(seedUsers);
+
+        try
+        {
+            user2.Name = "Fred";
+
+            var result = _usersDataService.UpdateAsync(user2.Id, user2);
+
+            var updatedUser = await _usersDataService.SingleAsync(user2.Id);
+
+            Assert.AreEqual(updatedUser.Name, "Fred");
+        }
+        catch (NotImplementedException ex)
+        {
+            Assert.That(true, Is.True);
+        }
+    }
+    [Test]
+    public async Task RemoveTest()
+    {
+
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid());
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid());
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid());
+
+        var seedUsers = new List<User>()
+            {
+                user1,
+                user2,
+                user3
+            };
+
+        await _configService.SeedUsers(seedUsers);
+
+        try
+        {
+            var retrievedUsers = await _usersDataService.GetAllAsync();
+            Assert.AreEqual(retrievedUsers.Count, 3);
+
+            var users = await _usersDataService.RemoveAsync(user2.Id);
+
+            retrievedUsers = await _usersDataService.GetAllAsync();
+            Assert.AreEqual(retrievedUsers.Count, 2);
+
+            var retrievedUser = await _usersDataService.SingleOrDefaultAsync(user2.Id);
+
+            Assert.IsNull(retrievedUser);
+        }
+        catch (NotImplementedException ex)
+        {
+            Assert.That(true, Is.True);
+        }
+    }
 }

@@ -49,7 +49,7 @@ namespace RateLimiter.Tests.Services
                 Identifier = username,
                 Name = username,  
                 Token = token.ToString(),
-                Email = string.Format("{0}@phonyEmail.com"),
+                Email = string.Format("{0}@phonyEmail.com", username),
                 CreatedBy = "DataGenerator",
                 CreatedDate = DateTime.Now
             };

@@ -22,7 +22,7 @@ public class LimiterServiceTest
     {
         var services = new ServiceCollection();
 
-        services.AddDbContext<RateLimiterDbContext>(options => options.UseInMemoryDatabase(databaseName: "RateLimitertDatabase"));
+        services.AddDbContext<RateLimiterDbContext>(options => options.UseInMemoryDatabase(databaseName: "LimiterServiceTest"));
         services.AddTransient(typeof(DbRepository<>));
         services.AddScoped<IDataService<Request>, RequestsDataService>();
         services.AddScoped<IDataService<Resource>, ResourcesDataService>();
@@ -48,11 +48,3 @@ public class LimiterServiceTest
         }
 	}
 }
-
-//public Task<List<T>> Get();
-//public Task<List<T>> Get(BaseModel searchCriteria);
-//public Task<T> Get(int id);
-//public Task<T> Get(string identifier);
-//public Task<bool> Add(T entity);
-//public Task<bool> Update(int id, T entity);
-//public Task<bool> Delete(int id);

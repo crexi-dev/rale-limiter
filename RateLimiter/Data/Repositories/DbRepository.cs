@@ -33,6 +33,22 @@ namespace M42.Data.Repositories
 
             return await dbSet.ToListAsync();
         }
+        public async Task<List<Entity>> FindAsync(BaseModel searchCriteria, string[] includes)
+        {
+            var dbSet = _dbSet.AsQueryable();
+            foreach (var include in includes)
+            {
+                if (include != "")
+                {
+                    dbSet = dbSet.Include(include);
+                }
+            }
+
+            var entities = await dbSet.Where(x => searchCriteria.CreatedBy == null || x.CreatedBy == searchCriteria.CreatedBy).ToListAsync();
+
+
+            return entities;
+        }
         public async Task<Entity> SingleAsync(int id, string[] includes)
         {
 
@@ -80,15 +96,18 @@ namespace M42.Data.Repositories
             return entity;
         }
         
-        public async Task<Entity> SingleOrDefaultAsync(int id)
+        public async Task<Entity?> SingleOrDefaultAsync(int id, string[] includes)
         {
             var dbSet = _dbSet.AsQueryable();
-            var entity = await dbSet.SingleOrDefaultAsync(e => e.Id == id);
 
-            if (entity == null)
+            foreach (var include in includes)
             {
-                throw new Exception("Invalid id");
+                if (include != "")
+                {
+                    dbSet = dbSet.Include(include);
+                }
             }
+            var entity = await dbSet.SingleOrDefaultAsync(e => e.Id == id);
 
             return entity;
         }

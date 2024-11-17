@@ -15,5 +15,6 @@ namespace RateLimiter.Interfaces
         public Task Reset();
         public Task SeedResources(List<Resource> resources);
         public Task SeedUsers(List<User> users);
+        public Task SeedRequests(List<Request> requests);
     }
 }

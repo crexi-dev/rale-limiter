@@ -26,11 +26,27 @@ namespace RateLimiter.Services
 
             return requests;
         }
+        public async Task<List<Request>> FindAsync(BaseModel searchCriteria)
+        {
+            string[] includes = new string[] { "" };
+
+            var requests = await _requestsRepository.FindAsync(searchCriteria, includes);
+
+            return requests;
+        }
         public async Task<Request> SingleAsync(int id)
         {
             string[] includes = new string[] { "" };
 
             var request = await _requestsRepository.SingleAsync(id, includes);
+
+            return request;
+        }
+        public async Task<Request?> SingleOrDefaultAsync(int id)
+        {
+            string[] includes = new string[] { "" };
+
+            var request = await _requestsRepository.SingleOrDefaultAsync(id, includes);
 
             return request;
         }
