@@ -1,13 +1,9 @@
 ﻿using RateLimiter.Data;
 using RateLimiter.Data.Interfaces;
-using RateLimiter.Data.Models.Data;
-using RateLimiter.Data.Models.Filter;
+using RateLimiter.Data.Models;
 using RateLimiter.Interfaces;
-using RateLimiter.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RateLimiter.Services

@@ -1,12 +1,8 @@
-﻿using RateLimiter.Data.Models.Data;
-using RateLimiter.Models;
-using System;
+﻿using RateLimiter.Data.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace RateLimiter.Interfaces
+namespace RateLimiter.Tests.Interfaces
 {
     // The config service is intended to add data to the database
     // for testing purposes.

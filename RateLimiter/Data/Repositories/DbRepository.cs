@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RateLimiter.Data;
-using RateLimiter.Models;
+using RateLimiter.Data.Contexts;
+using RateLimiter.Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace M42.Data.Repositories
+namespace RateLimiter.Data.Repositories
 {
     public class DbRepository<Entity> where Entity : BaseModel
     {

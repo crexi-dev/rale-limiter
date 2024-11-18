@@ -1,16 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
-using RateLimiter.Data;
-using RateLimiter.Data.Interfaces;
-using RateLimiter.Data.Models.Data;
-using RateLimiter.Interfaces;
-using RateLimiter.Models;
-using System;
+﻿using RateLimiter.Data;
+using RateLimiter.Data.Contexts;
+using RateLimiter.Data.Models;
+using RateLimiter.Tests.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace RateLimiter.Services
+namespace RateLimiter.Tests.Services
 {
     public class ConfigService : IConfigService
     {

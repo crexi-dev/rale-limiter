@@ -1,11 +1,6 @@
-﻿using RateLimiter.Data.Models.Data;
-using RateLimiter.Models;
+﻿using RateLimiter.Data.Models;
 using RateLimiter.Tests.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace RateLimiter.Tests.Services
 {

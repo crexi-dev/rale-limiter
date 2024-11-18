@@ -1,14 +1,12 @@
-﻿using M42.Data.Repositories;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
-using RateLimiter.Data;
+using RateLimiter.Data.Contexts;
 using RateLimiter.Data.Interfaces;
-using RateLimiter.Models;
-using RateLimiter.Services;
+using RateLimiter.Data.Models;
+using RateLimiter.Data.Repositories;
+using RateLimiter.Data.Services;
 using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace RateLimiter.Tests;
 

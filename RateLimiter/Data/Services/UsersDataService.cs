@@ -1,13 +1,11 @@
-﻿using M42.Data.Repositories;
-using RateLimiter.Data.Interfaces;
-using RateLimiter.Models;
+﻿using RateLimiter.Data.Interfaces;
+using RateLimiter.Data.Models;
+using RateLimiter.Data.Repositories;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace RateLimiter.Services
+namespace RateLimiter.Data.Services
 {
     public class UsersDataService : IDataService<User>
     {

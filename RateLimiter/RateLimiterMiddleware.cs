@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using RateLimiter.Data.Interfaces;
+using RateLimiter.Data.Models;
 using RateLimiter.Interfaces;
-using RateLimiter.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RateLimiter
@@ -50,9 +46,9 @@ namespace RateLimiter
 
             try
             {
-                var allowAccess = await _limiterService.AllowAccess(request);
+                var proceedToNext = await _limiterService.AllowAccess(request);
 
-                if (allowAccess)
+                if (proceedToNext)
                 {
                     await _next(context); // Call the next middleware component in the pipeline.
                 }

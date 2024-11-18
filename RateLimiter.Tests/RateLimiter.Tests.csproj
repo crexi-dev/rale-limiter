@@ -5,11 +5,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="Tests\RateLimiter\ConfigServiceTest.cs" />
-    <Compile Remove="Tests\RateLimiter\RequestHandlerServiceTest.cs" />
-    <Compile Remove="Tests\RateLimiter\RequestsAuditServiceTest.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\RateLimiter\RateLimiter.csproj" />
   </ItemGroup>
   <ItemGroup>

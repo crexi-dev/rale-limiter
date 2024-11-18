@@ -1,11 +1,6 @@
-﻿using RateLimiter.Data.Models.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
-namespace RateLimiter.Models
+namespace RateLimiter.Data.Models
 {
     public class Resource : BaseModel
     {

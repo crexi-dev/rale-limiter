@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RateLimiter.Data.Models.Filter
+namespace RateLimiter.Data.Filters
 {
     public class RequestsFilter
     {

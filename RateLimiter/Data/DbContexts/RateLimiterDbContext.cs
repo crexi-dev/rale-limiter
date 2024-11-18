@@ -1,13 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RateLimiter.Data.Models.Data;
-using RateLimiter.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using RateLimiter.Data.Models;
 
-namespace RateLimiter.Data
+namespace RateLimiter.Data.Contexts
 {
     public class RateLimiterDbContext : DbContext
     {
