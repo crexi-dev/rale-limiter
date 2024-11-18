@@ -26,7 +26,7 @@ namespace RateLimiter.Data.Services
         }
         public async Task<List<LimiterRule>> FindAsync(BaseModel searchCriteria)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Find() is not supported for LimiterRules");
         }
         public async Task<LimiterRule> SingleAsync(int id)
         {

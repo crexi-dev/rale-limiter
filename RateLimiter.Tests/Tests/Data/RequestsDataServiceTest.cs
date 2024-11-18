@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RateLimiter.Data;
+using RateLimiter.Data.CodeValues;
 using RateLimiter.Data.Contexts;
 using RateLimiter.Data.Interfaces;
 using RateLimiter.Data.Models;
@@ -53,8 +54,8 @@ public class RequestsDataServiceTest
     {
         await _configService.Reset();
 
-        resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", CodeValues.Statuses.Single(x => x.Name == "Normal"));
+        resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", Statuses.Normal, new List<LimiterRule>());
+        resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", Statuses.Normal, new List<LimiterRule>());
 
         var seedResources = new List<Resource>()
         {

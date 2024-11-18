@@ -1,4 +1,5 @@
 ﻿using RateLimiter.Data;
+using RateLimiter.Data.CodeValues;
 using RateLimiter.Data.Interfaces;
 using RateLimiter.Data.Models;
 using RateLimiter.Interfaces;
@@ -33,7 +34,7 @@ namespace RateLimiter.Services
             {
                 allowAccess = true;     // no rules in place so allow access
             }
-            if (resource.StatusId == CodeValues.Statuses.Single(x => x.Name == "Offline").Id)
+            if (resource.StatusId == Statuses.Offline.Id)
             {
                 allowAccess = false;    // resource is offline - unclear if this is the proper place for this logic...
             }
@@ -54,7 +55,7 @@ namespace RateLimiter.Services
             {
                 // if a limiter rule is in effect, then evaluate it here
                 var userRequests = await _requestsDataService.FindAsync(new BaseModel { CreatedBy = user.Name });
-                var userResourceRequests = userRequests.Where(x => x.ResourceId == resource.Id && x.WasHandled).ToList();
+                var userResourceRequests = userRequests.Where(x => x.ResourceId == resource.Id && x.WasHandled == true).ToList();
 
                 var numRequests = userResourceRequests.Where(x => x.CreatedDate.AddSeconds(limiterRule.NumSeconds) > DateTime.Now).Count();
 
@@ -64,7 +65,13 @@ namespace RateLimiter.Services
                 }
             }
 
-            // Record the request
+            // Record the request 
+            //
+            // Note that in production, the request auditing would probably be independent of
+            // the limiter service and the limiter service would likely use that body
+            // of data in its logic.  however, for this application, requests are only
+            // recorded to support the limiter service so it lives here.
+
             request.WasHandled = allowAccess;
             await _requestsDataService.AddAsync(request);
 

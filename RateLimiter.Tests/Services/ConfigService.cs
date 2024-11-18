@@ -1,4 +1,5 @@
 ﻿using RateLimiter.Data;
+using RateLimiter.Data.CodeValues;
 using RateLimiter.Data.Contexts;
 using RateLimiter.Data.Models;
 using RateLimiter.Tests.Interfaces;
@@ -21,7 +22,7 @@ namespace RateLimiter.Tests.Services
 
             if (statusesCount == 0)
             {
-                foreach (var status in CodeValues.Statuses)
+                foreach (var status in Statuses.Values)
                 {
                     _context.Statuses.Add(status);
                 }

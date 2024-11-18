@@ -1,19 +1,23 @@
-﻿using RateLimiter.Data.Models;
+﻿using NUnit.Framework;
+using RateLimiter.Data.Models;
 using RateLimiter.Tests.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace RateLimiter.Tests.Services
 {
     internal class DataGeneratorService : IDataGeneratorService
     {
-        public Request GenerateRequest(int id, Resource resource, User user, string identifier, bool wasHandled)
+        public Request GenerateRequest(int id, Resource resource, User user, string identifier, bool? wasHandled)
         {
             var request = new Request
             {
                 Id = id,
                 Identifier = identifier,
                 RequestDate = DateTime.Now,
+                ResourceId = resource.Id,
                 Resource = resource,
+                UserId = user.Id,
                 User = user,
                 WasHandled = wasHandled,
                 CreatedBy = "DataGenerator",
@@ -22,7 +26,7 @@ namespace RateLimiter.Tests.Services
 
             return request;
         }
-        public Resource GenerateResource(int id, string name, Status status)
+        public Resource GenerateResource(int id, string name, Status status, List<LimiterRule> limiterRules)
         {
             var resource = new Resource
             {
@@ -31,6 +35,7 @@ namespace RateLimiter.Tests.Services
                 Name = name,
                 Description = name,
                 Status = status,
+                LimiterRules = limiterRules,
                 CreatedBy = "DataGenerator",
                 CreatedDate = DateTime.Now
             };
@@ -42,7 +47,7 @@ namespace RateLimiter.Tests.Services
             var user = new User
             {
                 Id = id,
-                Identifier = username,
+                Identifier = token.ToString(),  // small hack - Find() only works with attributes in the BaseModel so user token must reside in the Identifier for now.
                 Name = username,  
                 Token = token.ToString(),
                 TokenSource = tokenSource,

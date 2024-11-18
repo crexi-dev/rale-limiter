@@ -26,7 +26,11 @@ namespace RateLimiter.Data.Services
         }
         public async Task<List<User>> FindAsync(BaseModel searchCriteria)
         {
-            throw new NotImplementedException();
+            string[] includes = new string[] { "" };
+
+            var users = await _usersRepository.FindAsync(searchCriteria, includes);
+
+            return users;
         }
         public async Task<User> SingleAsync(int id)
         {

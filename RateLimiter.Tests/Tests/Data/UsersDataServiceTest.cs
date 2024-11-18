@@ -79,16 +79,38 @@ public class UsersDataServiceTest
     [Test]
     public async Task FindTest()
     {
+        // this test verifies that a user can be found using the Identifier criteria
+        // which is where the token will be stored 
+
+        var user2Token = Guid.NewGuid();
+
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US");
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", user2Token, "US");
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US");
+
+        var seedUsers = new List<User>()
+            {
+                user1,
+                user2,
+                user3
+            };
+
+        await _configService.SeedUsers(seedUsers);
+
         try
         {
-            var searchCriteria = new BaseModel();
+            var searchCriteria = new BaseModel
+            {
+                 Identifier = user2Token.ToString()
+            };
             var users = await _usersDataService.FindAsync(searchCriteria);
 
-            Assert.AreEqual(users.Count, -1); // should never reach this assertion
+            Assert.AreEqual(users.Count, 1);                                    // should only find one user
+            Assert.AreEqual(users.Single().Identifier, user2Token.ToString());  // user's identifier should match the token 
         }
-        catch (NotImplementedException ex)
+        catch (Exception ex)
         {
-            Assert.That(true, Is.True);       // NotImplementedException is the expected result.
+            Assert.Fail("Exception was thrown during Find() method call.");       
         }
     }
     [Test]

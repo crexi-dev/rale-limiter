@@ -64,11 +64,11 @@ namespace RateLimiter.Data.Services
         }
         public async Task<bool> UpdateAsync(int id, Request request)
         {
-            throw new NotImplementedException("Cannot update a request.");
+            throw new NotImplementedException("Update() is not supported for Requests.");
         }
         public async Task<bool> RemoveAsync(int id)
         {
-            throw new NotImplementedException("Cannot remove a request.");
+            throw new NotImplementedException("Remove() is not supported for Requests.");
         }
     }
 }

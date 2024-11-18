@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NUnit.Framework;
 using RateLimiter.Data;
+using RateLimiter.Data.CodeValues;
 using RateLimiter.Data.Contexts;
 using RateLimiter.Data.Interfaces;
 using RateLimiter.Data.Models;
@@ -56,9 +57,9 @@ public class ResourcesDataServiceTest
     [Test]
     public async Task GetAllTest()
     {
-        var resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        var resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        var resource3 = _dataGeneratorService.GenerateResource(3, "Resource3", CodeValues.Statuses.Single(x => x.Name == "Normal"));
+        var resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", Statuses.Normal, new List<LimiterRule>());
+        var resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", Statuses.Normal, new List<LimiterRule>());
+        var resource3 = _dataGeneratorService.GenerateResource(3, "Resource3", Statuses.Normal, new List<LimiterRule>());
 
         var seedResources = new List<Resource>()
             {
@@ -98,9 +99,9 @@ public class ResourcesDataServiceTest
     [Test]
     public async Task GetByIdTest()
     {
-        var resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        var resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        var resource3 = _dataGeneratorService.GenerateResource(3, "Resource3", CodeValues.Statuses.Single(x => x.Name == "Normal"));
+        var resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", Statuses.Normal, new List<LimiterRule>());
+        var resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", Statuses.Normal, new List<LimiterRule>());
+        var resource3 = _dataGeneratorService.GenerateResource(3, "Resource3", Statuses.Normal, new List<LimiterRule>());
 
         var seedResources = new List<Resource>()
             {
@@ -125,9 +126,9 @@ public class ResourcesDataServiceTest
     [Test]
     public async Task GetByIdentifierTest()
     {
-        var resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        var resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        var resource3 = _dataGeneratorService.GenerateResource(3, "Resource3", CodeValues.Statuses.Single(x => x.Name == "Normal"));
+        var resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", Statuses.Normal, new List<LimiterRule>());
+        var resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", Statuses.Normal, new List<LimiterRule>());
+        var resource3 = _dataGeneratorService.GenerateResource(3, "Resource3", Statuses.Normal, new List<LimiterRule>());
 
         var seedResources = new List<Resource>()
             {
@@ -152,8 +153,8 @@ public class ResourcesDataServiceTest
     [Test]
     public async Task AddTest()
     { 
-        var resourceToAdd = _dataGeneratorService.GenerateResource(1, "ResourceToAdd", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        var limiterRule = _dataGeneratorService.GenerateLimiterRule(1, "Maintenance", null, CodeValues.Statuses.Single(x => x.Name == "Maintenance").Id, 1, 5);
+        var resourceToAdd = _dataGeneratorService.GenerateResource(1, "ResourceToAdd", Statuses.Normal, new List<LimiterRule>());
+        var limiterRule = _dataGeneratorService.GenerateLimiterRule(1, "Maintenance", null, Statuses.Maintenance.Id, 1, 5);
         resourceToAdd.LimiterRules = new List<LimiterRule> { limiterRule };
 
         try
@@ -172,9 +173,9 @@ public class ResourcesDataServiceTest
     [Test]
     public async Task UpdateTest()
     {
-        var resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        var resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        var resource3 = _dataGeneratorService.GenerateResource(3, "Resource3", CodeValues.Statuses.Single(x => x.Name == "Normal"));
+        var resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", Statuses.Normal, new List<LimiterRule>());
+        var resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", Statuses.Normal, new List<LimiterRule>());
+        var resource3 = _dataGeneratorService.GenerateResource(3, "Resource3", Statuses.Normal, new List<LimiterRule>());
 
         var seedResources = new List<Resource>()
             {
@@ -204,9 +205,9 @@ public class ResourcesDataServiceTest
     public async Task RemoveTest()
     {
 
-        var resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        var resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", CodeValues.Statuses.Single(x => x.Name == "Normal"));
-        var resource3 = _dataGeneratorService.GenerateResource(3, "Resource3", CodeValues.Statuses.Single(x => x.Name == "Normal"));
+        var resource1 = _dataGeneratorService.GenerateResource(1, "Resource1", Statuses.Normal, new List<LimiterRule>());
+        var resource2 = _dataGeneratorService.GenerateResource(2, "Resource2", Statuses.Normal, new List<LimiterRule>());
+        var resource3 = _dataGeneratorService.GenerateResource(3, "Resource3", Statuses.Normal, new List<LimiterRule>());
         var seedResources = new List<Resource>()
             {
                 resource1,

@@ -44,7 +44,10 @@ namespace RateLimiter.Data.Repositories
                 }
             }
 
-            var entities = await dbSet.Where(x => searchCriteria.CreatedBy == null || x.CreatedBy == searchCriteria.CreatedBy).ToListAsync();
+            var entities = await dbSet.Where(x => 
+                (searchCriteria.CreatedBy == null || x.CreatedBy == searchCriteria.CreatedBy) &&
+                (searchCriteria.Identifier == null || x.Identifier == searchCriteria.Identifier) 
+            ).ToListAsync();
 
 
             return entities;

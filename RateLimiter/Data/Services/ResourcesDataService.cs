@@ -26,7 +26,7 @@ namespace RateLimiter.Data.Services
         }
         public async Task<List<Resource>> FindAsync(BaseModel searchCriteria)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Find() is not supported for Resources.");
         }
         public async Task<Resource> SingleAsync(int id)
         {
