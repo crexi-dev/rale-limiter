@@ -1,7 +1,7 @@
-﻿using Crexi.Cache.Extensions;
-using Crexi.RulesService;
-using Crexi.RulesService.Interfaces;
-using Crexi.Utilities.Cache.Managers;
+﻿using Cache.Extensions;
+using RulesService;
+using RulesService.Interfaces;
+using Utilities.Cache.Managers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;

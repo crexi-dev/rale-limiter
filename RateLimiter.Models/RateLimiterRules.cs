@@ -1,7 +1,7 @@
 ﻿using RateLimiter.Models.Enums;
 
 
-namespace Crexi.RulesService.Models;
+namespace RulesService.Models;
 
 public class RateLimiterRule
 {

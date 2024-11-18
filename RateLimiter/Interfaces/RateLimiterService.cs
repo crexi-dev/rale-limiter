@@ -1,8 +1,8 @@
-﻿using Crexi.Cache.Models;
-using Crexi.Cache.Providers;
-using Crexi.RulesService.Interfaces;
-using Crexi.RulesService.Models;
-using Crexi.RulesService.Models.Requests;
+﻿using Cache.Models;
+using Cache.Providers;
+using RulesService.Interfaces;
+using RulesService.Models;
+using RulesService.Models.Requests;
 using Newtonsoft.Json.Converters;
 using RateLimiter.Models.Requests;
 using RateLimiter.Services;
@@ -110,7 +110,7 @@ public class RateLimiterService : IRateLimiterService
         var rulesResponse = await _ruleService.GetRulesAsync(rulesRequest);
 
 
-        if (rulesResponse.ResponseCode != Crexi.RulesService.Models.Enums.ResponseCodeEnum.Success)
+        if (rulesResponse.ResponseCode != RulesService.Models.Enums.ResponseCodeEnum.Success)
         {
             return null;
         }

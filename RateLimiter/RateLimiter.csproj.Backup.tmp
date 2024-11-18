@@ -19,9 +19,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Models\Data.Models.csproj" />
-    <ProjectReference Include="..\RulesEngine\RulesService.csproj" />
-    <ProjectReference Include="..\Utilities\Utilities.csproj" />
+    <ProjectReference Include="..\Crexi.Models\Data.Models.csproj" />
+    <ProjectReference Include="..\Crexi.RulesEngine\RulesService.csproj" />
+    <ProjectReference Include="..\Crexi.Utilities\Utilities.csproj" />
     <ProjectReference Include="..\RateLimiter.Models\RateLimiter.Models.csproj" />
   </ItemGroup>
 </Project>  

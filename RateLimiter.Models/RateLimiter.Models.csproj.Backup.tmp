@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Models\Data.Models.csproj" />
+    <ProjectReference Include="..\Crexi.Models\Data.Models.csproj" />
   </ItemGroup>
 
 </Project>

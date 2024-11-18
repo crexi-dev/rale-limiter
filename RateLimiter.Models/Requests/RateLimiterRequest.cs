@@ -1,4 +1,4 @@
-﻿using Crexi.Models;
+﻿using Models;
 
 namespace RateLimiter.Models.Requests;
 
