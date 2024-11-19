@@ -1,4 +1,4 @@
-﻿namespace Models;
+﻿namespace Data.Models;
 
 public class Client
 {
@@ -14,5 +14,10 @@ public class Client
     public string Tier { get; set; } = "Default";
     public string Classification { get; set; } = "Default";
     public double AverageTransactionVolume { get; set; }
+
+    public override string ToString()
+    {
+        return $"ClientId : {ClientId}, Name : {Name}, Tier : {Tier}, DefaultCountryCode : {DefaultCountryCode}";
+    }
 
 }

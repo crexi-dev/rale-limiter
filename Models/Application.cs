@@ -1,5 +1,4 @@
-﻿
-namespace Models;
+﻿namespace Data.Models;
 
 public class Application
 {

@@ -39,7 +39,7 @@ public class CacheManager : ICacheManager, IDisposable
 
     public async Task<Dictionary<string, T>> GetValues<T>(string keyPattern)
     {
-        return await _cacheProvider.GetValues<T>(keyPattern);
+        return await _cacheProvider.GetDictionary<T>(keyPattern);
     }
 }
 

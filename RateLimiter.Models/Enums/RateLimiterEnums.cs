@@ -4,7 +4,8 @@
     {
         Success = 100,
         SystemError = 500,
-        ValidationError = 600
+        ValidationError = 600,
+        RulesEngineError = 700
     }
 
    public enum RateSpanTypeEnum

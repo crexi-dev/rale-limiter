@@ -1,6 +1,6 @@
 [
   {
-    "WorkflowName": "RateLimiter",
+    "WorkflowName": "RateLimiterRouter",
     "Rules": [
       {
         "RuleName": "Default",
@@ -8,11 +8,12 @@
         "SuccessEvent": "5",
         "ErrorMessage": "One or more adjust rules failed.",
         "ErrorType": "Error",
-        "Expression": "input1.Client.CountryCode = \"US\"",
+        "Expression": "input1.Client.DefaultCountryCode = \"US\"",
         "Properties": {
           "RateRule": {
             "Priority": "1000",
-            "NextRuleFile": "RulesJson/RateLimiterRulesUS.json"
+            "NextRuleFile": "RulesJson/RateLimiterRulesUS.json",
+            "NextWorkflow": "RateLimiterUS"
           }
         }
 
@@ -23,14 +24,15 @@
         "SuccessEvent": "10",
         "ErrorMessage": "One or more adjust rules failed.",
         "ErrorType": "Error",
-        "Expression": "input1.Client.CountryCode = \"EU\"",
+        "Expression": "input1.Client.DefaultCountryCode = \"EU\"",
         "Properties": {
           "RateRule": {
             "Priority": "1000",
-            "NextRuleFile": "RulesJson/RateLimiterRulesEU.json"
-          }
+            "NextRuleFile": "RulesJson/RateLimiterRulesEU.json",
+            "NextWorkflow": "RateLimiterEU"
           }
         }
+      }
     ]
   }
 ]

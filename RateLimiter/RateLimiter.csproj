@@ -14,7 +14,7 @@
     <None Update="RulesJson\RateLimiterRulesUS.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="RulesJson\RateLimiterRules.json">
+    <None Update="RulesJson\RateLimiterRouterRules.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

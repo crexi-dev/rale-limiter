@@ -2,32 +2,70 @@
 using System;
 using System.Collections.Generic;
 
-
+using Data.Models;
 namespace RateLimiter.Tests;
 
 public class TestData
 {
+    public const string ConstUSClientId = "fa2d5de9-315f-4e93-9bf1-9c098e84bd21";
+    public const string ConstApplicationId = "1046073e-1350-48ba-a4dd-923df6fc8ecc";
+    public const string ConstEndpointId = "c370ed23-9366-45d4-b05b-95e5fab451a0";
+    public const string ConstUSClientApplicationId = "143afc7a-e964-4d7b-b03a-3120ac500ca5";
+   
 
-    public static List<RateLimiterRequest> GetUSRequest()
+    public const string ConstEUClientId = "883135fc-8605-4665-b324-15cc956967cd";
+    public const string ConstEUClientApplicationId = "2c17bafb-00a6-434e-9d55-4cd7af5f8684";
+    public const string ConstEUClientApplicationEndpointId = "9759c17e-5cec-42ae-bd44-388fc294578b";
+
+    public static RateLimiterRequest GetUSClientRequest(Guid clientApplicationEndpointId)
     {
         RateLimiterRequest request = new RateLimiterRequest();
-        request.Client = new Models.Client()
+        request.Client = new Client()
         {
-            ClientId = new Guid("F57B1BB8-CB73-42AD-935F-2352F491ABC0"),
+            ClientId = new Guid(ConstUSClientId),
             DefaultCountryCode = "US",
-            Tier = "Tier10"
 
         };
-        request.Endpoint = new Models.Endpoint()
+        request.ClientApplicationEndpoint = new ClientApplicationEndpoint()
         {
-            EndpointId = new Guid("230bfb42-594d-4171-a925-e127f90f4b28")
+            ClientApplicationEndpointId = clientApplicationEndpointId,
+            EndpointId = new Guid(ConstEndpointId),
+            ClientApplicationId = new Guid(ConstUSClientApplicationId),
         };
 
-        request.Application = new Models.Application()
+        request.ClientApplication = new ClientApplication()
         {
-            ApplicationId = new Guid("5331562b-255c-4b55-8930-1730c8c60828")
+            ApplicationId = new Guid(ConstApplicationId),
+            ClientId = new Guid(ConstUSClientId),
+            ClientApplicationId = new Guid(ConstUSClientApplicationId),
         };
 
-        return new List<RateLimiterRequest>() { request };
+        return request;
+    }
+
+    public static RateLimiterRequest GetEUClientRequest()
+    {
+        RateLimiterRequest request = new RateLimiterRequest();
+        request.Client = new Client()
+        {
+            ClientId = new Guid(ConstEUClientId),
+            DefaultCountryCode = "EU",
+
+        };
+        request.ClientApplicationEndpoint = new ClientApplicationEndpoint()
+        {
+            ClientApplicationEndpointId = new Guid(ConstEUClientApplicationEndpointId),
+            EndpointId = new Guid(ConstEUClientApplicationEndpointId),
+            ClientApplicationId = new Guid(ConstEUClientApplicationId),
+        };
+
+        request.ClientApplication = new ClientApplication()
+        {
+            ApplicationId = new Guid(ConstApplicationId),
+            ClientId = new Guid(ConstEUClientId),
+            ClientApplicationId = new Guid(ConstEUClientApplicationId),
+        };
+
+        return request;
     }
 }

@@ -61,7 +61,7 @@ internal class InMemoryCacheProvider :  ICacheProvider, IDisposable
         {
             return Task.FromResult(results);
         }
-        var propertyInfo = fieldInfo.FieldType.GetProperty("EntriesCollection", BindingFlags.Instance | BindingFlags.NonPublic);
+        var propertyInfo = fieldInfo.FieldType.GetProperty("StringEntriesCollection", BindingFlags.Instance | BindingFlags.NonPublic);
         var value = fieldInfo.GetValue(_cache);
         var dict = propertyInfo?.GetValue(value) as dynamic;
         if (dict == null)
@@ -87,10 +87,16 @@ internal class InMemoryCacheProvider :  ICacheProvider, IDisposable
         return Task.FromResult(results);
     }
 
-    public Task<Dictionary<string,T>> GetValues<T>(string keyPattern)
+    public Task<Dictionary<string,T>> GetDictionary<T>(string keyPattern)
     {
         List<string> keys =  GetKeys(GetKey(keyPattern)).Result;
         var results = GetValues<T>(keys);
+        return Task.FromResult(results.Result);
+    }
+    public Task<List<T>> GetValues<T>(string keyPattern)
+    {
+        List<string> keys = GetKeys(GetKey(keyPattern)).Result;
+        var results = GetValuesList<T>(keys);
         return Task.FromResult(results.Result);
     }
 
@@ -102,6 +108,17 @@ internal class InMemoryCacheProvider :  ICacheProvider, IDisposable
             var value = Get<T>(k);
             if (value != null && value.Result != null)
                 results.TryAdd(k,value.Result);
+        }
+        return Task.FromResult(results);
+    }
+    Task<List<T>> GetValuesList<T>(List<string> keys)
+    {
+        List<T> results = new List<T>();
+        foreach (string k in keys)
+        {
+            var value = Get<T>(k);
+            if (value != null && value.Result != null)
+                results.Add(value.Result);
         }
         return Task.FromResult(results);
     }

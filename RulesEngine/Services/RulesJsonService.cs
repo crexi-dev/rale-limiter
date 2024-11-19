@@ -6,6 +6,8 @@ using RulesService.Models.Requests;
 using RulesEngine.Models;
 using System.Runtime.CompilerServices;
 using System.Text.Json;
+using RulesEngine.Exceptions;
+using RulesService.Models.Enums;
 
 
 namespace RulesService.Services;
@@ -32,31 +34,52 @@ public class RulesJsonService : IRulesService
             var workflows = await GetWorkflows(request.RulesFile);
             if (workflows == null)
             {
-                response.ResponseCode = Models.Enums.ResponseCodeEnum.WorkflowNotFound;
-                response.ResponseMessage = $"Cannot find {request.RulesFile}";
+                response.ResponseCode = Models.Enums.RulesServiceResponseCodeEnum.WorkflowError;
+                response.ResponseMessage = $"Cannot workflows from the rules file {request.RulesFile}";
                 return response;
             }
 
             var rulesEngine = new RulesEngine.RulesEngine(workflows.ToArray());
 
             List<RuleResultTree> resultList = await rulesEngine.ExecuteAllRulesAsync(request.Workflow, request.Input);
-            for (int i = 0; i < resultList.Count; i++) 
-            { 
-              var rule = resultList[i]; 
-              RulesResult result = new RulesResult();
-              result.ErrorMessage = rule.ExceptionMessage;
-              result.SuccessEvent = rule.Rule.SuccessEvent;
-              result.RuleName = rule.Rule.RuleName;
-              result.IsSuccess = rule.IsSuccess;
-              result.Enabled = rule.Rule.Enabled;
-              result.Properties = rule.Rule.Properties;
-              response.RulesResults.Add(result);
+            for (int i = 0; i < resultList.Count; i++)
+            {
+                var rule = resultList[i];
+                RulesResult result = new RulesResult();
+                result.ErrorMessage = rule.ExceptionMessage;
+                result.SuccessEvent = rule.Rule.SuccessEvent;
+                result.RuleName = rule.Rule.RuleName;
+                result.IsSuccess = rule.IsSuccess;
+                result.Enabled = rule.Rule.Enabled;
+                result.Properties = rule.Rule.Properties;
+                response.RulesResults.Add(result);
             }
         }
-        catch (Exception ex) 
+      
+        catch (RuleValidationException vEx)
         {
-            response.ResponseCode = Models.Enums.ResponseCodeEnum.SystemError;
-            response.ResponseMessage = ex.Message;
+            response.ResponseCode = RulesServiceResponseCodeEnum.ValidationError;
+            response.ResponseMessage = $"Validatin Exception for {request}, Exception = {vEx.Message}";
+        }
+        catch (ExpressionParserException pEx)
+        {
+            response.ResponseCode = RulesServiceResponseCodeEnum.ExpressionParserError;
+            response.ResponseMessage = $"ExpressionParser Exception for {request}, Exception = {pEx.Message}";
+        }
+        catch (ScopedParamException rsEx)
+        {
+            response.ResponseCode = RulesServiceResponseCodeEnum.ScopedParameterError;
+            response.ResponseMessage = $"ScopedParamException Exception for {request}, Exception = {rsEx.Message}";
+        }
+        catch (RuleException rEx)
+        {
+            response.ResponseCode = RulesServiceResponseCodeEnum.RulesEngineError;
+            response.ResponseMessage = $"RuleException Exception for {request}, Exception = {rEx.Message}";
+        }
+        catch (Exception ex)
+        {
+            response.ResponseCode = RulesServiceResponseCodeEnum.SystemError;
+            response.ResponseMessage = $"System Exception for {request}, Exception = {ex.Message}";
         }
         return response;
     }
