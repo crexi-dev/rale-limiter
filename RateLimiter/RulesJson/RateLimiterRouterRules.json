@@ -3,7 +3,7 @@
     "WorkflowName": "RateLimiterRouter",
     "Rules": [
       {
-        "RuleName": "Default",
+        "RuleName": "DefaultCountryCode_US",
         "Enabled": true,
         "SuccessEvent": "5",
         "ErrorMessage": "One or more adjust rules failed.",
@@ -19,12 +19,12 @@
 
       },
       {
-        "RuleName": "Tier10",
+        "RuleName": "DefaultRegionCode_EU",
         "Enabled": true,
         "SuccessEvent": "10",
         "ErrorMessage": "One or more adjust rules failed.",
         "ErrorType": "Error",
-        "Expression": "input1.Client.DefaultCountryCode = \"EU\"",
+        "Expression": "input1.Client.DefaultRegionCode = \"EU\"",
         "Properties": {
           "RateRule": {
             "Priority": "1000",

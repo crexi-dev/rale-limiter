@@ -6,7 +6,6 @@
         "RuleName": "Default",
         "Enabled": true,
         "SuccessEvent": "5",
-        "ErrorMessage": "One or more adjust rules failed.",
         "ErrorType": "Error",
         "Expression": "input1.Client.Tier == \"Default\"",
         "Properties": {
@@ -30,7 +29,6 @@
         "RuleName": "Tier10",
         "Enabled": true,
         "SuccessEvent": "10",
-        "ErrorMessage": "One or more adjust rules failed.",
         "ErrorType": "Error",
         "Expression": "input1.Client.Tier == \"Tier10\"",
         "Properties": {

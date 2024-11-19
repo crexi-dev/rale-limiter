@@ -24,6 +24,7 @@ public class TestData
         {
             ClientId = new Guid(ConstUSClientId),
             DefaultCountryCode = "US",
+            DefaultRegionCode = "US",
 
         };
         request.ClientApplicationEndpoint = new ClientApplicationEndpoint()
@@ -49,7 +50,8 @@ public class TestData
         request.Client = new Client()
         {
             ClientId = new Guid(ConstEUClientId),
-            DefaultCountryCode = "EU",
+            DefaultCountryCode = "DE",
+            DefaultRegionCode = "EU"
 
         };
         request.ClientApplicationEndpoint = new ClientApplicationEndpoint()

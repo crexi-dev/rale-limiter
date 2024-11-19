@@ -75,6 +75,7 @@ public class RateLimiterService : IRateLimiterService
                 _logger.LogWarning($"{response}. {trace}");
                 return response;
             }
+
             if (ruleResponse.Rule == null)
             {
                 response.ResponseMessage = $"Limitation Rule is not found. {trace}. {ruleResponse.Response}";
@@ -83,6 +84,7 @@ public class RateLimiterService : IRateLimiterService
             }
             response.RateLimiterRule = ruleResponse.Rule;
             var rateValidationResult = await IsRequestRateExceeded(ruleResponse.Rule.MaxRate, request, ConstCachePrefixMaxRate);
+
             response.CurrentRate = rateValidationResult.CurrentCount;
             if (rateValidationResult.IsExceeded)
             {
@@ -102,8 +104,8 @@ public class RateLimiterService : IRateLimiterService
                 return response;
             }
 
-            await SetRequestCache(ruleResponse.Rule.MaxRate, request, ConstCachePrefixMaxRate);
-            await SetRequestCache(ruleResponse.Rule.VelocityRate, request, ConstCachePrefixVelocityRate);
+            //await SetRequestCache(ruleResponse.Rule.MaxRate, request, ConstCachePrefixMaxRate);
+            //await SetRequestCache(ruleResponse.Rule.VelocityRate, request, ConstCachePrefixVelocityRate);
         }
         catch (Exception ex)
         {
@@ -128,7 +130,7 @@ public class RateLimiterService : IRateLimiterService
         return (true, count); ;
     }
 
-    private async Task SetRequestCache(RateTimeRule? rule, RateLimiterRequest request, string prefix)
+    public async Task SetRequestCacheAsync(RateTimeRule? rule, RateLimiterRequest request, string prefix)
     {
         if (rule == null)
         { return; }

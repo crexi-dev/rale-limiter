@@ -10,7 +10,7 @@ public class Client
     public string? DefaultCountryCode { get; set; }
     public string? DefaultZipCode { get; set; }
     public string? DefaultStateCode { get; set; }
-    public string? DefaultRegion { get; set; }
+    public string? DefaultRegionCode { get; set; }
     public string Tier { get; set; } = "Default";
     public string Classification { get; set; } = "Default";
     public double AverageTransactionVolume { get; set; }

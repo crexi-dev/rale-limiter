@@ -8,6 +8,7 @@ using System.Runtime.CompilerServices;
 using System.Text.Json;
 using RulesEngine.Exceptions;
 using RulesService.Models.Enums;
+using RulesEngine.HelperFunctions;
 
 
 namespace RulesService.Services;
@@ -38,10 +39,15 @@ public class RulesJsonService : IRulesService
                 response.ResponseMessage = $"Cannot workflows from the rules file {request.RulesFile}";
                 return response;
             }
+            var reSettings = new ReSettings
+            {
+                CustomTypes = new Type[] { typeof(CustomTypes) }
+            };
 
-            var rulesEngine = new RulesEngine.RulesEngine(workflows.ToArray());
+            var rulesEngine = new RulesEngine.RulesEngine(workflows.ToArray(), reSettings);
 
             List<RuleResultTree> resultList = await rulesEngine.ExecuteAllRulesAsync(request.Workflow, request.Input);
+
             for (int i = 0; i < resultList.Count; i++)
             {
                 var rule = resultList[i];

@@ -68,19 +68,35 @@
             },
             "VelocityRate": {
               "RateSpanType": "Second",
-              "RateSpan": "3",
+              "RateSpan": "1",
               "Rate": "1"
             }
           }
         }
       },
       {
-        "RuleName": "Tier20",
+        "RuleName": "Tier20_CA_AZ",
         "Enabled": true,
-        "SuccessEvent": "20",
+        "SuccessEvent": "10",
         "ErrorMessage": "One or more adjust rules failed.",
         "ErrorType": "Error",
-        "Expression": "input1.Client.Tier == \"Tier20\""
+        "Expression": "input1.Client.Tier == \"Tier20\" AND CustomTypes.Contains(input1.Client.DefaultStateCode, \"CA,AZ\")",
+        "Properties": {
+          "RateRule": {
+            "Name": "RateLimiterUS Tier20_CA_AZ",
+            "Priority": 20000,
+            "MaxRate": {
+              "RateSpanType": "Hour",
+              "RateSpan": "1",
+              "Rate": "100"
+            },
+            "VelocityRate": {
+              "RateSpanType": "Second",
+              "RateSpan": "1",
+              "Rate": "10"
+            }
+          }
+        }
       }
     ]
   }
