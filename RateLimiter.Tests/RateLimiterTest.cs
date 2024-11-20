@@ -13,6 +13,8 @@ using RateLimiter.Models.Requests;
 using System;
 using RateLimiter.Models.Enums;
 using RulesService.Models.Enums;
+using RequestTracking.Interfaces;
+using RequestTracking;
 
 
 namespace RateLimiter.Tests;
@@ -20,6 +22,7 @@ namespace RateLimiter.Tests;
 public class RateLimiterTest
 {
     private readonly ICacheProvider _cacheProvider;
+    private readonly IRequestTrackingService _requestTrackingService;
     private readonly IRulesService _rulesService;
     private readonly IRateLimiterService _rateLimiterService;
     private readonly ServiceProvider _serviceProvider;
@@ -36,7 +39,10 @@ public class RateLimiterTest
         _rulesService = _serviceProvider.GetRequiredService<IRulesService>();
         Assert.NotNull(_rulesService);
 
-        _rateLimiterService = new RateLimiterService(_rulesService, _cacheProvider, Substitute.For<ILogger<RateLimiterService>>() );
+        _requestTrackingService = _serviceProvider.GetRequiredService<IRequestTrackingService>();
+        Assert.NotNull(_requestTrackingService);
+
+        _rateLimiterService = new RateLimiterService(_rulesService, _cacheProvider, _requestTrackingService, Substitute.For<ILogger<RateLimiterService>>() );
         Assert.NotNull(_rateLimiterService);
     }
     [Test]
@@ -158,6 +164,7 @@ public class RateLimiterTest
         ServiceProvider provider = new ServiceCollection()
             .ConfigureCache()
             .ConfigureRulesService()
+            .ConfigureRequestTracking()
             .ConfigureRateLimiter()
             .BuildServiceProvider();
         
@@ -168,11 +175,11 @@ public class RateLimiterTest
         var resp = await _rateLimiterService.GetRateLimiterRules(request);
         if (resp.RateLimiterRule?.MaxRate != null)
         {
-            await _rateLimiterService.SetRequestCacheAsync(resp.RateLimiterRule?.MaxRate, request, RateLimiterService.ConstCachePrefixMaxRate);
+            await _rateLimiterService.AddRequestTrackingAsync(resp.RateLimiterRule?.MaxRate, request, RateLimiterService.ConstCachePrefixMaxRate);
         }
         if (resp.RateLimiterRule?.VelocityRate != null)
         {
-            await _rateLimiterService.SetRequestCacheAsync(resp.RateLimiterRule?.VelocityRate, request, RateLimiterService.ConstCachePrefixVelocityRate);
+            await _rateLimiterService.AddRequestTrackingAsync(resp.RateLimiterRule?.VelocityRate, request, RateLimiterService.ConstCachePrefixVelocityRate);
         }
 
         return resp;

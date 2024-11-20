@@ -1,5 +1,4 @@
-﻿using Cache.Models;
-using Cache.Providers;
+﻿using Cache.Providers;
 using RulesService.Interfaces;
 using RulesService.Models;
 using RulesService.Models.Requests;
@@ -13,7 +12,8 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
+using RequestTracking.Interfaces;
+using RequestTracking.Models.Requests;
 
 namespace RateLimiter.Interfaces;
 
@@ -27,12 +27,14 @@ public class RateLimiterService : IRateLimiterService
 
     private readonly IRulesService _ruleService;
     private readonly ICacheProvider _cacheProvider;
+    private readonly IRequestTrackingService _requestTrackingService;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly ILogger<RateLimiterService> _logger;
-    public RateLimiterService(IRulesService ruleService, ICacheProvider cacheProvider, ILogger<RateLimiterService> logger)
+    public RateLimiterService(IRulesService ruleService, ICacheProvider cacheProvider, IRequestTrackingService requestTrackingService, ILogger<RateLimiterService> logger)
     {
         _ruleService = ruleService;
         _cacheProvider = cacheProvider;
+        _requestTrackingService = requestTrackingService;
         _logger = logger;
         _jsonSerializerOptions = new JsonSerializerOptions()
         {
@@ -120,9 +122,13 @@ public class RateLimiterService : IRateLimiterService
         if (rule == null)
         { return (true, 0); }
 
-        List<RateLimiterRequest> requests = await _cacheProvider.GetValues<RateLimiterRequest>(GetCacheKey(request, prefix));
+        GetByPatternResponse resp = await _requestTrackingService.GetTrackingResponseAsync(new GetByPatternRequest() { RequestIdPattern = GetTrackingId(request, prefix) });
+        if(resp.TrackingItems == null)
+        {
+            return (true, 0);
+        }
 
-        double count = requests.Where(x => x.RequestDateTimeUTC.AddSeconds((double)rule.RateSpanType * rule.RateSpan * rule.Rate) > DateTime.UtcNow).Count();
+        double count = resp.TrackingItems.Where(x => x.UtcDateTime.AddSeconds((double)rule.RateSpanType * rule.RateSpan * rule.Rate) > DateTime.UtcNow).Count();
         if (count < rule.Rate)
         {
             return (false, count);
@@ -130,16 +136,16 @@ public class RateLimiterService : IRateLimiterService
         return (true, count); ;
     }
 
-    public async Task SetRequestCacheAsync(RateTimeRule? rule, RateLimiterRequest request, string prefix)
+    public async Task AddRequestTrackingAsync(RateTimeRule? rule, RateLimiterRequest request, string prefix)
     {
         if (rule == null)
         { return; }
         double expirySec = (int)rule.RateSpanType * rule.RateSpan;
-        CacheOptions cacheOptions = new CacheOptions() { CacheExpiryOption = CacheExpiryOptionEnum.Absolute, ExpiryTTLSeconds = expirySec };
-        string keyPattern = GetCacheKey(request, prefix);
-        await _cacheProvider.Set($"{keyPattern}_{Guid.NewGuid()}", request, cacheOptions);
+        string trackingId = GetTrackingId(request, prefix);
+        AddTrackingRequest addTrackingRequest = new AddTrackingRequest() { ExpireAfterSeconds = expirySec, Request = request, TrackingId = trackingId};
+        await _requestTrackingService.AddTrackingAsync(addTrackingRequest);
     }
-    private string GetCacheKey(RateLimiterRequest request, string prefix)
+    private string GetTrackingId(RateLimiterRequest request, string prefix)
     {
         return $"{prefix}_{request.ClientApplicationEndpoint.ClientApplicationEndpointId}";
     }
@@ -161,6 +167,7 @@ public class RateLimiterService : IRateLimiterService
         }
         var results = rulesResponse.RulesResults.Where(x => x.IsSuccess);
         List<RateLimiterRule> rules = new List<RateLimiterRule>();
+
         foreach (var result in results)
         {
             if (!result.Enabled)
@@ -184,10 +191,12 @@ public class RateLimiterService : IRateLimiterService
 
             }
         }
+
         if (rules.Count == 0)
         {
             return (null, rulesRequest, rulesResponse);
         }
+
         var sortedRules = rules.OrderByDescending(x => x.Priority).ToList();
         if (sortedRules[0].NextRuleFile != null && sortedRules[0].NextWorkflow != null)
         {

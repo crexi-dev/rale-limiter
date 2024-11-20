@@ -7,6 +7,6 @@ namespace RateLimiter.Services
     public interface IRateLimiterService
     {
         Task<RateLimiterResponse> GetRateLimiterRules(RateLimiterRequest request);
-        Task SetRequestCacheAsync(RateTimeRule? rule, RateLimiterRequest request, string prefix);
+        Task AddRequestTrackingAsync(RateTimeRule? rule, RateLimiterRequest request, string prefix);
     }
 }

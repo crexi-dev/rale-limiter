@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Models\Data.Models.csproj" />
+    <ProjectReference Include="..\RequestTracking\RequestTracking.csproj" />
     <ProjectReference Include="..\RulesEngine\RulesService.csproj" />
     <ProjectReference Include="..\Utilities\Utilities.csproj" />
     <ProjectReference Include="..\RateLimiter.Models\RateLimiter.Models.csproj" />
