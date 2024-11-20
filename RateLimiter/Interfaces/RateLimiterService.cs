@@ -26,14 +26,12 @@ public class RateLimiterService : IRateLimiterService
     public const string ConstCachePrefixVelocityRate = "velocityrate";
 
     private readonly IRulesService _ruleService;
-    private readonly ICacheProvider _cacheProvider;
     private readonly IRequestTrackingService _requestTrackingService;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly ILogger<RateLimiterService> _logger;
-    public RateLimiterService(IRulesService ruleService, ICacheProvider cacheProvider, IRequestTrackingService requestTrackingService, ILogger<RateLimiterService> logger)
+    public RateLimiterService(IRulesService ruleService, IRequestTrackingService requestTrackingService, ILogger<RateLimiterService> logger)
     {
         _ruleService = ruleService;
-        _cacheProvider = cacheProvider;
         _requestTrackingService = requestTrackingService;
         _logger = logger;
         _jsonSerializerOptions = new JsonSerializerOptions()

@@ -18,10 +18,10 @@ using RequestTracking;
 
 
 namespace RateLimiter.Tests;
+
 [TestFixture]
 public class RateLimiterTest
 {
-    private readonly ICacheProvider _cacheProvider;
     private readonly IRequestTrackingService _requestTrackingService;
     private readonly IRulesService _rulesService;
     private readonly IRateLimiterService _rateLimiterService;
@@ -33,18 +33,16 @@ public class RateLimiterTest
         var services = new ServiceCollection();
         Assert.NotNull(_serviceProvider);
 
-        _cacheProvider = _serviceProvider.GetRequiredService<ICacheProvider>();
-        Assert.NotNull(_cacheProvider);
-
         _rulesService = _serviceProvider.GetRequiredService<IRulesService>();
         Assert.NotNull(_rulesService);
 
         _requestTrackingService = _serviceProvider.GetRequiredService<IRequestTrackingService>();
         Assert.NotNull(_requestTrackingService);
 
-        _rateLimiterService = new RateLimiterService(_rulesService, _cacheProvider, _requestTrackingService, Substitute.For<ILogger<RateLimiterService>>() );
+        _rateLimiterService = new RateLimiterService(_rulesService, _requestTrackingService, Substitute.For<ILogger<RateLimiterService>>() );
         Assert.NotNull(_rateLimiterService);
     }
+
     [Test]
 	public async Task Test_GetRateLimiterRules_MaxRate_HappyPath()
 	{
@@ -57,7 +55,6 @@ public class RateLimiterTest
         for (int i = 1; i <= 10; i++) 
         {
             resp = await ExecuteRequestAsync(reqUS);
-
             Assert.NotNull(resp);
             Assert.That(resp.IsRateExceeded, Is.False);
         }
@@ -66,6 +63,7 @@ public class RateLimiterTest
         Assert.NotNull(resp);
         Assert.That(resp.IsRateExceeded, Is.True);
 	}
+
     [Test]
     public async Task Test_GetRateLimiterRules_VelocityRate_HappyPath()
     {
@@ -105,8 +103,8 @@ public class RateLimiterTest
         Assert.AreEqual("RateLimiterUS Tier20_CA_AZ" , resp.RateLimiterRule?.Name);
         Assert.That(resp.IsRateExceeded, Is.False);
 
-
     }
+
     [Test]
     public async Task Test_GetRateLimiterRules_Error_FileError()
     {
@@ -120,9 +118,9 @@ public class RateLimiterTest
 
         Assert.NotNull(resp);
         Assert.AreEqual(ResponseCodeEnum.RulesEngineError, resp.ResponseCode!);
+
         Assert.NotNull(resp.RuleServiceResponseCode);
         Assert.AreEqual( RulesServiceResponseCodeEnum.SystemError, resp.RuleServiceResponseCode!);
-
     }
 
     [Test]
@@ -138,6 +136,7 @@ public class RateLimiterTest
 
         Assert.NotNull(resp);
         Assert.AreEqual(resp.ResponseCode, ResponseCodeEnum.RulesEngineError);
+
         Assert.NotNull(resp.RuleServiceResponseCode);
         Assert.AreEqual(RulesServiceResponseCodeEnum.SystemError, resp.RuleServiceResponseCode!);
     }
@@ -155,6 +154,7 @@ public class RateLimiterTest
 
         Assert.NotNull(resp);
         Assert.AreEqual(ResponseCodeEnum.RulesEngineError, resp.ResponseCode);
+
         Assert.NotNull(resp.RuleServiceResponseCode);
         Assert.AreEqual(RulesServiceResponseCodeEnum.WorkflowError, resp.RuleServiceResponseCode!);
     }
