@@ -85,18 +85,6 @@ namespace RateLimiter.Services
                         allowAccess = true;  
                     }
                 }
-                else if (limiterRule.NumPerTimespan == null)
-                {
-                    // implies the user must wait the number of seconds specified.  so only allow access after the specified number of seconds have 
-                    var numSeconds = limiterRule.NumSeconds ?? 0;
-
-                    var latestRequest = userRequests.OrderByDescending(x => x.CreatedDate).Where(x => x.CreatedDate.AddSeconds(numSeconds) < DateTime.Now).FirstOrDefault();
-
-                    if (latestRequest != null)
-                    {
-                        allowAccess = true;
-                    }
-                }
                 else
                 {
                     // implies the number of requests in 
