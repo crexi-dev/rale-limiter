@@ -15,7 +15,8 @@ using RateLimiter.Models.Enums;
 using RulesService.Models.Enums;
 using RequestTracking.Interfaces;
 using RequestTracking;
-
+using RulesService.Models;
+using System.Linq;
 
 namespace RateLimiter.Tests;
 
@@ -25,7 +26,9 @@ public class RateLimiterTest
     private readonly IRequestTrackingService _requestTrackingService;
     private readonly IRulesService _rulesService;
     private readonly IRateLimiterService _rateLimiterService;
+    private readonly ICacheProvider _cacheProvider;
     private readonly ServiceProvider _serviceProvider;
+    private readonly RateLimiterRules _defaultRateLimiterRules;
     
     public RateLimiterTest()
     {
@@ -39,8 +42,14 @@ public class RateLimiterTest
         _requestTrackingService = _serviceProvider.GetRequiredService<IRequestTrackingService>();
         Assert.NotNull(_requestTrackingService);
 
-        _rateLimiterService = new RateLimiterService(_rulesService, _requestTrackingService, Substitute.For<ILogger<RateLimiterService>>() );
+        _cacheProvider = _serviceProvider.GetRequiredService<ICacheProvider>();
+        Assert.NotNull(_cacheProvider);
+
+        _rateLimiterService = new RateLimiterService(_rulesService, _requestTrackingService, _cacheProvider, Substitute.For<ILogger<RateLimiterService>>() );
         Assert.NotNull(_rateLimiterService);
+
+        _defaultRateLimiterRules = _rateLimiterService.GetDefaultRules();
+        Assert.NotNull(_defaultRateLimiterRules);
     }
 
     [Test]
@@ -48,7 +57,6 @@ public class RateLimiterTest
 	{
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;
-
         reqUS.Client.Tier = "Tier10";
 
         //10 requests per 1 Hour
@@ -96,12 +104,17 @@ public class RateLimiterTest
 
         reqUS.Client.Tier = "Tier20";
         reqUS.Client.DefaultStateCode = "CA";
-       
+        for (int i = 1; i <= 10; i++)
+        {
+            resp = await ExecuteRequestAsync(reqUS);
+            Assert.NotNull(resp);
+            Assert.That(resp.IsRateExceeded, Is.False, $"{resp}");
+        }
         resp = await ExecuteRequestAsync(reqUS);
         Assert.NotNull(resp);
         Assert.NotNull(resp.RateLimiterRule);
         Assert.AreEqual("RateLimiterUS Tier20_CA_AZ" , resp.RateLimiterRule?.Name, $"{resp}");
-        Assert.That(resp.IsRateExceeded, Is.False, $"{resp}");
+        Assert.That(resp.IsRateExceeded, Is.True, $"{resp}");
 
     }
 
@@ -122,11 +135,20 @@ public class RateLimiterTest
         Assert.NotNull(resp.RuleServiceResponseCode);
         Assert.AreEqual( RulesServiceResponseCodeEnum.SystemError, resp.RuleServiceResponseCode!, $"{resp}");
 
+        var rule = _defaultRateLimiterRules.Rules.Where(x => x.MaxRateRule != null).OrderBy(x=>x.Priority).FirstOrDefault();
+
+        Assert.IsNotNull(rule);
+        Assert.IsNotNull(rule?.MaxRateRule);
+        for (int i = 0; i < rule?.MaxRateRule?.Rate - 1; i++)
+        {
+            resp = await ExecuteRequestAsync(reqUS);
+        }
+        Assert.IsTrue(resp.IsRateExceeded, $"{resp}");
         Assert.AreEqual("DefaultRule", resp.RateLimiterRule?.Name, $"{resp}");
     }
 
     [Test]
-    public async Task Test_GetRateLimiterRules_Error_WorkflowError()
+    public async Task Test_GetRateLimiterRules_WorkflowNotExist_SystemError()
     {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;
@@ -144,7 +166,7 @@ public class RateLimiterTest
     }
 
     [Test]
-    public async Task Test_GetRateLimiterRules_MaxAttemptsExceeded()
+    public async Task Test_GetRateLimiterRules_MaxRecursions_Exceeded()
     {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;

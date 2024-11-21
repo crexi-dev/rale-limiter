@@ -3,30 +3,6 @@
     "WorkflowName": "RateLimiterUS",
     "Rules": [
       {
-        "RuleName": "Default",
-        "Enabled": true,
-        "SuccessEvent": "5",
-        "ErrorMessage": "One or more adjust rules failed.",
-        "ErrorType": "Error",
-        "Expression": "input1.Client.Tier == \"Default\"",
-        "Properties": {
-          "RateRule": {
-            "Name": "RateLimiterUS Default Rule",
-            "Priority": 10000,
-            "MaxRate": {
-              "RateSpanType": "Hour",
-              "RateSpan": "1",
-              "Rate": "2"
-            },
-            "VelocityRate": {
-              "RateSpanType": "Second",
-              "RateSpan": "1",
-              "Rate": "1"
-            }
-          }
-        }
-      },
-      {
         "RuleName": "Tier10",
         "Enabled": true,
         "SuccessEvent": "10",
@@ -35,18 +11,26 @@
         "Expression": "input1.Client.Tier == \"Tier10\"",
         "Properties": {
           "RateRule": {
-            "Name": "RateLimiterUS Tier10 Rule",
-            "Priority": 20000,
-            "MaxRate": {
-              "RateSpanType": "Hour",
-              "RateSpan": "1",
-              "Rate": "10"
-            },
-            "VelocityRate": {
-              "RateSpanType": "Second",
-              "RateSpan": "0.001",
-              "Rate": "1"
-            }
+            "Name": "RateLimiterUS Tier10",
+            "Rules": [
+              {
+                "RuleType": "MaxRateType",
+                "Priority": 20000,
+                "MaxRateRule": {
+                  "Timespan": "1:00:00.000",
+                  "Rate": "10"
+                }
+              },
+              {
+                "Name": "RateLimiterUS Tier10 Max Rate Rule",
+                "RuleType": "MaxRateType",
+                "Priority": 30000,
+                "MaxRateRule": {
+                  "Timespan": "0:00:1.000",
+                  "Rate": 10
+                }
+              }
+            ]
           }
         }
       },
@@ -59,18 +43,28 @@
         "Expression": "input1.Client.Tier == \"Tier101\"",
         "Properties": {
           "RateRule": {
-            "Name": "RateLimiterUS Tier10 Rule",
-            "Priority": 20000,
-            "MaxRate": {
-              "RateSpanType": "Hour",
-              "RateSpan": "1",
-              "Rate": "10"
-            },
-            "VelocityRate": {
-              "RateSpanType": "Second",
-              "RateSpan": "1",
-              "Rate": "1"
-            }
+            "Name": "RateLimiterUS Tier101",
+            "Rules": [
+              {
+
+                "RuleType": "MaxRateType",
+                "Name": "RateLimiterUS Tier101 Max Rate Rule",
+                "Priority": 20000,
+                "MaxRateRule": {
+                  "Timespan": "1:00:00.000",
+                  "Rate": "10"
+                }
+              },
+              {
+                "Name": "RateLimiterUS Tier101 Max Rate Rule",
+                "RuleType": "MaxRateType",
+                "Priority": 30000,
+                "MaxRateRule": {
+                  "Timespan": "0:00:5.000",
+                  "Rate": 1
+                }
+              }
+            ]
           }
         }
       },
@@ -84,19 +78,30 @@
         "Properties": {
           "RateRule": {
             "Name": "RateLimiterUS Tier20_CA_AZ",
-            "Priority": 20000,
-            "MaxRate": {
-              "RateSpanType": "Hour",
-              "RateSpan": "1",
-              "Rate": "100"
-            },
-            "VelocityRate": {
-              "RateSpanType": "Second",
-              "RateSpan": "1",
-              "Rate": "10"
-            }
+            "Rules": [
+              {
+                "Name": "RateLimiterUS Tier20_CA_AZ",
+                "RuleType": "MaxRateType",
+                "Priority": 20000,
+                "MaxRateRule": {
+                  "Timespan": "1:00:00.000",
+                  "Rate": "10"
+                }
+
+              },
+              {
+                "Name": "RateLimiterUS Tier20_CA_AZ",
+                "RuleType": "MaxRateType",
+                "Priority": 30000,
+                "MaxRateRule": {
+                  "Timespan": "0:00:1.000",
+                  "Rate": 10
+                }
+              }
+            ]
           }
         }
+
       }
     ]
   }

@@ -7,6 +7,7 @@ namespace RateLimiter.Services
     public interface IRateLimiterService
     {
         Task<RateLimiterResponse> GetRateLimiterRules(RateLimiterRequest request);
-      
+        RateLimiterRules GetDefaultRules();
+
     }
 }

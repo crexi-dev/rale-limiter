@@ -1,9 +1,6 @@
-﻿using Cache.Models;
-using Cache.Providers;
-using RequestTracking.Interfaces;
+﻿using RequestTracking.Interfaces;
 using RequestTracking.Models;
 using System.Collections.Concurrent;
-using System.Text.RegularExpressions;
 
 namespace RequestTracking.Services;
 
@@ -52,7 +49,6 @@ public class CacheTrackingStorageProvider : ITrackingStorageProvider
 
     public DateTime GetLastTrackedDateTime(string key)
     {
-
         if (_cache.TryGetValue(key, out var items))
         {
             lock (items)

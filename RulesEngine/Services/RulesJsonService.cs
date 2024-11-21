@@ -61,22 +61,6 @@ public class RulesJsonService : IRulesService
                 response.RulesResults.Add(result);
             }
         }
-      
-        catch (RuleValidationException vEx)
-        {
-            response.ResponseCode = RulesServiceResponseCodeEnum.ValidationError;
-            response.ResponseMessage = $"Validation Exception for {request}, Exception = {vEx.Message}";
-        }
-        catch (ExpressionParserException pEx)
-        {
-            response.ResponseCode = RulesServiceResponseCodeEnum.ExpressionParserError;
-            response.ResponseMessage = $"ExpressionParser Exception for {request}, Exception = {pEx.Message}";
-        }
-        catch (ScopedParamException rsEx)
-        {
-            response.ResponseCode = RulesServiceResponseCodeEnum.ScopedParameterError;
-            response.ResponseMessage = $"ScopedParamException Exception for {request}, Exception = {rsEx.Message}";
-        }
         catch (RuleException rEx)
         {
             response.ResponseCode = RulesServiceResponseCodeEnum.RulesEngineError;

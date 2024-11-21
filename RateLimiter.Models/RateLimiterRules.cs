@@ -1,48 +1,71 @@
 ﻿using RateLimiter.Models.Enums;
+using System;
+using System.Text.Json.Serialization;
 
 
 namespace RulesService.Models;
 
-public class RateLimiterRule
+public enum RuleTypeEnum
 {
-    public int Priority { get; set; }
-    public string? Name { get;set; }
-    public string? NextRuleFile { get; set; }
-    public string? NextWorkflow { get; set; }
-    public RateTimeRule? MaxRate { get; set; }
-    public RateTimeRule? VelocityRate { get; set; }
-
-    public override string ToString()
-    {
-        return $"Priority : {Priority}, Name : {Name}, MaxRate : {MaxRate},  VelocityRate : {VelocityRate}, NextRuleFile : {NextRuleFile}";
-    }
-
+    Base,
+    RouterType,
+    MaxRateType,
+    VelocityType
 }
 
-public class RateTimeRule
+
+
+public class RateLimiterRules
 {
-    public RateSpanTypeEnum RateSpanType { get; set; }
-    public double RateSpan { get; set; }
+    public string? Name { get; set; }
+    public List<RateLimiterRule> Rules { get; set; } = new ();
+}
+
+public class MaxRateTimeSpanRule 
+{
+    public TimeSpan Timespan { get; set; }
     public double Rate { get; set; }
 
     public override string ToString()
     {
-        return $"{Rate} per {RateSpan} {RateSpanType}";
+        return $"{Rate} per {Timespan.TotalSeconds} secs";
     }
 }
-public class LimitWorkingHoursRule
-{
-    public bool Enable { get; set; }
-    public List<string> Days { get; set; } = new();
-    public string  StartTime { get; set; } = string.Empty;
-    public string EndTime { get; set; } = string.Empty;
-    public RateLimiterRule? LimitRule { get; set; }
 
-}
-public class LimiDateRule
+public class VelocityTimeSpanRule 
 {
-    public bool Enable { get; set; }
-    public List<DateOnly> Dates { get; set; } = new();
-    public LimitWorkingHoursRule? LimitRule { get; set; }
+    //can be MaxRateTimeSpanRule, but I prefer to be explicit
+    public TimeSpan Timespan { get; set; }
+
+    public override string ToString()
+    {
+        return $"1 per {Timespan.TotalSeconds} secs";
+    }
+}
+
+public class RouterRule 
+{
+    public string NextRuleFile { get; set; } = null!;
+    public string NextWorkflow { get; set; } = null!;
+
+    public override string ToString()
+    {
+        return $"NextRuleFile : {NextRuleFile}, NextWorkflow : {NextWorkflow}";
+    }
+}
+
+public class RateLimiterRule
+{
+    public RuleTypeEnum RuleType { get; set; }
+    public int Priority { get; set; }
+    public string? Name { get; set; }
+    public MaxRateTimeSpanRule? MaxRateRule { get; set; }
+    public RouterRule? RouterRule { get; set; }
+    public VelocityTimeSpanRule? VelocityRule { get; set; }
+
+    public override string ToString()
+    {
+        return $" Type : {RuleType}, Priority : {Priority}, Name : {Name}, MaxRateRule : {MaxRateRule},  VelocityRule : {VelocityRule}, RouterRule : {RouterRule}";
+    }
 
 }

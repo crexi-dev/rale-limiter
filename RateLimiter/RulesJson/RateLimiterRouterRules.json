@@ -11,10 +11,19 @@
         "Expression": "input1.Client.DefaultCountryCode = \"US\"",
         "Properties": {
           "RateRule": {
-            "Priority": "1000",
-            "NextRuleFile": "RulesJson/RateLimiterRulesUS.json",
-            "NextWorkflow": "RateLimiterUS"
+            "Name": "RateLimiterRulesUS",
+            "Rules": [
+              {
+                "RuleType": "RouterType",
+                "Priority": "1000",
+                "RouterRule": {
+                  "NextRuleFile": "RulesJson/RateLimiterRulesUS.json",
+                  "NextWorkflow": "RateLimiterUS"
+                  }
+                }
+            ]
           }
+          
         }
 
       },
@@ -27,9 +36,17 @@
         "Expression": "input1.Client.DefaultRegionCode = \"EU\"",
         "Properties": {
           "RateRule": {
-            "Priority": "1000",
-            "NextRuleFile": "RulesJson/RateLimiterRulesEU.json",
-            "NextWorkflow": "RateLimiterEU"
+            "Name": "RateLimiterRulesEU",
+            "Rules": [
+              {
+                "RuleType": "RouterType",
+                "Priority": "1000",
+                "RouterRule": {
+                  "NextRuleFile": "RulesJson/RateLimiterRulesEU.json",
+                  "NextWorkflow": "RateLimiterEU"
+                }
+                }
+            ]
           }
         }
       }
