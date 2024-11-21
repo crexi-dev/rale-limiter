@@ -52,9 +52,9 @@ public class UsersDataServiceTest
     [Test]
     public async Task GetAllTest()
     {
-        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US");
-        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US");
-        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US");
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US", false);
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US", false);
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US", false);
 
         var seedUsers = new List<User>()
             {
@@ -84,9 +84,9 @@ public class UsersDataServiceTest
 
         var user2Token = Guid.NewGuid();
 
-        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US");
-        var user2 = _dataGeneratorService.GenerateUser(2, "User2", user2Token, "US");
-        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US");
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US", false);
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", user2Token, "US", false);
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US", false);
 
         var seedUsers = new List<User>()
             {
@@ -116,9 +116,9 @@ public class UsersDataServiceTest
     [Test]
     public async Task GetByIdTest()     
     {
-        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US");
-        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US");
-        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US");
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US", false);
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US", false);
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US", false);
 
         var seedUsers = new List<User>()
             {
@@ -143,9 +143,9 @@ public class UsersDataServiceTest
     [Test]
     public async Task GetByIdentifierTest()
     {
-        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US");
-        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US");
-        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US");
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US", false);
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US", false);
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US", false);
 
         var seedUsers = new List<User>()
             {
@@ -170,7 +170,7 @@ public class UsersDataServiceTest
     [Test]
     public async Task AddTest()
     {
-        var userToAdd = _dataGeneratorService.GenerateUser(100, "UserToAdd", Guid.NewGuid(), "US");
+        var userToAdd = _dataGeneratorService.GenerateUser(100, "UserToAdd", Guid.NewGuid(), "US", false);
 
         try
         {
@@ -188,9 +188,9 @@ public class UsersDataServiceTest
     [Test]
     public async Task UpdateTest()
     {
-        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US");
-        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US");
-        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US");
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US", false);
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US", false);
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US", false);
 
         var seedUsers = new List<User>()
             {
@@ -220,9 +220,9 @@ public class UsersDataServiceTest
     public async Task RemoveTest()
     {
 
-        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US");
-        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US");
-        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US");
+        var user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US", false);
+        var user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US", false);
+        var user3 = _dataGeneratorService.GenerateUser(3, "User3", Guid.NewGuid(), "US", false );
 
         var seedUsers = new List<User>()
             {

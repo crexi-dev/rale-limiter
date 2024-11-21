@@ -20,7 +20,7 @@ namespace RateLimiter.Tests.Services
                 UserId = user.Id,
                 User = user,
                 WasHandled = wasHandled,
-                CreatedBy = "DataGenerator",
+                CreatedBy = user.Name,
                 CreatedDate = DateTime.Now
             };
 
@@ -42,7 +42,7 @@ namespace RateLimiter.Tests.Services
 
             return resource;
         }
-        public User GenerateUser(int id, string username, Guid token, string tokenSource)
+        public User GenerateUser(int id, string username, Guid token, string tokenSource, bool isPriorityUser)
         {
             var user = new User
             {
@@ -51,6 +51,7 @@ namespace RateLimiter.Tests.Services
                 Name = username,  
                 Token = token.ToString(),
                 TokenSource = tokenSource,
+                IsPriorityUser = isPriorityUser,    
                 Email = string.Format("{0}@phonyEmail.com", username),
                 CreatedBy = "DataGenerator",
                 CreatedDate = DateTime.Now
@@ -58,12 +59,13 @@ namespace RateLimiter.Tests.Services
 
             return user;
         }
-        public LimiterRule GenerateLimiterRule(int id, string name, string? tokenSource, int? resourceStatusId, int numPerTimespan, int numSeconds)
+        public LimiterRule GenerateLimiterRule(int id, string name, string? tokenSource, int? resourceStatusId, int? numPerTimespan, int? numSeconds, bool? isPriorityUser)
         {
             var limiterRule = new LimiterRule
             {
                 Id = id ,
-                Identifier = name ,
+                Identifier = name , 
+                IsPriorityUser = isPriorityUser ,
                 Name = name ,
                 TokenSource = tokenSource ,
                 ResourceStatusId = resourceStatusId ,

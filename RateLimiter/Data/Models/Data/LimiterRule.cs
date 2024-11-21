@@ -6,11 +6,12 @@
 
         // conditions to look for
         public string? TokenSource { get; set; }
+        public bool? IsPriorityUser { get; set; }
         public int? ResourceStatusId { get; set; }
 
         // limiter
-        public int NumPerTimespan { get; set; }
-        public int NumSeconds { get; set; }
+        public int? NumPerTimespan { get; set; }
+        public int? NumSeconds { get; set; }
 
     }
 }

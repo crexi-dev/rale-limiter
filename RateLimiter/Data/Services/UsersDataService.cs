@@ -71,6 +71,7 @@ namespace RateLimiter.Data.Services
             existingUser.Name = user.Name;
             existingUser.Email = user.Email;
             existingUser.Token = user.Token;
+            existingUser.IsPriorityUser = user.IsPriorityUser;  
             existingUser.UpdatedBy = user.UpdatedBy;
             existingUser.UpdatedDate = DateTime.Now;
 

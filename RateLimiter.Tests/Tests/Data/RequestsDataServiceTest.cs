@@ -65,8 +65,8 @@ public class RequestsDataServiceTest
 
         await _configService.SeedResources(seedResources);
 
-        user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US");
-        user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US");
+        user1 = _dataGeneratorService.GenerateUser(1, "User1", Guid.NewGuid(), "US", false);
+        user2 = _dataGeneratorService.GenerateUser(2, "User2", Guid.NewGuid(), "US", false);
         var seedUsers = new List<User>()
         {
             user1,
@@ -126,16 +126,16 @@ public class RequestsDataServiceTest
             var searchCriteria = new BaseModel { CreatedBy = "FredSmith" };
             var requests = await _requestsDataService.FindAsync(searchCriteria);
 
-            Assert.AreEqual(requests.Count, 0); // should never reach this assertion
+            Assert.AreEqual(requests.Count, 0); 
 
-            searchCriteria = new BaseModel { CreatedBy = "DataGenerator" };
+            searchCriteria = new BaseModel { CreatedBy = "User1" };
             requests = await _requestsDataService.FindAsync(searchCriteria);
 
-            Assert.AreEqual(requests.Count, 3); // should never reach this assertion
+            Assert.AreEqual(requests.Count, 3); 
         }
         catch (Exception ex)
         {
-            Assert.That(true, Is.True);       // NotImplementedException is the expected result.
+            Assert.That(true, Is.False);       
         }
     }
     [Test]

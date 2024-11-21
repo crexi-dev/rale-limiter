@@ -24,13 +24,13 @@ namespace RateLimiter.Services
 
         public async Task<bool> AllowAccess(Request request)
         {
-            // By default, access allowed to the resource
-            bool allowAccess = true;
+            // By default, access is denied to the resource
+            bool allowAccess = false;
 
             var resource = await _resourcesDataService.SingleAsync(request.ResourceId);
             var user = await _usersDataSource.SingleAsync(request.UserId);
 
-            if (resource.LimiterRules == null) 
+            if (resource.LimiterRules == null || resource.LimiterRules.Count == 0) 
             {
                 allowAccess = true;     // no rules in place so allow access
             }
@@ -39,29 +39,75 @@ namespace RateLimiter.Services
                 allowAccess = false;    // resource is offline - unclear if this is the proper place for this logic...
             }
 
-            // Identify the rule to use 
+            // Identify the rule to use - the first one in the LimiterRules collection that evaluates to true will be the one in effect
             LimiterRule limiterRule = new LimiterRule { Id = -1, Name = "No rule in effect", NumSeconds = 0, NumPerTimespan = 0 };
 
             foreach (var rule in resource.LimiterRules)
             {
-                if (rule.TokenSource == null || rule.TokenSource == user.TokenSource)
+                if (rule.IsPriorityUser == true && user.IsPriorityUser)
                 {
                     limiterRule = rule;
+                    break;
+                }
+                else if (rule.TokenSource != null && rule.TokenSource == user.TokenSource)  // does user token match the rule
+                {
+                    limiterRule = rule;
+                    break;
+                }
+                else if (rule.ResourceStatusId == Statuses.Maintenance.Id && resource.StatusId == Statuses.Maintenance.Id)
+                {
+                    limiterRule = rule;
+                    break;
                 }
             }
 
             // If a rule is in effect for the request, evaluate it
             if (limiterRule.Id > 0)
             {
-                // if a limiter rule is in effect, then evaluate it here
-                var userRequests = await _requestsDataService.FindAsync(new BaseModel { CreatedBy = user.Name });
+                // All rules are based on the number of requests that were allowed in the past so 
+                // so they must be retrieved.  I did not implement a Search() method for the 
+                // Requests collections - only a Find() which uses the base model to specify search criteria.
+                var userRequests = await _requestsDataService.FindAsync(new BaseModel { CreatedBy = user.Name }); 
                 var userResourceRequests = userRequests.Where(x => x.ResourceId == resource.Id && x.WasHandled == true).ToList();
 
-                var numRequests = userResourceRequests.Where(x => x.CreatedDate.AddSeconds(limiterRule.NumSeconds) > DateTime.Now).Count();
-
-                if (numRequests > limiterRule.NumPerTimespan)
+                if (limiterRule.NumSeconds == null && limiterRule.NumPerTimespan == null)  // a rule with no limiter
                 {
-                    allowAccess = false;
+                    allowAccess = true;
+                }
+                else if (limiterRule.NumSeconds == null)  
+                {
+                    var numPerTimespan = limiterRule.NumPerTimespan ?? 0;
+                    // the previous NumPerTimespan - 1 requests must all be unhandled before the limiter will allow the request.
+                    var latestRequests = userRequests.OrderByDescending(x => x.CreatedDate).Take(numPerTimespan-1).Where(x => x.WasHandled == true).ToList();
+
+                    if (latestRequests.Count() == 0)
+                    {
+                        allowAccess = true;  
+                    }
+                }
+                else if (limiterRule.NumPerTimespan == null)
+                {
+                    // implies the user must wait the number of seconds specified.  so only allow access after the specified number of seconds have 
+                    var numSeconds = limiterRule.NumSeconds ?? 0;
+
+                    var latestRequest = userRequests.OrderByDescending(x => x.CreatedDate).Where(x => x.CreatedDate.AddSeconds(numSeconds) < DateTime.Now).FirstOrDefault();
+
+                    if (latestRequest != null)
+                    {
+                        allowAccess = true;
+                    }
+                }
+                else
+                {
+                    // implies the number of requests in 
+                    var numSeconds = limiterRule.NumSeconds ?? 0;
+                    var latestRequests = userRequests.OrderByDescending(x => x.CreatedDate).Where(x => x.CreatedDate.AddSeconds(numSeconds) > DateTime.Now);
+
+                    if (latestRequests.Count() < limiterRule.NumPerTimespan)
+                    {
+                        allowAccess = true;
+                    }
+
                 }
             }
 
@@ -74,6 +120,8 @@ namespace RateLimiter.Services
 
             request.WasHandled = allowAccess;
             await _requestsDataService.AddAsync(request);
+
+            var jeff = await _requestsDataService.GetAllAsync();
 
             return allowAccess;
         }

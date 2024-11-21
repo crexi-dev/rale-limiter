@@ -52,9 +52,9 @@ public class LimiterRulesDataServiceTest
     [Test]
     public async Task GetAllTest()
     {
-        var limiterRule1 = _dataGeneratorService.GenerateLimiterRule(1, "US Users", "US", null, 3, 15);
-        var limiterRule2 = _dataGeneratorService.GenerateLimiterRule(2, "EU Users", "EU", null, 1, 5);
-        var limiterRule3 = _dataGeneratorService.GenerateLimiterRule(3, "CN Users", "CN", null, 2, 10);
+        var limiterRule1 = _dataGeneratorService.GenerateLimiterRule(1, "US Users", "US", null, 3, 15, null);
+        var limiterRule2 = _dataGeneratorService.GenerateLimiterRule(2, "EU Users", "EU", null, 1, 5, null);
+        var limiterRule3 = _dataGeneratorService.GenerateLimiterRule(3, "CN Users", "CN", null, 2, 10, null);
 
         var seedLimiterRules = new List<LimiterRule>()
             {
@@ -94,9 +94,9 @@ public class LimiterRulesDataServiceTest
     [Test]
     public async Task GetByIdTest()     
     {
-        var limiterRule1 = _dataGeneratorService.GenerateLimiterRule(1, "US Users", "US", null, 3, 15);
-        var limiterRule2 = _dataGeneratorService.GenerateLimiterRule(2, "EU Users", "EU", null, 1, 5);
-        var limiterRule3 = _dataGeneratorService.GenerateLimiterRule(3, "CN Users", "CN", null, 2, 10);
+        var limiterRule1 = _dataGeneratorService.GenerateLimiterRule(1, "US Users", "US", null, 3, 15, null);
+        var limiterRule2 = _dataGeneratorService.GenerateLimiterRule(2, "EU Users", "EU", null, 1, 5, null);
+        var limiterRule3 = _dataGeneratorService.GenerateLimiterRule(3, "CN Users", "CN", null, 2, 10, null);
 
         var seedLimiterRules = new List<LimiterRule>()
             {
@@ -121,9 +121,9 @@ public class LimiterRulesDataServiceTest
     [Test]
     public async Task GetByIdentifierTest()
     {
-        var limiterRule1 = _dataGeneratorService.GenerateLimiterRule(1, "US Users", "US", null, 3, 15);
-        var limiterRule2 = _dataGeneratorService.GenerateLimiterRule(2, "EU Users", "EU", null, 1, 5);
-        var limiterRule3 = _dataGeneratorService.GenerateLimiterRule(3, "CN Users", "CN", null, 2, 10);
+        var limiterRule1 = _dataGeneratorService.GenerateLimiterRule(1, "US Users", "US", null, 3, 15, null);
+        var limiterRule2 = _dataGeneratorService.GenerateLimiterRule(2, "EU Users", "EU", null, 1, 5, null);
+        var limiterRule3 = _dataGeneratorService.GenerateLimiterRule(3, "CN Users", "CN", null, 2, 10, null);
 
         var seedLimiterRules = new List<LimiterRule>()
             {
@@ -148,7 +148,7 @@ public class LimiterRulesDataServiceTest
     [Test]
     public async Task AddTest()
     {
-        var limiterRuleToAdd = _dataGeneratorService.GenerateLimiterRule(100, "US Users", "US", null, 3, 15);
+        var limiterRuleToAdd = _dataGeneratorService.GenerateLimiterRule(100, "US Users", "US", null, 3, 15, null);
 
         try
         {
@@ -166,9 +166,9 @@ public class LimiterRulesDataServiceTest
     [Test]
     public async Task UpdateTest()
     {
-        var limiterRule1 = _dataGeneratorService.GenerateLimiterRule(1, "US Users", "US", null, 3, 15);
-        var limiterRule2 = _dataGeneratorService.GenerateLimiterRule(2, "EU Users", "EU", null, 1, 5);
-        var limiterRule3 = _dataGeneratorService.GenerateLimiterRule(3, "CN Users", "CN", null, 2, 10);
+        var limiterRule1 = _dataGeneratorService.GenerateLimiterRule(1, "US Users", "US", null, 3, 15, null);
+        var limiterRule2 = _dataGeneratorService.GenerateLimiterRule(2, "EU Users", "EU", null, 1, 5, null);
+        var limiterRule3 = _dataGeneratorService.GenerateLimiterRule(3, "CN Users", "CN", null, 2, 10, null);
 
         var seedLimiterRules = new List<LimiterRule>()
             {
@@ -197,9 +197,9 @@ public class LimiterRulesDataServiceTest
     [Test]
     public async Task RemoveTest()
     {
-        var limiterRule1 = _dataGeneratorService.GenerateLimiterRule(1, "US Users", "US", null, 3, 15);
-        var limiterRule2 = _dataGeneratorService.GenerateLimiterRule(2, "EU Users", "EU", null, 1, 5);
-        var limiterRule3 = _dataGeneratorService.GenerateLimiterRule(3, "CN Users", "CN", null, 2, 10);
+        var limiterRule1 = _dataGeneratorService.GenerateLimiterRule(1, "US Users", "US", null, 3, 15, null);
+        var limiterRule2 = _dataGeneratorService.GenerateLimiterRule(2, "EU Users", "EU", null, 1, 5, null);
+        var limiterRule3 = _dataGeneratorService.GenerateLimiterRule(3, "CN Users", "CN", null, 2, 10, null);
 
         var seedLimiterRules = new List<LimiterRule>()
             {

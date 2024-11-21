@@ -154,7 +154,7 @@ public class ResourcesDataServiceTest
     public async Task AddTest()
     { 
         var resourceToAdd = _dataGeneratorService.GenerateResource(1, "ResourceToAdd", Statuses.Normal, new List<LimiterRule>());
-        var limiterRule = _dataGeneratorService.GenerateLimiterRule(1, "Maintenance", null, Statuses.Maintenance.Id, 1, 5);
+        var limiterRule = _dataGeneratorService.GenerateLimiterRule(1, "Maintenance", null, Statuses.Maintenance.Id, 1, 5, null);
         resourceToAdd.LimiterRules = new List<LimiterRule> { limiterRule };
 
         try
