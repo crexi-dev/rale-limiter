@@ -2,9 +2,10 @@
 
 namespace RequestTracking.Models.Requests;
 
-public class GetByPatternResponse
+public class GetTrackedItemsResponse
 {
     public ResponseCodeEnum ResponseCode { get; set; }
     public string? ResponseMessage { get; set; }
-    public List<TrackingItem>? TrackingItems { get; set; }
+    public int Count { get; set; }
+    public DateTime LastTrackedDateTimeUtc { get; set; }
 }

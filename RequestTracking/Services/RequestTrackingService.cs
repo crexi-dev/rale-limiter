@@ -12,12 +12,12 @@ public class RequestTrackingService : IRequestTrackingService
         _storageProvider = storageProvider;
     }
 
-    public async Task<AddTrackingResponse> AddTrackingAsync(AddTrackingRequest request)
+    public AddTrackedItemResponse AddTrackedItem(AddTrackedItemRequest request)
     {
-        AddTrackingResponse response = new AddTrackingResponse() { ResponseCode = Models.Enums.ResponseCodeEnum.Success, ResponseMessage = "Success" };
+        AddTrackedItemResponse response = new AddTrackedItemResponse() { ResponseCode = Models.Enums.ResponseCodeEnum.Success, ResponseMessage = "Success" };
         try
         {
-            await _storageProvider.AddTrackingItem(request.TrackingId, request.Request, request.ExpireAfterSeconds);
+            _storageProvider.AddTrackedItem(request.TrackingId, request.Request, request.ExpireAfterSeconds);
         }
         catch (Exception ex)
         {
@@ -27,12 +27,29 @@ public class RequestTrackingService : IRequestTrackingService
         return response;
     }
 
-    public async Task<GetByPatternResponse> GetTrackingResponseAsync(GetByPatternRequest request)
+    public GetTrackedItemsResponse GetTrackedItemsInfo(GetTrackedItemsRequest request)
     {
-        GetByPatternResponse response = new GetByPatternResponse() { ResponseCode = Models.Enums.ResponseCodeEnum.Success, ResponseMessage = "Success" };
+        GetTrackedItemsResponse response = new GetTrackedItemsResponse() { ResponseCode = Models.Enums.ResponseCodeEnum.Success, ResponseMessage = "Success" };
         try
         {
-            response.TrackingItems = await _storageProvider.GetByPattern(request.RequestIdPattern);
+            var info = _storageProvider.GetTrackedItemsInfo(request.Key, request.Start, request.End);
+            response.Count = info.Count;
+            response.LastTrackedDateTimeUtc = info.LastDateTimeUtc;
+        }
+        catch (Exception ex)
+        {
+            response.ResponseCode = Models.Enums.ResponseCodeEnum.SystemError;
+            response.ResponseMessage = ex.Message;
+        }
+        return response;
+    }
+
+    public GetLastTrackedDateTimeUtcResponse GetLastTrackedDateTimeUtc(GetLastTrackedDateTimeUtcRequest request)
+    {
+        GetLastTrackedDateTimeUtcResponse response = new GetLastTrackedDateTimeUtcResponse() { ResponseCode = Models.Enums.ResponseCodeEnum.Success, ResponseMessage = "Success" };
+        try
+        {
+            response.LastTrackedDateTimeUtc = _storageProvider.GetLastTrackedDateTime(request.Key);
         }
         catch (Exception ex)
         {

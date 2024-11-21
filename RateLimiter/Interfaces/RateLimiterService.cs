@@ -1,5 +1,4 @@
-﻿using Cache.Providers;
-using RulesService.Interfaces;
+﻿using RulesService.Interfaces;
 using RulesService.Models;
 using RulesService.Models.Requests;
 using RateLimiter.Models.Requests;
@@ -24,11 +23,13 @@ public class RateLimiterService : IRateLimiterService
     public const string ConstDefaultRateLimiterWorkflow = "RateLimiterRouter";
     public const string ConstCachePrefixMaxRate = "maxrate";
     public const string ConstCachePrefixVelocityRate = "velocityrate";
+    public readonly RateLimiterRule _defaultRule;
 
     private readonly IRulesService _ruleService;
     private readonly IRequestTrackingService _requestTrackingService;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
     private readonly ILogger<RateLimiterService> _logger;
+
     public RateLimiterService(IRulesService ruleService, IRequestTrackingService requestTrackingService, ILogger<RateLimiterService> logger)
     {
         _ruleService = ruleService;
@@ -44,8 +45,26 @@ public class RateLimiterService : IRateLimiterService
             }
         };
 
-    }
+        _defaultRule = new RateLimiterRule()
+        {
+            Name = "DefaultRule",
+            MaxRate = new RateTimeRule()
+            {
+                //1000 per 1 Hour
+                RateSpanType = Models.Enums.RateSpanTypeEnum.Hour,
+                RateSpan = 1,
+                Rate = 1000
+            },
+            VelocityRate = new RateTimeRule()
+            {
+                //1 per 1 Hour
+                RateSpanType = Models.Enums.RateSpanTypeEnum.Second,
+                RateSpan = 1,
+                Rate = 1
 
+            }
+        };
+    }
     public async Task<RateLimiterResponse> GetRateLimiterRules(RateLimiterRequest request)
     {
         RateLimiterResponse response = new RateLimiterResponse() { ResponseCode = Models.Enums.ResponseCodeEnum.Success, IsRateExceeded = false };
@@ -66,43 +85,18 @@ public class RateLimiterService : IRateLimiterService
 
             var ruleResponse = await GetRuleAsync(rulesConfigFile, rulesWorkflow, request);
             response.RuleServiceResponseCode = ruleResponse.Response.ResponseCode;
-
-            if (ruleResponse.Response.ResponseCode != RulesService.Models.Enums.RulesServiceResponseCodeEnum.Success) 
-            {
-                response.ResponseCode = Models.Enums.ResponseCodeEnum.RulesEngineError;
-              
-                response.ResponseMessage = ruleResponse.Response.ResponseMessage;
-                _logger.LogWarning($"{response}. {trace}");
-                return response;
-            }
-
+          
             if (ruleResponse.Rule == null)
             {
-                response.ResponseMessage = $"Limitation Rule is not found. {trace}. {ruleResponse.Response}";
-                _logger.LogWarning($"{response}. {trace}");
-                return response;
+                _logger.LogWarning($"Limitation Rule is not found, using default rule. {trace}");
             }
-            response.RateLimiterRule = ruleResponse.Rule;
-            var rateValidationResult = await IsRequestRateExceeded(ruleResponse.Rule.MaxRate, request, ConstCachePrefixMaxRate);
 
-            response.CurrentRate = rateValidationResult.CurrentCount;
-            if (rateValidationResult.IsExceeded)
-            {
-                response.IsRateExceeded = true;
-                response.ResponseMessage = "Request max rate is exceeded.";
-                _logger.LogWarning($"{response}.{trace}");
-                return response;
-            }
-            
-            rateValidationResult = await IsRequestRateExceeded(ruleResponse.Rule.VelocityRate, request, ConstCachePrefixVelocityRate);
-            response.CurrentVelocityRate = rateValidationResult.CurrentCount;
-            if (rateValidationResult.IsExceeded)
-            {
-                response.IsRateExceeded = true;
-                response.ResponseMessage = "Request velocity rate is exceeded.";
-                _logger.LogWarning($"{response}. {trace}");
-                return response;
-            }
+            RateLimiterRule rule = ruleResponse.Rule??_defaultRule;
+
+            response.RateLimiterRule = rule;
+            response.IsRateExceeded = IsRequestRateExceeded(rule, request);
+            AddRequestTracking(rule.MaxRate, request);
+            return response;
 
             //await SetRequestCache(ruleResponse.Rule.MaxRate, request, ConstCachePrefixMaxRate);
             //await SetRequestCache(ruleResponse.Rule.VelocityRate, request, ConstCachePrefixVelocityRate);
@@ -115,37 +109,71 @@ public class RateLimiterService : IRateLimiterService
         }
         return response;
     }
-    private async Task<(bool IsExceeded, double CurrentCount)> IsRequestRateExceeded(RateTimeRule? rule, RateLimiterRequest request, string prefix)
+
+    private bool IsRequestRateExceeded(RateLimiterRule? rule, RateLimiterRequest request)
     {
-        if (rule == null)
-        { return (true, 0); }
-
-        GetByPatternResponse resp = await _requestTrackingService.GetTrackingResponseAsync(new GetByPatternRequest() { RequestIdPattern = GetTrackingId(request, prefix) });
-        if(resp.TrackingItems == null)
+        if(rule == null)
         {
-            return (true, 0);
+            return false;
+        }
+        string key = GetTrackingId(request);
+        GetTrackedItemsResponse? resp = default;
+        var dateTime = DateTime.UtcNow;
+
+        if (rule.MaxRate != null)
+        {
+            double seconds = (double)rule.MaxRate.RateSpanType * rule.MaxRate.RateSpan;
+            resp = _requestTrackingService.GetTrackedItemsInfo(
+                new GetTrackedItemsRequest()
+                {
+                    Key = key,
+                    Start = dateTime.AddSeconds(-1 *seconds),
+                    End = dateTime
+
+                });
+          
+            if (resp.Count >= rule.MaxRate.Rate)
+            {
+                return true;
+            }
         }
 
-        double count = resp.TrackingItems.Where(x => x.UtcDateTime.AddSeconds((double)rule.RateSpanType * rule.RateSpan * rule.Rate) > DateTime.UtcNow).Count();
-        if (count < rule.Rate)
+        if (rule.VelocityRate != null)
         {
-            return (false, count);
+            
+            double seconds = (double)rule.VelocityRate.RateSpanType * rule.VelocityRate.RateSpan;
+            DateTime lastRequestDateTimeUtc;
+            if (resp == null)
+            {
+                var lastResp = _requestTrackingService.GetLastTrackedDateTimeUtc(new GetLastTrackedDateTimeUtcRequest()
+                {
+                    Key = key
+                });
+                lastRequestDateTimeUtc = lastResp.LastTrackedDateTimeUtc;
+            }
+            else
+            {
+                lastRequestDateTimeUtc = resp.LastTrackedDateTimeUtc;
+            }
+            if (lastRequestDateTimeUtc.AddSeconds(seconds) > dateTime) 
+            {
+                return  true;
+            }
         }
-        return (true, count); ;
+        return false;
     }
 
-    public async Task AddRequestTrackingAsync(RateTimeRule? rule, RateLimiterRequest request, string prefix)
+    private void AddRequestTracking(RateTimeRule rule, RateLimiterRequest request)
     {
-        if (rule == null)
-        { return; }
         double expirySec = (int)rule.RateSpanType * rule.RateSpan;
-        string trackingId = GetTrackingId(request, prefix);
-        AddTrackingRequest addTrackingRequest = new AddTrackingRequest() { ExpireAfterSeconds = expirySec, Request = request, TrackingId = trackingId};
-        await _requestTrackingService.AddTrackingAsync(addTrackingRequest);
+        string trackingId = GetTrackingId(request);
+        AddTrackedItemRequest addTrackingRequest = new AddTrackedItemRequest() { ExpireAfterSeconds = expirySec, Request = request, TrackingId = trackingId};
+        _requestTrackingService.AddTrackedItem(addTrackingRequest);
     }
-    private string GetTrackingId(RateLimiterRequest request, string prefix)
+
+    private string GetTrackingId(RateLimiterRequest request)
     {
-        return $"{prefix}_{request.ClientApplicationEndpoint.ClientApplicationEndpointId}";
+        return $"request_{request.ClientApplicationEndpoint.ClientApplicationEndpointId}";
     }
     private async Task<(RateLimiterRule? Rule, GetRulesRequest Request, GetRulesResponse Response)> GetRuleAsync(string ruleFile, string workflow, RateLimiterRequest request, int iteration = 0)
     {
@@ -215,8 +243,7 @@ public class RateLimiterService : IRateLimiterService
             return (sortedRules[0], rulesRequest, rulesResponse);
         }
     }
-
-    public string? GetObjectValue(object? obj)
+    private string? GetObjectValue(object? obj)
     {
         try
         {

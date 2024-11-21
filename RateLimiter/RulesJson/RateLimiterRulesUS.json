@@ -19,7 +19,7 @@
               "Rate": "2"
             },
             "VelocityRate": {
-              "RateSpanType": "Minute",
+              "RateSpanType": "Second",
               "RateSpan": "1",
               "Rate": "1"
             }
@@ -43,9 +43,9 @@
               "Rate": "10"
             },
             "VelocityRate": {
-              "RateSpanType": "Minute",
-              "RateSpan": "1",
-              "Rate": "10"
+              "RateSpanType": "Second",
+              "RateSpan": "0.001",
+              "Rate": "1"
             }
           }
         }

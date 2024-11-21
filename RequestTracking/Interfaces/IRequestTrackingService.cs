@@ -4,7 +4,8 @@ namespace RequestTracking.Interfaces
 {
     public interface IRequestTrackingService
     {
-        Task<AddTrackingResponse> AddTrackingAsync(AddTrackingRequest request);
-        Task<GetByPatternResponse> GetTrackingResponseAsync(GetByPatternRequest request);
+        AddTrackedItemResponse AddTrackedItem(AddTrackedItemRequest request);
+        GetTrackedItemsResponse GetTrackedItemsInfo(GetTrackedItemsRequest request);
+        GetLastTrackedDateTimeUtcResponse GetLastTrackedDateTimeUtc(GetLastTrackedDateTimeUtcRequest request);
     }
 }

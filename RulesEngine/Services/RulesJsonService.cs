@@ -4,14 +4,12 @@ using RulesService.Interfaces;
 using RulesService.Models;
 using RulesService.Models.Requests;
 using RulesEngine.Models;
-using System.Runtime.CompilerServices;
 using System.Text.Json;
 using RulesEngine.Exceptions;
 using RulesService.Models.Enums;
-using RulesEngine.HelperFunctions;
-
 
 namespace RulesService.Services;
+
 
 public class RulesJsonService : IRulesService
 {
@@ -19,13 +17,16 @@ public class RulesJsonService : IRulesService
     private readonly CacheOptions _cacheOptions;
     public const double ConstExpiryTTLSeconds = 600;
     public readonly JsonSerializerOptions _jsonSerializerOptions;
+  
     public RulesJsonService(ICacheProvider cacheProvider)
     {
         _cacheProvider = cacheProvider;
         _cacheOptions = new CacheOptions() { CacheExpiryOption = CacheExpiryOptionEnum.Absolute, ExpiryTTLSeconds = ConstExpiryTTLSeconds };
         _jsonSerializerOptions = new JsonSerializerOptions() 
-        { NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
-          PropertyNameCaseInsensitive = true};
+        { 
+          NumberHandling = System.Text.Json.Serialization.JsonNumberHandling.AllowReadingFromString,
+          PropertyNameCaseInsensitive = true
+        };
     }
     public async Task<GetRulesResponse> GetRulesAsync(GetRulesRequest request)
     {
@@ -48,9 +49,8 @@ public class RulesJsonService : IRulesService
 
             List<RuleResultTree> resultList = await rulesEngine.ExecuteAllRulesAsync(request.Workflow, request.Input);
 
-            for (int i = 0; i < resultList.Count; i++)
+            foreach(var rule in resultList)
             {
-                var rule = resultList[i];
                 RulesResult result = new RulesResult();
                 result.ErrorMessage = rule.ExceptionMessage;
                 result.SuccessEvent = rule.Rule.SuccessEvent;
@@ -65,7 +65,7 @@ public class RulesJsonService : IRulesService
         catch (RuleValidationException vEx)
         {
             response.ResponseCode = RulesServiceResponseCodeEnum.ValidationError;
-            response.ResponseMessage = $"Validatin Exception for {request}, Exception = {vEx.Message}";
+            response.ResponseMessage = $"Validation Exception for {request}, Exception = {vEx.Message}";
         }
         catch (ExpressionParserException pEx)
         {

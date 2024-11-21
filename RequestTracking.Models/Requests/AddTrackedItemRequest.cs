@@ -1,7 +1,7 @@
 ﻿
 namespace RequestTracking.Models.Requests;
 
-public class AddTrackingRequest
+public class AddTrackedItemRequest
 {
     public string TrackingId { get; set; } = null!;
     public object Request { get; set; } = null!;

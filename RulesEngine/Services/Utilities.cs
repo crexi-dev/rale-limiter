@@ -1,5 +1,6 @@
 ﻿namespace RulesService.Services;
 
+//functions that can be called from expressin in json file
 public class CustomTypes
 {
     public static bool Contains(string value, string stringList)

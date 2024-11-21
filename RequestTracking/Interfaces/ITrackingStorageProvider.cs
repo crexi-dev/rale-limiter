@@ -4,7 +4,8 @@ namespace RequestTracking.Interfaces
 {
     public interface ITrackingStorageProvider
     {
-        Task AddTrackingItem(string key, object item, double expireAfterSec);
-        Task<List<TrackingItem>> GetByPattern(string pattern);
+        void AddTrackedItem(string key, object item, double expireAfterSec);
+        (int Count, DateTime LastDateTimeUtc) GetTrackedItemsInfo(string key, DateTime start, DateTime end);
+        DateTime GetLastTrackedDateTime(string key);
     }
 }

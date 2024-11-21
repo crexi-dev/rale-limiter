@@ -10,13 +10,12 @@ public class RateLimiterResponse
     public RulesServiceResponseCodeEnum? RuleServiceResponseCode { get; set; }
     public string? ResponseMessage { get; set; }
     public bool IsRateExceeded { get; set; }
-    public double CurrentRate { get; set; }
-    public double CurrentVelocityRate { get; set; }
+   
     public RateLimiterRule? RateLimiterRule { get; set; }
 
     public override string ToString()
     {
-        return $"ResponseCode : {ResponseCode}, RuleServiceResponseCode : {RuleServiceResponseCode}, ResponseMessage : {ResponseMessage}, IsRateExceeded : {IsRateExceeded},  CurrentRate : {CurrentRate}, CurrentVelocityRate : {CurrentVelocityRate}, RateLimiterRule : {{{RateLimiterRule}}}";
+        return $"ResponseCode : {ResponseCode}, RuleServiceResponseCode : {RuleServiceResponseCode}, ResponseMessage : {ResponseMessage}, IsRateExceeded : {IsRateExceeded}, RateLimiterRule : {{{RateLimiterRule}}}";
     }
 
 }
