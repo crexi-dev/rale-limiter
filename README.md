@@ -47,50 +47,50 @@ Good luck!
 ### Implementation Details:
 
 **Core Functionality**
-The solution implements a **ResourceRateLimiter** class that receives a list of resources, along with rate limiting rules for each resource. It then utilizes the **PartitionedRateLimiter** class from the [.NET NuGet RateLimiting package](https://www.nuget.org/packages/System.Threading.RateLimiting) to orchestrate the application rules on each supplied resource.
 
-ResourceRateLimiter supports the configuration of multiple resources with composable rate limit rules on each resource.
+The solution implements Limiters that provide Leases to requesting Resources. Limiters are configured through a common **LimiterConfig** file that contains all the configuration properties that can be applied for all limiters. It is the responsibilty of each limiter to ensure the proper configuration is set in this class for the given limiter type. 
 
-Each Rate Limiter class inherits from the **System.Threading.RateLimiting.RateLimiter** class, ensuring extensibility to support custom rate limiting algorithms. An example rate limiting algorithm called **RandomRateLimiter** was created to demonstrate how to extend the solution to support custom limiters.
+Leases are produced when a resource attempts to utilize a limiter. The lease may be acquired or denied based on the current state of the limiter. Leases are configured using the **LeaseConfig** class. For example, the **TokenLimiter** class uses **LeaseConfig** to enable requesting a lease with a variable amount of tokens.
+
+Relinquishing a lease releases the limiter according to the limiter implementation.
+
+**Linked Limiters**
+
+It is possible to compose limiter rules using the **LinkedLimiter** class. 
+
+- Any combination of limiters can be created, including chaining multiple limiters of the same type together.
+	- Example: Rule A + Rule B + Rule C + Rule A  is a supported use case for a linked limiter.
+- When acquiring a lease, all linked limiters must succeed, or the lease acquisition fails as a unit.
+- Nesting of linked limiters is not currently supported, but could be with an enhancement to the linked limiter.
+	- Example: Rule A + (Rule B + Rule C) + Rule D is not currently supported
+
+**Example Limiters**
+
+Two example limiters have been created: TokenLimiter and FixedWindowLimiter. 
+
+**TokenLimiter** 
+
+- Sets a maximum number of tokens that can be utilized at one time.
+- Provids the ability to configure the number of tokens each resource acquires for a given lease.
+- As leases are acquired, the number of tokens utilized is incremented.
+- As leases are released, the number of tokens utilized is decremented.
+
+**FixedWindowLimiter** 
+
+- A simple limiter which takes the window duration in seconds and the maximum number of resources that can utilize the limiter for the given window
+- The number of uses increases for each successful lease and is only reset when the window's elapsed time causes a token refresh.
 
 **JSON-style resource configuration**
+
 ResourceRateLimiter supports (but does not require) JSON-style resource configuration to enable dynamic configuration of rules and resources through JSON hosted in an external source (API Project AppSettings.json file, JSON-based configuration data store, etc.)
 
 A functional sample configuration file has also been provided here: [SampleResourceRateLimiterConfig.json](SampleResourceRateLimiterConfig.json)
 
-* Note - A unit test was created in **ResourceRateLimiterTests** that utilizes this json file for demonstration purposes.
+* Note - A unit test was created in **ResourceRateLimiter.Tests** that utilizes this json file for demonstration purposes.
 
-**Supported Rate Limiters**
-ResourceRateLimiter supports all rate limiter rules provided by the [.NET NuGet RateLimiting package](https://www.nuget.org/packages/System.Threading.RateLimiting) package including:
-* Concurrency
-* Fixed Window
-* Sliding Window
-* Token Bucket
+### Potential Future Enhancements:
 
-**RandomRateLimiter**
-Additionally, to demonstrate adding custom rate limiting rules, the **RandomRateLimiter** class was created to demonstrate adding custom rate limiting algorithms to the configuration capabilities. This limiter is for example purposes only and should not be used in production.
-
-Utilize rate limiting classes available in the official System.Threading.RateLimiting NuGet package.
-
-### Solution Advantages
-
-The solution utilizes classes and rules from the .Net NuGet library **System.Threading.RateLimiting.RateLimiter** rather than creating a custom rate limiter framework. This ensures the solution:
-* Utilizes a Microsoft-maintained, core .NET NuGet package.
-* Is .NET 6 compatible (this project's version) with support for future .NET versions.
-* Adheres to industry best practices and standards.
-* Increases likelihood of developer familiarity. 
-* Reduces maintenance overhead by leveraging existing solutions.
-* Reduces cognitive load for solution maintainers.
-* Provides out of the box support for common rate limiting rules via built-in classes:
-	* ConcurrencyLimiter: Limits the number of concurrent requests to a resources
-	* FixedWindowRateLimiter: Limits the number of requests to a resource within a fixed window of time
-	* SlidingWindowRateLimiter: Limits the number of requests to a resource within a sliding window of time
-	* TokenBucketRateLimiter: Limits the number of requests to a resource within a fixed window of time, with a token bucket algorithm
-* Provides extensibility through inheritance from base RateLimiter class.
-* Implements composability through the use of the Chained/PartitionedRateLimiter class.
-
-### Recommended Next Steps
-Recommended next steps could include: 
-* Refactor namespace for RateLimiter project to prevent conflicts with System.Threading.RateLimiting NuGet package.
-* Implementing additional rate limiting rules as needed.
-* Full testing of configuration and functionality for each supported rate limiter.
+1. Support nested linked limiters to support additional combinations of limiters.
+	Example: Rule A + Rule B + (Rules A + B) + ((Rules A + B) + (Rules B + C)).
+2. Support for asynchronous calls.
+3. Support for resource queuing.

@@ -1,112 +1,53 @@
 {
-  "ResourceLimitConfig": [
+  "RateLimiterConfig": [
     {
-      "Name": "ResourceConcurrency",
+      "Resources": [
+        {
+          "ResourceName": "Resource1",
+          "Tokens": 1
+        }
+      ],
       "Limiters": [
         {
-          "LimiterType": "ConcurrencyLimiter",
-          "MinPermits": 0,
-          "PermitLimit": 10,
-          "QueueLimit": 5,
-          "WindowMinutes": 0,
-          "TokensPerPeriod": 0,
-          "ReplenishmentPeriodSeconds": 0,
-          "SlidingWindowSegments": 0
+          "LimiterType": "TokenLimiter",
+          "MaxTokens": 10
         }
       ]
     },
     {
-      "Name": "ResourceFixedWindow",
+      "Resources": [
+        {
+          "ResourceName": "Resource2"
+        }
+      ],
       "Limiters": [
         {
-          "LimiterType": "FixedWindowRateLimiter",
-          "MinPermits": 0,
-          "PermitLimit": 20,
-          "QueueLimit": 10,
-          "WindowMinutes": 1,
-          "TokensPerPeriod": 0,
-          "ReplenishmentPeriodSeconds": 0,
-          "SlidingWindowSegments": 0
+          "LimiterType": "FixedWindowLimiter",
+          "MaxTokens": 20,
+          "MaxTimeInSeconds": 10
         }
       ]
     },
     {
-      "Name": "ResourceRandom",
-      "Limiters": [
+      "Resources": [
         {
-          "LimiterType": "RandomRateLimiter",
-          "MinPermits": 5,
-          "PermitLimit": 15,
-          "QueueLimit": 0,
-          "WindowMinutes": 0,
-          "TokensPerPeriod": 0,
-          "ReplenishmentPeriodSeconds": 0,
-          "SlidingWindowSegments": 0
-        }
-      ]
-    },
-    {
-      "Name": "ResourceSlidingWindow",
-      "Limiters": [
-        {
-          "LimiterType": "SlidingWindowRateLimiter",
-          "MinPermits": 0,
-          "PermitLimit": 30,
-          "QueueLimit": 15,
-          "WindowMinutes": 2,
-          "TokensPerPeriod": 0,
-          "ReplenishmentPeriodSeconds": 0,
-          "SlidingWindowSegments": 4
-        }
-      ]
-    },
-    {
-      "Name": "ResourceTokenBucket",
-      "Limiters": [
-        {
-          "LimiterType": "TokenBucketRateLimiter",
-          "MinPermits": 0,
-          "PermitLimit": 25,
-          "QueueLimit": 10,
-          "WindowMinutes": 0,
-          "TokensPerPeriod": 5,
-          "ReplenishmentPeriodSeconds": 60,
-          "SlidingWindowSegments": 0
-        }
-      ]
-    },
-    {
-      "Name": "ResourceChained",
-      "Limiters": [
-        {
-          "LimiterType": "ConcurrencyLimiter",
-          "MinPermits": 0,
-          "PermitLimit": 10,
-          "QueueLimit": 5,
-          "WindowMinutes": 0,
-          "TokensPerPeriod": 0,
-          "ReplenishmentPeriodSeconds": 0,
-          "SlidingWindowSegments": 0
+          "ResourceName": "Resource3",
+          "Tokens": 1
         },
         {
-          "LimiterType": "FixedWindowRateLimiter",
-          "MinPermits": 0,
-          "PermitLimit": 20,
-          "QueueLimit": 10,
-          "WindowMinutes": 1,
-          "TokensPerPeriod": 0,
-          "ReplenishmentPeriodSeconds": 0,
-          "SlidingWindowSegments": 0
+          "ResourceName": "Resource4",
+          "Tokens": 1
+        }
+      ],
+      "Limiters": [
+        {
+          "LimiterType": "TokenLimiter",
+          "MaxTokens": 10
         },
         {
-          "LimiterType": "RandomRateLimiter",
-          "MinPermits": 5,
-          "PermitLimit": 15,
-          "QueueLimit": 0,
-          "WindowMinutes": 0,
-          "TokensPerPeriod": 0,
-          "ReplenishmentPeriodSeconds": 0,
-          "SlidingWindowSegments": 0
+          "LimiterType": "FixedWindowLimiter",
+          "MaxTokens": 5,
+          "MaxTimeInSeconds": 10
         }
       ]
     }
