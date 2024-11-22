@@ -53,7 +53,7 @@ public class RateLimiterTest
     }
 
     [Test]
-	public async Task Test_GetRateLimiterRules_MaxRate_HappyPath()
+	public async Task GetRateLimiterRules_MaxRate_ShouldGetCorrectRateExceeded()
 	{
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;
@@ -73,7 +73,7 @@ public class RateLimiterTest
 	}
 
     [Test]
-    public async Task Test_GetRateLimiterRules_VelocityRate_HappyPath()
+    public async Task GetRateLimiterRules_VelocityRate_ShouldGetCorrectRateExceeded()
     {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;
@@ -97,7 +97,7 @@ public class RateLimiterTest
     }
 
     [Test]
-    public async Task Test_GetRateLimiterRules_CustomTypes_Contains()
+    public async Task GetRateLimiterRules_CustomTypes_ShouldSucceedGetCorrectRule()
     {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;
@@ -119,7 +119,7 @@ public class RateLimiterTest
     }
 
     [Test]
-    public async Task Test_GetRateLimiterRules_FileNotFound_UseDefaultRule ()
+    public async Task GetRateLimiterRules_FileNotFound_ShouldGetDefaultRule ()
     {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;
@@ -148,7 +148,7 @@ public class RateLimiterTest
     }
 
     [Test]
-    public async Task Test_GetRateLimiterRules_WorkflowNotExist_SystemError()
+    public async Task GetRateLimiterRules_WorkflowNotExist_ShouldGetSystemErrorResponse()
     {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;
@@ -166,7 +166,7 @@ public class RateLimiterTest
     }
 
     [Test]
-    public async Task Test_GetRateLimiterRules_MaxRecursions_Exceeded()
+    public async Task GetRateLimiterRules_ShouldNotRecurseIndefinetely()
     {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;

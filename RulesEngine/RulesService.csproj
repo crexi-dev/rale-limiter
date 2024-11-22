@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RateLimiter.Models\RateLimiter.Models.csproj" />
+    <ProjectReference Include="..\RequestTracking\RequestTracking.csproj" />
     <ProjectReference Include="..\RulesEngine.Models\RulesService.Models.csproj" />
     <ProjectReference Include="..\Utilities\Utilities.csproj" />
   </ItemGroup>

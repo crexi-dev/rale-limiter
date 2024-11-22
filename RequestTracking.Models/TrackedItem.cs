@@ -13,7 +13,7 @@
         {
             get
             {
-                return DateTime.UtcNow > CreatedDateTimeUtc;
+                return DateTime.UtcNow > ExpirationDateTimeUtc;
             }
         }
 

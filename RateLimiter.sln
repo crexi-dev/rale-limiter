@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestTracking", "RequestT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestTracking.Models", "RequestTracking.Models\RequestTracking.Models.csproj", "{9847D4DC-D426-4F24-AD44-5F40D25887A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RequestTrackingTest", "RequestTrackingTest\RequestTrackingTest.csproj", "{6AF8413E-A18D-4027-8BD4-02F4BFCF8975}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +70,10 @@ Global
 		{9847D4DC-D426-4F24-AD44-5F40D25887A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9847D4DC-D426-4F24-AD44-5F40D25887A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9847D4DC-D426-4F24-AD44-5F40D25887A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AF8413E-A18D-4027-8BD4-02F4BFCF8975}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AF8413E-A18D-4027-8BD4-02F4BFCF8975}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AF8413E-A18D-4027-8BD4-02F4BFCF8975}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AF8413E-A18D-4027-8BD4-02F4BFCF8975}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

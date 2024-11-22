@@ -32,9 +32,8 @@ public class RequestTrackingService : IRequestTrackingService
         GetTrackedItemsResponse response = new GetTrackedItemsResponse() { ResponseCode = Models.Enums.ResponseCodeEnum.Success, ResponseMessage = "Success" };
         try
         {
-            var info = _storageProvider.GetTrackedItemsInfo(request.Key, request.Start, request.End);
-            response.Count = info.Count;
-            response.LastTrackedDateTimeUtc = info.LastDateTimeUtc;
+            response.Count = _storageProvider.GetTrackedItemsCount(request.Key, request.Start, request.End);
+           
         }
         catch (Exception ex)
         {

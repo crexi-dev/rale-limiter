@@ -1,6 +1,7 @@
 ﻿using RequestTracking.Interfaces;
 using RequestTracking.Models;
 using System.Collections.Concurrent;
+using System.Runtime.CompilerServices;
 
 namespace RequestTracking.Services;
 
@@ -23,12 +24,12 @@ public class CacheTrackingStorageProvider : ITrackingStorageProvider
 
         lock (items) 
         {
-            TrackedItem trItem = new TrackedItem() { Item = item, ExpirationDateTimeUtc = DateTime.Now.AddSeconds(expireAfterSec) };
+            TrackedItem trItem = new TrackedItem() { Item = item, ExpirationDateTimeUtc = DateTime.UtcNow.AddSeconds(expireAfterSec) };
             items.Add(trItem);
         }
     }
 
-    public (int Count, DateTime LastDateTimeUtc) GetTrackedItemsInfo(string key, DateTime start, DateTime end)
+    public int  GetTrackedItemsCount(string key, DateTime start, DateTime end)
     {
         if (_cache.TryGetValue(key, out var items))
         {
@@ -40,10 +41,10 @@ public class CacheTrackingStorageProvider : ITrackingStorageProvider
                 startIndex = startIndex < 0 ? ~startIndex : startIndex;
                 endIndex = endIndex < 0 ? ~endIndex : endIndex;
 
-                return (endIndex - startIndex, items[^1].CreatedDateTimeUtc);
+                return endIndex - startIndex;
             }
         }
-        return (0, DateTime.MinValue);
+        return 0;
 
     }
 
@@ -53,13 +54,14 @@ public class CacheTrackingStorageProvider : ITrackingStorageProvider
         {
             lock (items)
             {
-                return items[^1].CreatedDateTimeUtc;
+                if(items.Count > 0)
+                    return items[^1].CreatedDateTimeUtc;
             }
         }
         return DateTime.MinValue;
     }
 
-    private void CleanupExpiredItems(object? state)
+    internal void CleanupExpiredItems(object? state)
     {
         foreach (var kvp in _cache)
         {
