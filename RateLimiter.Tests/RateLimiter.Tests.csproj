@@ -18,14 +18,5 @@
     <None Update="TestRulesJson\RateLimiterRouterRulesInfiniteLoop.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="TestRulesJson\RateLimiterRouterRules.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="TestRulesJson\RateLimiterRulesEU.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="TestRulesJson\RateLimiterRulesUS.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>  

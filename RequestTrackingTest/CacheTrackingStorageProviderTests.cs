@@ -10,7 +10,7 @@ public class CacheTrackingStorageProviderTests
 
     public CacheTrackingStorageProviderTests()
     {
-        _provider = new CacheTrackingStorageProvider();
+        _provider = new CacheTrackingStorageProvider(TimeSpan.FromSeconds(5));
     }
 
     [Test]
@@ -57,8 +57,8 @@ public class CacheTrackingStorageProviderTests
     {
         string key = Guid.NewGuid().ToString();
         _provider.AddTrackedItem(key, "item1", 1);
-        _provider.AddTrackedItem(key, "item2", 5);
-        Thread.Sleep(2000);
+        _provider.AddTrackedItem(key, "item2", 7);
+        Thread.Sleep(6000);
 
         _provider.CleanupExpiredItems(null);
 
@@ -70,8 +70,8 @@ public class CacheTrackingStorageProviderTests
     public void AddTrackedItem_ShouldSucceedAddingConcurrently()
     {
         string key = Guid.NewGuid().ToString();
-        int numberOfThreads = 10;
-        int itemsPerThread = 100;
+        int numberOfThreads = 100;
+        int itemsPerThread = 1000;
 
         Parallel.For(0, numberOfThreads, i =>
         {
@@ -94,7 +94,7 @@ public class CacheTrackingStorageProviderTests
         _provider.AddTrackedItem(key, "item3", 6);
 
         Assert.AreEqual(3, _provider.GetTrackedItemsCount(key, DateTime.MinValue, DateTime.MaxValue));
-        Thread.Sleep(3000);
+        Thread.Sleep(5000);
 
         var remainingItemsCount = _provider.GetTrackedItemsCount(key, DateTime.MinValue, DateTime.MaxValue);
         Assert.AreEqual(2, remainingItemsCount);

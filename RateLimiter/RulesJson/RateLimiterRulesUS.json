@@ -102,7 +102,41 @@
           }
         }
 
+      },
+      {
+        "RuleName": "Tier1000",
+        "Enabled": true,
+        "SuccessEvent": "10",
+        "ErrorType": "Error",
+        "Expression": "input1.Client.Tier == \"Tier1000\"",
+        "Properties": {
+          "RateRule": {
+            "Name": "RateLimiterUS Tier1000 Rule",
+            "Rules": [
+              {
+
+                "RuleType": "MaxRateType",
+                "Name": "RateLimiterUS Tier1000 Max Rate",
+                "Priority": 20000,
+                "MaxRateRule": {
+                  "Timespan": "1:00:00.000",
+                  "Rate": "1000"
+                }
+              },
+              {
+                "Name": "RateLimiterUS Tier1000 Velocity",
+                "RuleType": "MaxRateType",
+                "Priority": 30000,
+                "MaxRateRule": {
+                  "Timespan": "0:00:1.000",
+                  "Rate": 1000
+                }
+              }
+            ]
+          }
+        }
       }
+
     ]
   }
 ]

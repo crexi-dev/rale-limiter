@@ -17,6 +17,7 @@ using RequestTracking.Interfaces;
 using RequestTracking;
 using RulesService.Models;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace RateLimiter.Tests;
 
@@ -53,7 +54,7 @@ public class RateLimiterTest
     }
 
     [Test]
-    public async Task GetRateLimiterRules_MaxRate_ShouldGetCorrectRateExceeded()
+    public async Task GetRateLimiterRules_MaxRate_ShouldGetc()
     {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;
@@ -72,29 +73,58 @@ public class RateLimiterTest
         Assert.That(resp.IsRateExceeded, Is.True, $"{resp}");
     }
 
-    [Test]
-    public async Task GetRateLimiterRules_RunMultipleThreads_ShouldNotGetErrors()
+    [TestCase(100, 100)]
+    [TestCase(100, 1000)]
+    [TestCase(1000, 1001)]
+    [TestCase(1010, 1010)]
+    public async Task GetRateLimiterRules_MaxRate_MultipleThreads_ShouldNotGetErrors_CorrectRateExceeded(int numberOfThreads, int requestsPerThread)
     {
-        var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
-        RateLimiterResponse? resp = default;
-        int numberOfThreads = 100;
-        int itemsPerThread = 1000;
-        reqUS.Client.Tier = "Tier10";
+        //Tier1000 - 1000/1 Hour, expect first 1000 per threat IsExceeded = false, next  per thread IsExceeded = true
 
+        List<RateLimiterResponse> responses = new List<RateLimiterResponse>();
+        int count = 0;
+        int errcount = 0;
         await Parallel.ForEachAsync(Enumerable.Range(0, numberOfThreads), async (i, cancellationToken) =>
         {
-            for (int j = 0; j < itemsPerThread; j++)
+            var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
+            reqUS.Client.Tier = "Tier1000";
+            for (int j = 0; j < requestsPerThread; j++)
             {
-                var resp = await ExecuteRequestAsync(reqUS);
-                Assert.NotNull(resp);
-                Assert.AreEqual(ResponseCodeEnum.Success, resp.ResponseCode);
+                try
+                {
+                    var resp = await ExecuteRequestAsync(reqUS);
+                    Assert.NotNull(resp);
+                    Assert.AreEqual(ResponseCodeEnum.Success, resp.ResponseCode);
+                    lock (responses)
+                    {
+                        responses.Add(resp);
+                        count++;
+                    }
+                }
+                catch (AggregateException aggEx)
+                {
+                    foreach (var ex in aggEx.InnerExceptions)
+                    {
+                        errcount++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    errcount++;
+                }
             }
         });
 
-        resp = await ExecuteRequestAsync(reqUS);
-        Assert.NotNull(resp);
-        Assert.That(resp.IsRateExceeded, Is.True, $"{resp}");
+        var actualCount = responses.Count();
+        var exceedCount = responses.Count(x => x.IsRateExceeded);
+        Assert.AreEqual(numberOfThreads * requestsPerThread, actualCount, $"Expected {numberOfThreads * requestsPerThread} responses, actual {actualCount}");
+        if (exceedCount > 0)
+            Assert.AreEqual((requestsPerThread - 1000) * numberOfThreads, exceedCount, $"Expected {(requestsPerThread - 1000) * numberOfThreads} rate exceeded  responses, actual {exceedCount}");
+
+        Assert.AreEqual(0, errcount);
     }
+
+  
 
     [Test]
     public async Task GetRateLimiterRules_VelocityRate_ShouldGetCorrectRateExceeded()
@@ -143,7 +173,7 @@ public class RateLimiterTest
     }
 
     [Test]
-    public async Task GetRateLimiterRules_FileNotFound_ShouldGetDefaultRule()
+    public async Task GetRateLimiterRules_BadFile_ShouldGetDefaultRule()
     {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;
@@ -172,7 +202,7 @@ public class RateLimiterTest
     }
 
     [Test]
-    public async Task GetRateLimiterRules_WorkflowNotExist_ShouldGetSystemErrorResponse()
+    public async Task GetRateLimiterRules_BadWorkflow_ShouldGetSystemErrorResponse()
     {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;

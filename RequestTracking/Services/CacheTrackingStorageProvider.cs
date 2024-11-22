@@ -1,14 +1,13 @@
 ﻿using RequestTracking.Interfaces;
 using RequestTracking.Models;
 using System.Collections.Concurrent;
-using System.Runtime.CompilerServices;
 
 namespace RequestTracking.Services;
 
 public class CacheTrackingStorageProvider : ITrackingStorageProvider
 {
     // probably shoud be intialized from configuration 
-    private readonly TimeSpan constDefaultCleanupTimeSpan = TimeSpan.FromSeconds(5);
+    private readonly TimeSpan constDefaultCleanupTimeSpan = TimeSpan.FromSeconds(60);
     private ConcurrentDictionary<string, List<TrackedItem>> _cache;
     private readonly Timer _cleanupTimer;
 
@@ -17,11 +16,15 @@ public class CacheTrackingStorageProvider : ITrackingStorageProvider
         _cleanupTimer = new Timer(CleanupExpiredItems, null, TimeSpan.Zero, constDefaultCleanupTimeSpan);
         _cache = new ConcurrentDictionary<string, List<TrackedItem>>();
     }
-   
+    public CacheTrackingStorageProvider(TimeSpan timeSpan)
+    {
+        _cleanupTimer = new Timer(CleanupExpiredItems, null, TimeSpan.Zero, timeSpan);
+        _cache = new ConcurrentDictionary<string, List<TrackedItem>>();
+    }
+
     public void AddTrackedItem(string key, object item, double expireAfterSec)
     {
         var items = _cache.GetOrAdd(key, _ => new List<TrackedItem>());
-
         lock (items) 
         {
             TrackedItem trItem = new TrackedItem() { Item = item, ExpirationDateTimeUtc = DateTime.UtcNow.AddSeconds(expireAfterSec) };
@@ -74,5 +77,4 @@ public class CacheTrackingStorageProvider : ITrackingStorageProvider
             }
         }
     }
-
 }
