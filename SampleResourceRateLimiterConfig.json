@@ -1,0 +1,55 @@
+{
+  "RateLimiterConfig": [
+    {
+      "Resources": [
+        {
+          "ResourceName": "Resource1",
+          "Tokens": 1
+        }
+      ],
+      "Limiters": [
+        {
+          "LimiterType": "TokenLimiter",
+          "MaxTokens": 10
+        }
+      ]
+    },
+    {
+      "Resources": [
+        {
+          "ResourceName": "Resource2"
+        }
+      ],
+      "Limiters": [
+        {
+          "LimiterType": "FixedWindowLimiter",
+          "MaxTokens": 20,
+          "MaxTimeInSeconds": 10
+        }
+      ]
+    },
+    {
+      "Resources": [
+        {
+          "ResourceName": "Resource3",
+          "Tokens": 1
+        },
+        {
+          "ResourceName": "Resource4",
+          "Tokens": 1
+        }
+      ],
+      "Limiters": [
+        {
+          "LimiterType": "TokenLimiter",
+          "MaxTokens": 10
+        },
+        {
+          "LimiterType": "FixedWindowLimiter",
+          "MaxTokens": 5,
+          "MaxTimeInSeconds": 10
+        }
+      ]
+    }
+  ]
+}
