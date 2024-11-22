@@ -29,10 +29,10 @@ public class CacheTrackingStorageProviderTests
     [Test]
     public void GetTrackedItemsCount_ShouldReturnCorrectCount()
     {
-        string key =  Guid.NewGuid().ToString();
+        string key = Guid.NewGuid().ToString();
         double expireAfterSec = 10;
         _provider.AddTrackedItem(key, "item1", expireAfterSec);
-        Thread.Sleep(10); 
+        Thread.Sleep(10);
         _provider.AddTrackedItem(key, "item2", expireAfterSec);
 
         var count = _provider.GetTrackedItemsCount(key, DateTime.MinValue, DateTime.MaxValue);
@@ -45,7 +45,7 @@ public class CacheTrackingStorageProviderTests
         string key = Guid.NewGuid().ToString();
         double expireAfterSec = 10;
         _provider.AddTrackedItem(key, "item1", expireAfterSec);
-        Thread.Sleep(10); 
+        Thread.Sleep(10);
         _provider.AddTrackedItem(key, "item2", expireAfterSec);
 
         var lastDateTime = _provider.GetLastTrackedDateTime(key);
@@ -56,9 +56,9 @@ public class CacheTrackingStorageProviderTests
     public void CleanupExpiredItems_ShouldRemoveExpiredItems()
     {
         string key = Guid.NewGuid().ToString();
-        _provider.AddTrackedItem(key, "item1", 1); 
-        _provider.AddTrackedItem(key, "item2", 5); 
-        Thread.Sleep(2000); 
+        _provider.AddTrackedItem(key, "item1", 1);
+        _provider.AddTrackedItem(key, "item2", 5);
+        Thread.Sleep(2000);
 
         _provider.CleanupExpiredItems(null);
 
@@ -83,5 +83,20 @@ public class CacheTrackingStorageProviderTests
 
         var count = _provider.GetTrackedItemsCount(key, DateTime.MinValue, DateTime.MaxValue);
         Assert.AreEqual(numberOfThreads * itemsPerThread, count, $"Expected {numberOfThreads * itemsPerThread}, received {count}");
+    }
+    [Test]
+    public void CleanupTimer_ShouldRemoveExpiredItems()
+    {
+        string key = Guid.NewGuid().ToString();
+
+        _provider.AddTrackedItem(key, "item1", 2);
+        _provider.AddTrackedItem(key, "item2", 4);
+        _provider.AddTrackedItem(key, "item3", 6);
+
+        Assert.AreEqual(3, _provider.GetTrackedItemsCount(key, DateTime.MinValue, DateTime.MaxValue));
+        Thread.Sleep(3000);
+
+        var remainingItemsCount = _provider.GetTrackedItemsCount(key, DateTime.MinValue, DateTime.MaxValue);
+        Assert.AreEqual(2, remainingItemsCount);
     }
 }

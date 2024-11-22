@@ -8,7 +8,7 @@ namespace RequestTracking.Services;
 public class CacheTrackingStorageProvider : ITrackingStorageProvider
 {
     // probably shoud be intialized from configuration 
-    private readonly TimeSpan constDefaultCleanupTimeSpan = TimeSpan.FromSeconds(60);
+    private readonly TimeSpan constDefaultCleanupTimeSpan = TimeSpan.FromSeconds(5);
     private ConcurrentDictionary<string, List<TrackedItem>> _cache;
     private readonly Timer _cleanupTimer;
 

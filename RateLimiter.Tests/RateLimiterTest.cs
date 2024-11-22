@@ -29,7 +29,7 @@ public class RateLimiterTest
     private readonly ICacheProvider _cacheProvider;
     private readonly ServiceProvider _serviceProvider;
     private readonly RateLimiterRules _defaultRateLimiterRules;
-    
+
     public RateLimiterTest()
     {
         _serviceProvider = ConfigureServices();
@@ -45,7 +45,7 @@ public class RateLimiterTest
         _cacheProvider = _serviceProvider.GetRequiredService<ICacheProvider>();
         Assert.NotNull(_cacheProvider);
 
-        _rateLimiterService = new RateLimiterService(_rulesService, _requestTrackingService, _cacheProvider, Substitute.For<ILogger<RateLimiterService>>() );
+        _rateLimiterService = new RateLimiterService(_rulesService, _requestTrackingService, _cacheProvider, Substitute.For<ILogger<RateLimiterService>>());
         Assert.NotNull(_rateLimiterService);
 
         _defaultRateLimiterRules = _rateLimiterService.GetDefaultRules();
@@ -53,14 +53,14 @@ public class RateLimiterTest
     }
 
     [Test]
-	public async Task GetRateLimiterRules_MaxRate_ShouldGetCorrectRateExceeded()
-	{
+    public async Task GetRateLimiterRules_MaxRate_ShouldGetCorrectRateExceeded()
+    {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;
         reqUS.Client.Tier = "Tier10";
 
         //10 requests per 1 Hour
-        for (int i = 1; i <= 10; i++) 
+        for (int i = 1; i <= 10; i++)
         {
             resp = await ExecuteRequestAsync(reqUS);
             Assert.NotNull(resp);
@@ -70,7 +70,31 @@ public class RateLimiterTest
         resp = await ExecuteRequestAsync(reqUS);
         Assert.NotNull(resp);
         Assert.That(resp.IsRateExceeded, Is.True, $"{resp}");
-	}
+    }
+
+    [Test]
+    public async Task GetRateLimiterRules_RunMultipleThreads_ShouldNotGetErrors()
+    {
+        var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
+        RateLimiterResponse? resp = default;
+        int numberOfThreads = 100;
+        int itemsPerThread = 1000;
+        reqUS.Client.Tier = "Tier10";
+
+        await Parallel.ForEachAsync(Enumerable.Range(0, numberOfThreads), async (i, cancellationToken) =>
+        {
+            for (int j = 0; j < itemsPerThread; j++)
+            {
+                var resp = await ExecuteRequestAsync(reqUS);
+                Assert.NotNull(resp);
+                Assert.AreEqual(ResponseCodeEnum.Success, resp.ResponseCode);
+            }
+        });
+
+        resp = await ExecuteRequestAsync(reqUS);
+        Assert.NotNull(resp);
+        Assert.That(resp.IsRateExceeded, Is.True, $"{resp}");
+    }
 
     [Test]
     public async Task GetRateLimiterRules_VelocityRate_ShouldGetCorrectRateExceeded()
@@ -113,13 +137,13 @@ public class RateLimiterTest
         resp = await ExecuteRequestAsync(reqUS);
         Assert.NotNull(resp);
         Assert.NotNull(resp.RateLimiterRule);
-        Assert.AreEqual("RateLimiterUS Tier20_CA_AZ" , resp.RateLimiterRule?.Name, $"{resp}");
+        Assert.AreEqual("RateLimiterUS Tier20_CA_AZ", resp.RateLimiterRule?.Name, $"{resp}");
         Assert.That(resp.IsRateExceeded, Is.True, $"{resp}");
 
     }
 
     [Test]
-    public async Task GetRateLimiterRules_FileNotFound_ShouldGetDefaultRule ()
+    public async Task GetRateLimiterRules_FileNotFound_ShouldGetDefaultRule()
     {
         var reqUS = TestData.GetUSClientRequest(Guid.NewGuid());
         RateLimiterResponse? resp = default;
@@ -133,9 +157,9 @@ public class RateLimiterTest
         Assert.AreEqual(ResponseCodeEnum.Success, resp.ResponseCode!);
 
         Assert.NotNull(resp.RuleServiceResponseCode);
-        Assert.AreEqual( RulesServiceResponseCodeEnum.SystemError, resp.RuleServiceResponseCode!, $"{resp}");
+        Assert.AreEqual(RulesServiceResponseCodeEnum.SystemError, resp.RuleServiceResponseCode!, $"{resp}");
 
-        var rule = _defaultRateLimiterRules.Rules.Where(x => x.MaxRateRule != null).OrderBy(x=>x.Priority).FirstOrDefault();
+        var rule = _defaultRateLimiterRules.Rules.Where(x => x.MaxRateRule != null).OrderBy(x => x.Priority).FirstOrDefault();
 
         Assert.IsNotNull(rule);
         Assert.IsNotNull(rule?.MaxRateRule);
@@ -191,7 +215,7 @@ public class RateLimiterTest
             .ConfigureRequestTracking()
             .ConfigureRateLimiter()
             .BuildServiceProvider();
-        
+
         return provider;
     }
     private async Task<RateLimiterResponse> ExecuteRequestAsync(RateLimiterRequest request)
