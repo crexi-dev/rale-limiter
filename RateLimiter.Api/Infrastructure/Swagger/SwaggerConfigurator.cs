@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using NSwag;
 using NSwag.Generation.Processors.Security;
+using NSwag;
 
-namespace RateLimiter.Api.Infrastructure
+namespace RateLimiter.Api.Infrastructure.Swagger
 {
-	public static class ServiceCollectionExtensions
+	public static class SwaggerConfigurator
 	{
 		public static void AddSwaggerServices(this IServiceCollection services)
 		{
