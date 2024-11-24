@@ -1,16 +1,22 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26730.15
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiter", "RateLimiter\RateLimiter.csproj", "{36F4BDC6-D3DA-403A-8DB7-0C79F94B938F}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiter.Tests", "RateLimiter.Tests\RateLimiter.Tests.csproj", "{C4F9249B-010E-46BE-94B8-DD20D82F1E60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RateLimiter.Tests", "RateLimiter.Tests\RateLimiter.Tests.csproj", "{C4F9249B-010E-46BE-94B8-DD20D82F1E60}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9B206889-9841-4B5E-B79B-D5B2610CCCFF}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiter.Api", "RateLimiter.Api\RateLimiter.Api.csproj", "{CF9ADF06-F358-44D9-B7CD-BED4B65F6FD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiter.BusinessLogic", "RateLimiter.BusinessLogic\RateLimiter.BusinessLogic.csproj", "{BD6B761C-8E5B-4A64-B248-2CA6E8851AF1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiter.DataAccess", "RateLimiter.DataAccess\RateLimiter.DataAccess.csproj", "{A35CE824-DD41-4368-9959-D33CB76C1EF8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiter.Core", "RateLimiter.Core\RateLimiter.Core.csproj", "{57519CC4-B3EE-4F53-AE73-BB7F8D0960F1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,14 +24,26 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{36F4BDC6-D3DA-403A-8DB7-0C79F94B938F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{36F4BDC6-D3DA-403A-8DB7-0C79F94B938F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{36F4BDC6-D3DA-403A-8DB7-0C79F94B938F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{36F4BDC6-D3DA-403A-8DB7-0C79F94B938F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C4F9249B-010E-46BE-94B8-DD20D82F1E60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C4F9249B-010E-46BE-94B8-DD20D82F1E60}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C4F9249B-010E-46BE-94B8-DD20D82F1E60}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C4F9249B-010E-46BE-94B8-DD20D82F1E60}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF9ADF06-F358-44D9-B7CD-BED4B65F6FD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF9ADF06-F358-44D9-B7CD-BED4B65F6FD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF9ADF06-F358-44D9-B7CD-BED4B65F6FD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF9ADF06-F358-44D9-B7CD-BED4B65F6FD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD6B761C-8E5B-4A64-B248-2CA6E8851AF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD6B761C-8E5B-4A64-B248-2CA6E8851AF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD6B761C-8E5B-4A64-B248-2CA6E8851AF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD6B761C-8E5B-4A64-B248-2CA6E8851AF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A35CE824-DD41-4368-9959-D33CB76C1EF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A35CE824-DD41-4368-9959-D33CB76C1EF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A35CE824-DD41-4368-9959-D33CB76C1EF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A35CE824-DD41-4368-9959-D33CB76C1EF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57519CC4-B3EE-4F53-AE73-BB7F8D0960F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57519CC4-B3EE-4F53-AE73-BB7F8D0960F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57519CC4-B3EE-4F53-AE73-BB7F8D0960F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57519CC4-B3EE-4F53-AE73-BB7F8D0960F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
