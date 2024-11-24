@@ -14,7 +14,9 @@ namespace RateLimiter.Api.Infrastructure.Authentication
 			_serviceScopeFactory = serviceScopeFactory;
 		}
 
-		public void Configure(string? name, JwtBearerOptions options)
+		public void Configure(string? name, JwtBearerOptions options) => Configure(options);
+
+		public void Configure(JwtBearerOptions options)
 		{
 			using (var scope = _serviceScopeFactory.CreateScope())
 			{
@@ -32,11 +34,6 @@ namespace RateLimiter.Api.Infrastructure.Authentication
 					IssuerSigningKey = tokenService.KeyGenerator.GetKey(),
 				};
 			}
-		}
-
-		public void Configure(JwtBearerOptions options)
-		{
-			Configure(JwtBearerDefaults.AuthenticationScheme, options);
 		}
 	}
 }

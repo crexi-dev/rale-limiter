@@ -2,6 +2,7 @@
 using RateLimiter.Api.Infrastructure;
 using RateLimiter.Api.Infrastructure.Authentication;
 using RateLimiter.Api.Infrastructure.ExeptionHandling;
+using RateLimiter.Api.Infrastructure.Swagger;
 using System.Text.Json.Serialization;
 
 namespace RateLimiter.Api
@@ -24,7 +25,7 @@ namespace RateLimiter.Api
 
 			services.AddTokenConfigurationServices(Configuration);
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
-			services.ConfigureOptions<ConfigureJwtBearerOptions>();
+			services.AddJwtBearerConfiguration();
 
 			services.AddRateLimiterServices();
 			services.AddSwaggerServices();
