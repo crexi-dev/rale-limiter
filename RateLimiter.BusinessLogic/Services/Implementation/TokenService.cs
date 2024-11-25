@@ -10,27 +10,25 @@ namespace RateLimiter.BusinessLogic.Services.Implementation
 {
 	public class TokenService : ITokenService
 	{
-		private const string UniqueIndentifier = "UniqueIdentifierId";
-
-		private readonly KeyGenerator _keyGenerator;
+		private readonly IKeyGeneratorService _keyGenerator;
 		private readonly TokenSettings _tokenSettings;
 
 		public TokenService(
-			KeyGenerator keyGenerator,
+			IKeyGeneratorService keyGenerator,
 			IOptions<TokenSettings> options)
 		{
 			_keyGenerator = keyGenerator;
 			_tokenSettings = options.Value;
 		}
 
-		public KeyGenerator KeyGenerator => _keyGenerator;
 		public TokenSettings TokenSettings => _tokenSettings;
+		public IKeyGeneratorService KeyGeneratorService => _keyGenerator;
 
-		public Task<string> GenerateTokenAsync(RegionTokenType type)
+		public Task<string> GenerateTokenAsync(RegionType type)
 		{
-			if (type == RegionTokenType.None)
+			if (type == RegionType.None)
 			{
-				throw new ArgumentException($"{nameof(RegionTokenType)} should not be set up in {RegionTokenType.None}.");
+				throw new ArgumentException($"{nameof(RegionType)} should not be set up in {RegionType.None}.");
 			}
 
 			var token = new JwtSecurityToken(
@@ -38,8 +36,8 @@ namespace RateLimiter.BusinessLogic.Services.Implementation
 				audience: _tokenSettings.Audience,
 				claims: new List<Claim>
 				{
-					new Claim(nameof(RegionTokenType), type.ToString()),
-					new Claim(nameof(UniqueIndentifier), Guid.NewGuid().ToString())
+					new Claim(nameof(CustomClaimTypes.Region), type.ToString()),
+					new Claim(nameof(CustomClaimTypes.UniqueIdentifier), Guid.NewGuid().ToString())
 				},
 				signingCredentials: new SigningCredentials(_keyGenerator.GetKey(), _keyGenerator.SigningAlgorithm));
 

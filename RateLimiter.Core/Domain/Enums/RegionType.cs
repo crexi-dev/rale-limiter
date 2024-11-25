@@ -1,6 +1,6 @@
 ﻿namespace RateLimiter.Core.Domain.Enums
 {
-	public enum RegionTokenType
+	public enum RegionType
 	{
 		None = 0,
 		US = 1,

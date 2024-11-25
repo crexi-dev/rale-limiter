@@ -4,6 +4,6 @@ namespace RateLimiter.Api.Models.Request
 {
 	public class CreateTokenRequestModel
 	{
-		public RegionTokenType Type { get; set; }
+		public RegionType Type { get; set; }
 	}
 }

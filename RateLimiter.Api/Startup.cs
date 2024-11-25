@@ -27,6 +27,7 @@ namespace RateLimiter.Api
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
 			services.AddJwtBearerConfiguration();
 
+			services.AddFilters();
 			services.AddRateLimiterServices();
 			services.AddSwaggerServices();
 		}
@@ -44,13 +45,13 @@ namespace RateLimiter.Api
 			}
 
 			app.UseHttpsRedirection();
+
 			app.UseRouting();
 
 			app.UseAuthentication();
 			app.UseAuthorization();
 
 			app.UseErrorHandler();
-
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
