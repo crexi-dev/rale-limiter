@@ -15,7 +15,14 @@ namespace RateLimiter.Api.Infrastructure
 			services.AddScoped<RuleFilter>();
 		}
 
-		public static void AddTokenConfigurationServices(this IServiceCollection services, IConfiguration configuration)
+		public static void AddRateLimiterServices(this IServiceCollection services, IConfiguration configuration)
+		{
+			AddTokenConfigurationServices(services, configuration);
+			AddBussinessLogicServices(services);
+			AddDataAccessLayerRepositories(services);
+		}
+
+		private static void AddTokenConfigurationServices(this IServiceCollection services, IConfiguration configuration)
 		{
 			services.Configure<TokenSettings>(configuration.GetSection(nameof(TokenSettings)));
 			services.AddSingleton<IKeyGeneratorService>(provider =>
@@ -25,12 +32,6 @@ namespace RateLimiter.Api.Infrastructure
 			});
 
 			services.AddScoped<ITokenService, TokenService>();
-		}
-
-		public static void AddRateLimiterServices(this IServiceCollection services)
-		{
-			AddBussinessLogicServices(services);
-			AddDataAccessLayerRepositories(services);
 		}
 
 		private static void AddBussinessLogicServices(this IServiceCollection services)

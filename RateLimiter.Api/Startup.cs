@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Configuration;
 using RateLimiter.Api.Infrastructure;
 using RateLimiter.Api.Infrastructure.Authentication;
 using RateLimiter.Api.Infrastructure.ExeptionHandling;
@@ -23,12 +24,9 @@ namespace RateLimiter.Api
 				options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
 			});
 
-			services.AddTokenConfigurationServices(Configuration);
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
-			services.AddJwtBearerConfiguration();
-
+			services.AddAuthenticationConfiguration(Configuration);
 			services.AddFilters();
-			services.AddRateLimiterServices();
+			services.AddRateLimiterServices(Configuration);
 			services.AddSwaggerServices();
 		}
 
