@@ -4,13 +4,13 @@ Based on this, I designed a simple solution with a service that runs a group of 
 Each rule is independent of each other and can verify anything that is required. Rules can be reusable or built for specific scenarios.
 
 
-## Requirements
+# Requirements
 - The system shall be capable of applying different rate-limiting rules to each endpoint.
 - The system shall be able to reuse any given rule.
 - The system shall be able to add as many rules as needed.
 - The rules should be configurable.
 
-## Design
+# Design
 
 
 ![](./Documentation/high_level_design.png)
@@ -42,7 +42,7 @@ a given country. The current configuration supports only one country, but this c
 - No tests were provided for RateLimiterWeb as this is only a configuration and usage sample.
 
 
-## Code Organization
+# Code Organization
 **RateLimiter** - The main project holding the service, rules, and supporting components.
 
 **RateLimiter.Tests** - Project holding tests for RateLimiter.
@@ -51,7 +51,7 @@ a given country. The current configuration supports only one country, but this c
 
 
 
-## What's next?
+# What's next?
 - Better error handling, this code shows only basic error handling
 - Better logging, this code only logs to the console log
 - Create actual rules, this code only has a sample of rules for some scenarios. 
