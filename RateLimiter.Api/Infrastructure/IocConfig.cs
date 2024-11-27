@@ -18,9 +18,7 @@ namespace RateLimiter.Api.Infrastructure
 	public static class IocConfig
 	{
 		public static void AddFilters(this IServiceCollection services)
-		{
-			services.AddScoped<RequestLimitFilter>();
-		}
+			=> services.AddScoped<RequestLimitFilter>();
 
 		public static void AddRateLimiterServices(this IServiceCollection services, IConfiguration configuration)
 		{

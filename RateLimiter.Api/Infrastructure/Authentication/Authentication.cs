@@ -53,7 +53,7 @@ namespace RateLimiter.Api.Infrastructure.Authentication
 								return Task.CompletedTask;
 							}
 
-							if(!Guid.TryParse(uniqueIdentifier, out Guid guid))
+							if(!Guid.TryParse(uniqueIdentifier, out _))
 							{
 								context.Fail(GetClaimValueErrorMessage(nameof(Constants.CustomClaimTypes.UniqueIdentifier)));
 								return Task.CompletedTask;
