@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Mvc;
 using RateLimiter.Api.Infrastructure;
 using RateLimiter.Api.Infrastructure.Authentication;
 using RateLimiter.Api.Infrastructure.ExeptionHandling;
 using RateLimiter.Api.Infrastructure.Filters;
 using RateLimiter.Api.Infrastructure.Swagger;
+using RateLimiter.Api.Infrastructure.Validators;
 using System.Text.Json.Serialization;
 
 namespace RateLimiter.Api
@@ -30,6 +32,9 @@ namespace RateLimiter.Api
 			});
 
 			services.AddAuthenticationConfiguration(Configuration);
+			services.AddFluentValidationAutoValidation();
+			services.AddValidators();
+
 			services.AddRateLimiterServices(Configuration);
 			services.AddSwaggerServices();
 		}

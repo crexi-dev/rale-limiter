@@ -23,11 +23,6 @@ namespace RateLimiter.BusinessLogic.Services.Implementation
 
 		public Task<string> GenerateTokenAsync(RegionType type)
 		{
-			if (type == RegionType.None)
-			{
-				throw new ArgumentException($"{nameof(RegionType)} should not be set up in {RegionType.None}.");
-			}
-
 			var token = new JwtSecurityToken(
 				issuer: _tokenSettings.Issuer,
 				audience: _tokenSettings.Audience,
