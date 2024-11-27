@@ -6,7 +6,7 @@ namespace RateLimiter.Api.Infrastructure.ExeptionHandling.Model
 	{
 		public int Status { get; set; }
 		public required string Title { get; set; }
-		public required string Detail { get; set; }
+		public required string Details { get; set; }
 		public override string ToString() => JsonConvert.SerializeObject(this);
 	}
 }

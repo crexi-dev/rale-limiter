@@ -16,7 +16,7 @@ namespace RateLimiter.Api.Infrastructure.Authentication
 				.AddJwtBearer(options =>
 				{
 					var settings = configuration.GetSection(nameof(TokenSettings)).Get<TokenSettings>();
-					var secretKey = configuration.GetValue<string>("GeneratorSecretKey");
+					var secretKey = configuration.GetValue<string>(Constants.SecretKey);
 
 					options.TokenValidationParameters = new TokenValidationParameters
 					{
@@ -35,8 +35,8 @@ namespace RateLimiter.Api.Infrastructure.Authentication
 						{
 							var claimsPrincipal = context.Principal;
 
-							var regionClaim = claimsPrincipal.FindFirst(nameof(CustomClaimTypes.Region));
-							var uniqueIdentifierClaim = claimsPrincipal.FindFirst(nameof(CustomClaimTypes.UniqueIdentifier));
+							var regionClaim = claimsPrincipal.FindFirst(nameof(Constants.CustomClaimTypes.Region));
+							var uniqueIdentifierClaim = claimsPrincipal.FindFirst(nameof(Constants.CustomClaimTypes.UniqueIdentifier));
 
 							if (regionClaim == null || uniqueIdentifierClaim == null)
 							{
@@ -53,9 +53,15 @@ namespace RateLimiter.Api.Infrastructure.Authentication
 								return Task.CompletedTask;
 							}
 
+							if(!Guid.TryParse(uniqueIdentifier, out Guid guid))
+							{
+								context.Fail(GetClaimValueErrorMessage(nameof(Constants.CustomClaimTypes.UniqueIdentifier)));
+								return Task.CompletedTask;
+							}
+
 							if (!Enum.TryParse(regionType, out RegionType type))
 							{
-								context.Fail($"Invalid value of claim: {nameof(CustomClaimTypes.Region)}.");
+								context.Fail(GetClaimValueErrorMessage(nameof(Constants.CustomClaimTypes.Region)));
 							}
 
 							return Task.CompletedTask;
@@ -63,5 +69,8 @@ namespace RateLimiter.Api.Infrastructure.Authentication
 					};
 				});
 		}
+
+		private static string GetClaimValueErrorMessage(string claimType)
+			=> $"Invalid value of claim: {claimType}.";
 	}
 }

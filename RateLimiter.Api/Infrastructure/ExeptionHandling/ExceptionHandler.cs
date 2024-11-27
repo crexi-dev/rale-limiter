@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using RateLimiter.Api.Infrastructure.ExeptionHandling.Model;
+using RateLimiter.Core.Exceptions;
 using System.Net;
 
 namespace RateLimiter.Api.Infrastructure.ExeptionHandling
@@ -34,6 +35,7 @@ namespace RateLimiter.Api.Infrastructure.ExeptionHandling
 			response.StatusCode = exception switch
 			{
 				ArgumentException => (int)HttpStatusCode.BadRequest,
+				TooManyRequestsException => (int)HttpStatusCode.TooManyRequests,
 				_ => (int)HttpStatusCode.InternalServerError,
 			};
 
@@ -41,7 +43,7 @@ namespace RateLimiter.Api.Infrastructure.ExeptionHandling
 			{
 				Status = response.StatusCode,
 				Title = ((HttpStatusCode)response.StatusCode).ToString(),
-				Detail = exception.InnerException?.Message ?? exception.Message,
+				Details = exception.InnerException?.Message ?? exception.Message,
 			}.ToString());
 		}
 	}

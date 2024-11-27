@@ -1,4 +1,6 @@
-﻿using RateLimiter.Core.Domain.Enums;
+﻿using RateLimiter.BusinessLogic.Services.RateLimiter.Factory;
+using RateLimiter.BusinessLogic.Services.RateLimiter.Rules;
+using RateLimiter.Core.Domain.Enums;
 
 namespace RateLimiter.BusinessLogic.Services.Implementation.RateLimiter.Factory
 {
@@ -11,7 +13,10 @@ namespace RateLimiter.BusinessLogic.Services.Implementation.RateLimiter.Factory
 			_rules = rules;
 		}
 
-		public IRuleService GetRule(RegionType regionType, RuleType ruleType)
-			=> _rules.Single(x => x.RegionType == regionType && x.RuleType == ruleType);
+		public IEnumerable<IRuleService> GetRulesByRegion(RegionType regionType)
+			=> _rules.Where(x => x.RegionType == regionType);
+
+		public IRuleService GetRule(RuleType ruleType)
+			=> _rules.Single(x => x.RuleType == ruleType); 
 	}
 }

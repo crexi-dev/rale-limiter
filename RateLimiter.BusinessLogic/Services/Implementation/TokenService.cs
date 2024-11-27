@@ -21,9 +21,6 @@ namespace RateLimiter.BusinessLogic.Services.Implementation
 			_tokenSettings = options.Value;
 		}
 
-		public TokenSettings TokenSettings => _tokenSettings;
-		public IKeyGeneratorService KeyGeneratorService => _keyGenerator;
-
 		public Task<string> GenerateTokenAsync(RegionType type)
 		{
 			if (type == RegionType.None)
@@ -36,8 +33,8 @@ namespace RateLimiter.BusinessLogic.Services.Implementation
 				audience: _tokenSettings.Audience,
 				claims: new List<Claim>
 				{
-					new Claim(nameof(CustomClaimTypes.Region), type.ToString()),
-					new Claim(nameof(CustomClaimTypes.UniqueIdentifier), Guid.NewGuid().ToString())
+					new Claim(nameof(Constants.CustomClaimTypes.Region), type.ToString()),
+					new Claim(nameof(Constants.CustomClaimTypes.UniqueIdentifier), Guid.NewGuid().ToString())
 				},
 				signingCredentials: new SigningCredentials(_keyGenerator.GetKey(), _keyGenerator.SigningAlgorithm));
 
