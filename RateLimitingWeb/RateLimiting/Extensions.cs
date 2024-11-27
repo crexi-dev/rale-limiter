@@ -19,9 +19,9 @@ namespace RateLimiterWeb.RateLimiting
                 .AddSingleton<ICountryDataProvider, CountryDataProvider>()
 
                 // rules
-                .AddScoped<IRateLimitingRule, RuleNRequestPerTimerange>()
-                .AddScoped<IRateLimitingRule, RuleAllow1RequestForMatchingConfiguration>()
-                .AddScoped<IRateLimitingRule, DummyRule>()
+                .AddTransient<IRateLimitingRule, RuleNRequestPerTimerange>()
+                .AddTransient<IRateLimitingRule, RuleAllow1RequestForMatchingConfiguration>()
+                .AddTransient<IRateLimitingRule, DummyRule>()
                 ;
 
             return services;
