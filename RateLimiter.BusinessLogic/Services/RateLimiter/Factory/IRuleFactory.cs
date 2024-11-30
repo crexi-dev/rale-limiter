@@ -6,6 +6,6 @@ namespace RateLimiter.BusinessLogic.Services.RateLimiter.Factory
 	public interface IRuleFactory
 	{
 		IEnumerable<IRuleService> GetRulesByRegion(RegionType regionType);
-		IRuleService GetRule(RuleType ruleType);
+		IRuleService GetRule(RuleType ruleType, RegionType regionType);
 	}
 }

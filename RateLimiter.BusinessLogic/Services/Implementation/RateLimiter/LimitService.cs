@@ -23,7 +23,7 @@ namespace RateLimiter.BusinessLogic.Services.Implementation.RateLimiter
 			{
 				foreach (var ruleType in matchedRules)
 				{
-					var rule = _ruleFactory.GetRule(ruleType);
+					var rule = _ruleFactory.GetRule(ruleType, requestModel.RegionType);
 					var isSuccess = await rule.ApplyToRequest(requestModel);
 
 					if (!isSuccess)

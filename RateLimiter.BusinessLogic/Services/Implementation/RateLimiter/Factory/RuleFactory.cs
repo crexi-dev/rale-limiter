@@ -16,7 +16,7 @@ namespace RateLimiter.BusinessLogic.Services.Implementation.RateLimiter.Factory
 		public IEnumerable<IRuleService> GetRulesByRegion(RegionType regionType)
 			=> _rules.Where(x => x.RegionType == regionType);
 
-		public IRuleService GetRule(RuleType ruleType)
-			=> _rules.Single(x => x.RuleType == ruleType); 
+		public IRuleService GetRule(RuleType ruleType, RegionType regionType)
+			=> _rules.Single(x => x.RuleType == ruleType && x.RegionType == regionType); 
 	}
 }
