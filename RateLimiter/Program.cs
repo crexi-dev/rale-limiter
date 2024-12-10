@@ -29,5 +29,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseApiKeyMiddleware();
+app.UseRateLimiterMiddleware();
 
 app.Run();
