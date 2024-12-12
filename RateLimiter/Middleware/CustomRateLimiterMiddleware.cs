@@ -13,8 +13,6 @@ public class CustomRateLimiterMiddleware(RequestDelegate next)
 {
     private readonly RequestDelegate _next = next;
 
-    // TODO: Determine what makes a request timestamp "old" since each token/resource combo can have different configuration values for how far back to look
-    // TODO: Remove old requests to keep the list small for performance
     public async Task InvokeAsync(HttpContext context, IEnumerable<IApplyARateLimit> rateLimiters, IProvideAccessToCachedData repository)
     {
         // Try to get the x-authentication-key header
