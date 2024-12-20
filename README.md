@@ -10,9 +10,7 @@ The following rate limiting rules are implemented in the code:
 
 - **RequestsPerTimespanRule**: Limits the number of requests a client can make within a specified timespan.
 - **TimespanSinceLastCallRule**: Ensures a minimum timespan has passed since the last request from a client.
-- **DailyRequestLimitRule**: Limits the number of requests a client can make in a 24-hour period.
 - **ConcurrentRequestLimitRule**: Limits the number of concurrent requests a client can make.
-- **BurstRequestLimitRule**: Allows a burst of requests in a short period but enforces a cooldown period afterward.
 - **RegionBasedRule**: Applies different rules based on the client's region (e.g., US or EU).
 
 ## Design Patterns Used
