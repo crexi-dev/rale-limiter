@@ -1,4 +1,117 @@
-﻿**Rate-limiting pattern**
+﻿# Rate Limiter
+
+## Introduction
+
+The Rate Limiting pattern is a technique used to control the rate at which clients can make requests to a server. This helps prevent abuse and ensures fair usage of resources. In this project, we implement a simple, reusable rate limiter class that can be configured with different rate limiting rules. The goal is to demonstrate the concept of rate limiting without the need for a complex environment or API configurations.
+
+## Rate Limiting Algorithms (Rules)
+
+The following rate limiting rules are implemented in the code:
+
+- **RequestsPerTimespanRule**: Limits the number of requests a client can make within a specified timespan.
+- **TimespanSinceLastCallRule**: Ensures a minimum timespan has passed since the last request from a client.
+- **DailyRequestLimitRule**: Limits the number of requests a client can make in a 24-hour period.
+- **ConcurrentRequestLimitRule**: Limits the number of concurrent requests a client can make.
+- **BurstRequestLimitRule**: Allows a burst of requests in a short period but enforces a cooldown period afterward.
+- **RegionBasedRule**: Applies different rules based on the client's region (e.g., US or EU).
+
+## Design Patterns Used
+
+- **Strategy Pattern**: Each rate limiting rule implements the `IRateLimitingRule` interface, allowing the `RateLimiter` class to use different strategies for rate limiting.
+- **Decorator Pattern**: The `RegionBasedRule` class decorates other rules to apply different rate limiting strategies based on the client's region.
+- **Repository Pattern**: A fake repository is used to determine the location of a client by their access token.
+
+## Thread Safety
+
+The rate limiter and its rules are designed to be thread-safe. Concurrent collections such as `ConcurrentDictionary` and `ConcurrentBag` are used to ensure safe access to shared data in a multi-threaded environment.
+
+## Assumptions
+
+- By default, a request is allowed if no rules are defined for the resource.
+
+## Future Enhancements
+
+- **Builder Pattern**: Implement a builder pattern to allow chaining of method calls to configure rules fluently.
+- **Upgrade to .NET 8.0**: Upgrade the project to .NET 8.0, the latest Long-Term Support (LTS) version of .NET.
+- **Response Object**: Return a helpful message or type as a response object to provide more information about the rate limiting decision.
+
+## Usage
+
+This project is a simple, reusable class library to demonstrate the rate limiter concept. It does not include any complex environment setups, API configurations, or web frameworks. The focus is on the design and implementation of the rate limiting rules and their integration into a rate limiter class.
+
+## Example
+
+Here is an example of how to use the rate limiter with different rules:
+
+``` csharp
+var clientRepository = new ClientRepository(); 
+var usRule = new RequestsPerTimespanRule(10, TimeSpan.FromMinutes(1)); 
+var euRule = new TimespanSinceLastCallRule(TimeSpan.FromSeconds(30)); 
+var locationBasedRule = new RegionBasedRule(usRule, euRule, clientRepository);
+
+var rateLimiter = new RateLimiter(); 
+rateLimiter.AddRule("resource1", locationBasedRule);
+
+// Check if requests are allowed 
+bool isAllowed1 = rateLimiter.IsRequestAllowed("resource1", "client1"); // US-based rule 
+bool isAllowed2 = rateLimiter.IsRequestAllowed("resource1", "client2"); // EU-based rule
+```
+
+## Extensibility and Configurability
+
+The implementation is designed to be extendable and configurable, meeting the initial requirements.
+
+### Extensibility
+
+1. **Strategy Pattern**: Each rate limiting rule implements the `IRateLimitingRule` interface, allowing new rules to be added easily. You can create new classes that implement this interface and add them to the `RateLimiter` class.
+   
+2. **Decorator Pattern**: The `RegionBasedRule` class demonstrates how you can combine multiple rules and apply them based on specific conditions (e.g., client region). This pattern can be extended to create more complex combinations of rules.
+
+3. **Concurrent Collections**: The use of thread-safe collections like `ConcurrentDictionary` and `ConcurrentBag` ensures that the implementation can be safely extended to handle more complex scenarios without running into concurrency issues.
+
+### Configurability
+
+1. **AddRule Method**: The `RateLimiter` class provides an `AddRule` method that allows you to add multiple rules for different resources. This makes it easy to configure the rate limiter for various API endpoints.
+
+2. **Flexible Rule Combinations**: You can combine different rules for a single resource. For example, you can use both `RequestsPerTimespanRule` and `TimespanSinceLastCallRule` for a single resource, ensuring that both conditions must be met for a request to be allowed.
+
+3. **Fake Repository**: The `ClientRepository` class is used to determine the client's region based on their access token. This can be easily replaced or extended to use a real database or external service for more complex configurations.
+
+### Example of Extensibility and Configurability
+
+Here is an example demonstrating how you can extend and configure the rate limiter:
+
+``` csharp
+// Define a new rule 
+public class CustomRateLimitRule : IRateLimitingRule
+{
+    private readonly int _maxRequests; 
+    private readonly TimeSpan _timespan; 
+    private readonly ConcurrentDictionary<string, List> _requestLog = new();
+    public CustomRateLimitRule(int maxRequests, TimeSpan timespan)
+    {
+        _maxRequests = maxRequests;
+        _timespan = timespan;
+    }
+
+    public bool IsRequestAllowed(string clientId)
+    {
+        // Rule logic here
+    }
+}
+
+// Configure the rate limiter 
+var rateLimiter = new RateLimiter(); 
+var customRule = new CustomRateLimitRule(10, TimeSpan.FromMinutes(1)); 
+rateLimiter.AddRule("resource1", customRule); 
+rateLimiter.AddRule("resource1", new TimespanSinceLastCallRule(TimeSpan.FromSeconds(30)));
+
+// Check if requests are allowed 
+bool isAllowed = rateLimiter.IsRequestAllowed("resource1", "client1");
+```
+
+## Original task description
+**Rate-limiting pattern**
 
 Rate limiting involves restricting the number of requests that a client can make.
 A client is identified with an access token, which is used for every request to a resource.
