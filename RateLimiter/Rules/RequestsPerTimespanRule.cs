@@ -1,6 +1,6 @@
 ﻿using RateLimiter.Interfaces;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 
 namespace RateLimiter.Rules
@@ -12,7 +12,7 @@ namespace RateLimiter.Rules
     {
         private readonly int _maxRequests;
         private readonly TimeSpan _timespan;
-        private readonly Dictionary<string, List<DateTime>> _requestsStorage = new Dictionary<string, List<DateTime>>(); // TODO: Implement a proper storage mechanism
+        private readonly ConcurrentDictionary<string, ConcurrentBag<DateTime>> _requestsStorage = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RequestsPerTimespanRule"/> class.
@@ -32,16 +32,13 @@ namespace RateLimiter.Rules
         /// <returns>Result if request is allowed</returns>
         public bool IsRequestAllowed(string clientId)
         {
-            if (!_requestsStorage.ContainsKey(clientId))
-            {
-                _requestsStorage[clientId] = new List<DateTime>();
-            }
-
             var nowDateTime = DateTime.Now;
-            _requestsStorage[clientId].Add(nowDateTime);
+            var requests = _requestsStorage.GetOrAdd(clientId, new ConcurrentBag<DateTime>());
+            requests.Add(nowDateTime);
 
             var elapsedTimespan = nowDateTime - _timespan;
-            var requestsWithinTimespan = _requestsStorage[clientId].Where(request => request > nowDateTime - _timespan).ToList();
+            var requestsWithinTimespan = requests.Where(request => request > elapsedTimespan).ToList();
+            _requestsStorage[clientId] = new ConcurrentBag<DateTime>(requestsWithinTimespan);
 
             // Allow the request if the number of requests within the timespan is less than or equal to the maximum allowed requests
             return requestsWithinTimespan.Count <= _maxRequests;

@@ -1,6 +1,6 @@
 ﻿using RateLimiter.Interfaces;
 using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace RateLimiter.Rules
 {
@@ -10,7 +10,7 @@ namespace RateLimiter.Rules
     public class TimespanSinceLastCallRule : IRateLimitingRule
     {
         private readonly TimeSpan _minTimespan;
-        private readonly Dictionary<string, DateTime> _requestsStorage = new Dictionary<string, DateTime>(); // TODO: Implement a proper storage mechanism
+        private readonly ConcurrentDictionary<string, DateTime> _requestsStorage = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TimespanSinceLastCallRule"/> class.
@@ -29,7 +29,8 @@ namespace RateLimiter.Rules
         public bool IsRequestAllowed(string clientId)
         {
             var nowDateTime = DateTime.Now;
-            var elapsedTimespan = nowDateTime - (_requestsStorage.ContainsKey(clientId) ? _requestsStorage[clientId] : DateTime.MinValue);
+            var lastRequestTime = _requestsStorage.GetOrAdd(clientId, DateTime.MinValue);
+            var elapsedTimespan = nowDateTime - lastRequestTime;
 
             _requestsStorage[clientId] = nowDateTime;
 
