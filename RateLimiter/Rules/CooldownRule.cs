@@ -1,20 +1,18 @@
 ﻿using System;
-
 using RateLimiter.Interfaces;
 
-namespace RateLimiter
+namespace RateLimiter.Rules
 {
-    public class FixedWindowRule
-    {
-        private readonly int _limit;
-        private readonly TimeSpan _window;
-        private readonly IUsageRepository _usageRepository;
 
-        public FixedWindowRule(int limit, TimeSpan window, IUsageRepository usageRepository)
+    public class CooldownRule : IRateLimitStrategy
+    {
+        private readonly IUsageRepository _usageRepository;
+        private readonly TimeSpan _cooldown;
+
+        public CooldownRule(IUsageRepository usageRepository, TimeSpan cooldown)
         {
-            _limit = limit;
-            _window = window;
             _usageRepository = usageRepository;
+            _cooldown = cooldown;
         }
 
         public bool IsRequestAllowed(string clientToken)
@@ -22,24 +20,20 @@ namespace RateLimiter
             var usage = _usageRepository.GetUsageForClient(clientToken);
             var now = DateTime.UtcNow;
 
-            if ((now - usage.WindowStart) > _window)
-            {
-                usage.RequestCount = 0;
-                usage.WindowStart = now;
-            }
-
-            if (usage.RequestCount < _limit)
+            // if no prior usage (request count = 0), or if enough time has passed since last request,
+            // then allow this request
+            if (usage.RequestCount == 0 || now - usage.LastRequestTime >= _cooldown)
             {
                 usage.RequestCount++;
-                //usage.WindowStart = DateTime.UtcNow;
+                usage.LastRequestTime = now;
                 _usageRepository.UpdateUsageForClient(clientToken, usage);
-
                 return true;
             }
             else
             {
                 return false;
             }
+
         }
     }
 }
