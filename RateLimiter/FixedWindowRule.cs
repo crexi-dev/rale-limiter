@@ -20,17 +20,26 @@ namespace RateLimiter
         public bool IsRequestAllowed(string clientToken)
         {
             var usage = _usageRepository.GetUsageForClient(clientToken);
+            var now = DateTime.UtcNow;
 
-            if (usage.RequestCount == 0)
+            if ((now - usage.WindowStart) > _window)
             {
-                usage.RequestCount = 1;
-                usage.WindowStart = DateTime.UtcNow;
+                usage.RequestCount = 0;
+                usage.WindowStart = now;
+            }
+
+            if (usage.RequestCount < _limit)
+            {
+                usage.RequestCount++;
+                //usage.WindowStart = DateTime.UtcNow;
                 _usageRepository.UpdateUsageForClient(clientToken, usage);
 
                 return true;
             }
-
-            return false; 
+            else
+            {
+                return false;
+            }
         }
     }
 }

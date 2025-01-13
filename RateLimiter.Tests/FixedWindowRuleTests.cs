@@ -98,5 +98,19 @@ namespace RateLimiter.Tests
             var thirdRequest = rule.IsRequestAllowed(clientToken);
             //Assert.IsTrue(thirdRequest, "a request after the window expires should be allowed again.");
         }
+
+        [Test]
+        public void TwoRequestsMadeWithLimitOfTwo_BeforeWindowExpires_Should_BeAllowed()
+        {
+            var usageRepo = new InMemoryUsageRepository();
+            var rule = new FixedWindowRule(limit: 2, window: TimeSpan.FromSeconds(10), usageRepo);
+            var clientToken = "crexi-client123";
+
+            var firstRequest = rule.IsRequestAllowed(clientToken);
+            Assert.IsTrue(firstRequest, "first request should be allowed.");
+
+            var secondRequest = rule.IsRequestAllowed(clientToken);
+            Assert.IsTrue(secondRequest, "second request within a limit of 2 requests within the time window.");
+        }
     }
 }
