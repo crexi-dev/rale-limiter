@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System;
+using NUnit.Framework;
 
 namespace RateLimiter.Tests;
 
@@ -6,8 +7,14 @@ namespace RateLimiter.Tests;
 public class RateLimiterTest
 {
 	[Test]
-	public void Example()
+	public void FirstRequest_Should_BeAllowed()
 	{
-		Assert.That(true, Is.True);
+		throw new NotImplementedException();
+	}
+
+	[Test]
+	public void SecondRequest_WithinSameWindow_Should_BeBlocked()
+	{
+		throw new NotImplementedException();
 	}
 }
