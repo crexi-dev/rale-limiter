@@ -110,7 +110,7 @@ namespace RateLimiter.Tests
             Assert.IsTrue(firstRequest, "first request should be allowed.");
 
             var secondRequest = rule.IsRequestAllowed(clientToken);
-            Assert.IsTrue(secondRequest, "second request within a limit of 2 requests within the time window.");
+            Assert.IsTrue(secondRequest, "second request within a limit of 2 requests within the time window should be allowed.");
         }
     }
 }
