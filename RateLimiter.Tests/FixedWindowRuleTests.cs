@@ -15,7 +15,6 @@ namespace RateLimiter.Tests
             var rule = new FixedWindowRule(limit: 1, window: TimeSpan.FromMinutes(1), usageRepo);
             var isAllowed = rule.IsRequestAllowed("crexi-client123");
 
-            // assert
             Assert.IsTrue(isAllowed, "first request from a new client should always be allowed.");
 
         }
@@ -30,9 +29,21 @@ namespace RateLimiter.Tests
             var firstRequestIsAllowed= rule.IsRequestAllowed("crexi-client123");
             var secondRequestIsAllowed = rule.IsRequestAllowed("crexi-client123");
 
-            // assert
             Assert.IsTrue(firstRequestIsAllowed, "first request should be allowed.");
             Assert.IsFalse(secondRequestIsAllowed, "second request should be blocked within the same tiem window.");
+        }
+
+        [Test]
+        public void SecondRequest_FromDifferentClient_Should_BeAllowed()
+        {
+            var usageRepo = new InMemoryUsageRepository();
+
+            var rule = new FixedWindowRule(limit: 1, window: TimeSpan.FromMinutes(1), usageRepo);
+            var firstRequestIsAllowed = rule.IsRequestAllowed("crexi-client123");
+            var secondRequestIsAllowed = rule.IsRequestAllowed("crexi-client456");
+
+            Assert.IsTrue(firstRequestIsAllowed, "first request should be allowed.");
+            Assert.IsTrue(firstRequestIsAllowed, "first request from different client should be allowed.");
         }
     }
 }
