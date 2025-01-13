@@ -34,10 +34,11 @@ namespace RateLimiter.Tests
         }
 
         [Test]
-        public void SecondRequest_FromDifferentClient_Should_BeAllowed()
+        public void SecondRequest_WithinSameWindowButFromDifferentClient_Should_BeAllowed()
         {
             var usageRepo = new InMemoryUsageRepository();
 
+            // second request from different client but within same time window
             var rule = new FixedWindowRule(limit: 1, window: TimeSpan.FromMinutes(1), usageRepo);
             var firstRequestIsAllowed = rule.IsRequestAllowed("crexi-client123");
             var secondRequestIsAllowed = rule.IsRequestAllowed("crexi-client456");
