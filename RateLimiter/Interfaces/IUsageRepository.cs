@@ -2,8 +2,8 @@
 {
     public interface IUsageRepository
     {
-        RequestUsage GetUsageForClient(string clientToken);
-        void UpdateUsageForClient(string clientToken, RequestUsage usage);
+        public RequestUsage GetUsageForClient(string clientToken);
+        public void UpdateUsageForClient(string clientToken, RequestUsage usage);
 
     }
 }

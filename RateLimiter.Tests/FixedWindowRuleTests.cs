@@ -9,7 +9,7 @@ namespace RateLimiter.Tests
         [Test]
         public void FirstRequest_Should_BeAllowed()
         {
-            var usageRepo = new InMemoryUsageRepository();
+            var usageRepo = new InMemoryUsageRepository();           
 
             // assume we only allow 1 request in a 1-minute window for this test
             var rule = new FixedWindowRule(limit: 1, window: TimeSpan.FromMinutes(1), usageRepo);
@@ -22,7 +22,6 @@ namespace RateLimiter.Tests
         [Test]
         public void SecondRequest_WithinSameWindow_Should_BeBlocked()
         {
-
             var usageRepo = new InMemoryUsageRepository();
 
             var rule = new FixedWindowRule(limit: 1, window: TimeSpan.FromMinutes(1), usageRepo);
@@ -63,10 +62,10 @@ namespace RateLimiter.Tests
             var thirdRequestIsAllowed = rule.IsRequestAllowed("crexi-client456");
 
             Assert.IsTrue(firstRequestIsAllowed, "first request should be allowed.");
-            Assert.IsTrue(secondRequestIsAllowed, "first request from second client should be allowed.");
+            Assert.IsTrue(secondRequestIsAllowed, "first request in window but from second client should be allowed as it's the client's first request.");
 
             // should be blocked
-            Assert.IsFalse(thirdRequestIsAllowed, "second request from second client should not be allowed.");
+            Assert.IsFalse(thirdRequestIsAllowed, "second request from second client within window should NOT be allowed.");
         }
     }
 }
