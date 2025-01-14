@@ -36,7 +36,7 @@ namespace CrexiService.Controllers
         }
 
         [HttpGet("regional-listings")]
-        [RegionRateLimit(usLimit: 5, usWindowSeconds: 60, euCooldownSeconds: 10)]
+        [RegionRateLimit(usLimit: 5, usWindowSeconds: 10, euCooldownSeconds: 10)]
         public IEnumerable<CommercialListing> GetRegionalListings()
         {
             return new List<CommercialListing>()
@@ -67,6 +67,33 @@ namespace CrexiService.Controllers
                     City = "New York",
                     State = "NY",
                     BrokerName = "Fred Realty Corp"
+                }
+            };
+        }
+
+        [HttpGet("composite-listings")]
+        [CompositeRateLimit]
+        public IEnumerable<CommercialListing> GetCompositeListings()
+        {
+            return new List<CommercialListing>
+            {
+                new CommercialListing
+                {
+                    ListingId = 101,
+                    Title = "Office Retail",
+                    Price = 2500000,
+                    City = "Los Angeles",
+                    State = "CA",
+                    BrokerName = "Alice Realty"
+                },
+                new CommercialListing
+                {
+                    ListingId = 102,
+                    Title = "Concrete Office Suite",
+                    Price = 1500000,
+                    City = "Miami",
+                    State = "FL",
+                    BrokerName = "Magic Realty"
                 }
             };
         }
