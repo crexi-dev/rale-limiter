@@ -1,6 +1,6 @@
 ﻿namespace RateLimiter.Interfaces
 {
-    internal interface IRateLimitStrategy
+    public interface IRateLimitStrategy
     {
         bool IsRequestAllowed(string clientToken);
     }
