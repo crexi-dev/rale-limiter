@@ -1,0 +1,6 @@
+@CrexiService_HostAddress = http://localhost:5232
+
+GET {{CrexiService_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
