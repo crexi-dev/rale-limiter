@@ -1,4 +1,3 @@
-﻿// In the RateLimiter project, create an InMemoryUsageRepository.cs
 using System.Collections.Concurrent;
 using RateLimiter.Interfaces;
 
