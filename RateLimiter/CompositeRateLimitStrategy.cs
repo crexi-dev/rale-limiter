@@ -5,7 +5,7 @@ namespace RateLimiter
 {
     public class CompositeRateLimitStrategy(IEnumerable<IRateLimitStrategy> strategies) : IRateLimitStrategy
     {
-        public bool IsRequestAllowed(string clientToken)
+        public bool IsRequestAllowed(string? clientToken)
         {
             foreach (var strategy in strategies)
             {

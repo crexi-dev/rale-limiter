@@ -15,7 +15,7 @@ namespace RateLimiter.Rules
             _cooldown = cooldown;
         }
 
-        public bool IsRequestAllowed(string clientToken)
+        public bool IsRequestAllowed(string? clientToken)
         {
             var usage = _usageRepository.GetUsageForClient(clientToken);
             var now = DateTime.UtcNow;

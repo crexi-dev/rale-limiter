@@ -1,4 +1,5 @@
-﻿using CrexiService.Models;
+﻿using CrexiService.Attributes;
+using CrexiService.Models;
 using Microsoft.AspNetCore.Mvc;
 using RateLimiter.Attributes;
 
@@ -9,7 +10,7 @@ namespace CrexiService.Controllers
     public class ListingsController : ControllerBase
     {
         [HttpGet("listings")]
-        [RateLimit(1, 5)]
+        [RateLimit(1, 5)]        
         public IEnumerable<CommercialListing> GetListings()
         {
             return new List<CommercialListing>()
@@ -93,6 +94,33 @@ namespace CrexiService.Controllers
                     Price = 1500000,
                     City = "Miami",
                     State = "FL",
+                    BrokerName = "Magic Realty"
+                }
+            };
+        }
+
+        [HttpGet("global-listings")]
+        [GlobalRateLimit(1, 5)]
+        public IEnumerable<CommercialListing> GetGlobalListings()
+        {
+            return new List<CommercialListing>
+            {
+                new CommercialListing
+                {
+                    ListingId = 101,
+                    Title = "Global Offices",
+                    Price = 12000000,
+                    City = "Los Angeles",
+                    State = "CA",
+                    BrokerName = "Alice Realty"
+                },
+                new CommercialListing
+                {
+                    ListingId = 102,
+                    Title = "Enterprise Realty Suite",
+                    Price = 51500000,
+                    City = "Chicago",
+                    State = "IL",
                     BrokerName = "Magic Realty"
                 }
             };

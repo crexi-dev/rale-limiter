@@ -2,6 +2,6 @@
 {
     public interface IRateLimitStrategy
     {
-        bool IsRequestAllowed(string clientToken);
+        bool IsRequestAllowed(string? clientToken);
     }
 }
