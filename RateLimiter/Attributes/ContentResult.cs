@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace RateLimiter.Attributes
 {
-    internal class ContentResult : IActionResult
+    public class ContentResult : IActionResult
     {
         public int StatusCodes { get; set; }
         public string Content { get; set; }
