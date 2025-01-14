@@ -1,5 +1,6 @@
 ﻿using CrexiService.Models;
 using Microsoft.AspNetCore.Mvc;
+using RateLimiter.Attributes;
 
 namespace CrexiService.Controllers
 {
@@ -8,6 +9,7 @@ namespace CrexiService.Controllers
     public class ListingsController : ControllerBase
     {
         [HttpGet("listings")]
+        [RateLimit(1, 5)]
         public IEnumerable<CommercialListing> GetListings()
         {
             return new List<CommercialListing>()

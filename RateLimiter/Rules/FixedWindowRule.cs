@@ -35,10 +35,8 @@ namespace RateLimiter.Rules
 
                 return true;
             }
-            else
-            {
-                return false;
-            }
+         
+            return false;
         }
     }
 }
