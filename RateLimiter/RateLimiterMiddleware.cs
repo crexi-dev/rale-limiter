@@ -5,18 +5,15 @@ namespace RateLimiter;
 public class RateLimiterMiddleware
 {
     private readonly IRateLimiterRuleStorage _rulesStorage;
-    private readonly IRateLimitStateStorage<int> _ruleStateStorage;
     private readonly IRateLimitAlgorithm _algorithm;
     private readonly RateLimiterMiddlewareConfiguration _configuration;
 
     public RateLimiterMiddleware(
         IRateLimiterRuleStorage rulesStorage,
-        IRateLimitStateStorage<int> ruleStateStorage,
         IRateLimitAlgorithm algorithm,
         RateLimiterMiddlewareConfiguration configuration)
     {
         _rulesStorage = rulesStorage;
-        _ruleStateStorage = ruleStateStorage;
         _algorithm = algorithm;
         _configuration = configuration;
     }

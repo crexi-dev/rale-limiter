@@ -13,17 +13,15 @@ public class FixedWindowAlgorithm : IRateLimitAlgorithm
         _stateStorage = stateStorage;
     }
 
-    public async Task<RateLimitResult> HandleRequestAsync(
-        RateLimitRule rule,
-        CancellationToken token = default)
+    public async Task<RateLimitResult> HandleRequestAsync(RateLimitRule rule, CancellationToken token = default)
     {
         var stateKey = rule.GetHashCode();
 
         // get the rule's state or a new state if this is the first execution of the rule
         var state = await _stateStorage.GetStateAsync(stateKey, token) ??
-                    new RateLimitRuleState(0, DateTime.UtcNow);
+                    new RateLimitRuleState(0, GetCurrentTime());
 
-        var currentTime = DateTime.UtcNow;
+        var currentTime = GetCurrentTime();
 
         // the request is made after the window duration expires so this is the first execution
         if (currentTime - state.WindowStart > rule.RateLimit.WindowDuration)
@@ -60,4 +58,6 @@ public class FixedWindowAlgorithm : IRateLimitAlgorithm
             0,
             retryAfter);
     }
+
+    private static DateTime GetCurrentTime() => DateTime.UtcNow;
 }

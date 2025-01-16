@@ -25,28 +25,18 @@ public class RateLimitDescriptor
 
     public bool Equals(RateLimitDescriptor other)
     {
-        var stringComparison = StringComparison.InvariantCultureIgnoreCase;
-
-        return string.Equals(Key, other.Key, stringComparison) &&
-               string.Equals(Value, other.Value, stringComparison);
+        return string.Equals(Key, other.Key, StringComparisonDefaults.DefaultStringComparison) &&
+               string.Equals(Value, other.Value, StringComparisonDefaults.DefaultStringComparison);
     }
             
 
     public override int GetHashCode()
     {
         var hash = new HashCode();
-        var stringComparer = StringComparer.InvariantCultureIgnoreCase;
 
-        hash.Add(Key, stringComparer);
-        hash.Add(Value, stringComparer);
+        hash.Add(Key, StringComparisonDefaults.DefaultStringComparer);
+        hash.Add(Value, StringComparisonDefaults.DefaultStringComparer);
 
         return hash.ToHashCode();
-    }
-}
-
-public class EmptyRateLimitDescriptor : RateLimitDescriptor
-{
-    public EmptyRateLimitDescriptor() : base(string.Empty, string.Empty)
-    {
     }
 }

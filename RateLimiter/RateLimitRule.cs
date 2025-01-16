@@ -33,18 +33,14 @@ public class RateLimitRule
 
     public bool Equals(RateLimitRule other)
     {
-        var stringComparison = StringComparison.InvariantCultureIgnoreCase;
-
-        if (!string.Equals(Domain, other.Domain, stringComparison))
+        if (!string.Equals(Domain, other.Domain, StringComparisonDefaults.DefaultStringComparison))
         {
             return false;
         }
 
-        var stringComparer = StringComparer.InvariantCultureIgnoreCase;
+        var thisDescriptors = Descriptors.OrderBy(d => d.Key, StringComparisonDefaults.DefaultStringComparer);
 
-        var thisDescriptors = Descriptors.OrderBy(d => d.Key, stringComparer);
-
-        var otherDescriptors = other.Descriptors.OrderBy(d => d.Key, stringComparer);
+        var otherDescriptors = other.Descriptors.OrderBy(d => d.Key, StringComparisonDefaults.DefaultStringComparer);
 
 
         return thisDescriptors.SequenceEqual(otherDescriptors);
@@ -54,11 +50,10 @@ public class RateLimitRule
     public override int GetHashCode()
     {
         var hash = new HashCode();
-        var stringComparer = StringComparer.InvariantCultureIgnoreCase;
+        
+        hash.Add(Domain, StringComparisonDefaults.DefaultStringComparer);
 
-        hash.Add(Domain, stringComparer);
-
-        foreach (var descriptor in Descriptors.OrderBy(d => d.Key, stringComparer))
+        foreach (var descriptor in Descriptors.OrderBy(d => d.Key, StringComparisonDefaults.DefaultStringComparer))
         {
             hash.Add(descriptor);
         }

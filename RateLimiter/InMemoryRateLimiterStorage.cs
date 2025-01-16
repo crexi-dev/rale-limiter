@@ -40,7 +40,7 @@ public class InMemoryRateLimiterStorage : IRateLimiterRuleStorage, IRateLimitSta
         lock (_lock)
         {
             var rule = _rulesDatabase.Where(
-                    r => string.Equals(r.Domain, domain, StringComparison.InvariantCultureIgnoreCase))
+                    r => string.Equals(r.Domain, domain, StringComparisonDefaults.DefaultStringComparison))
                 .SingleOrDefault(r => r.Descriptors.Any(d => d.Equals(descriptor)));
 
             if (rule == null)
@@ -67,7 +67,10 @@ public class InMemoryRateLimiterStorage : IRateLimiterRuleStorage, IRateLimitSta
         return Task.FromResult(state)!;
     }
 
-    public Task AddOrUpdateStateAsync(int key, RateLimitRuleState state, CancellationToken token = default)
+    public Task AddOrUpdateStateAsync(
+        int key,
+        RateLimitRuleState state,
+        CancellationToken token = default)
     {
         _stateDatabase.AddOrUpdate(
             key,

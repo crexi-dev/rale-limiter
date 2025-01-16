@@ -8,7 +8,10 @@ public class RateLimitResult
     public int RemainingRequests { get; }
     public TimeSpan RetryAfter { get; }
 
-    public RateLimitResult(bool isRateLimited, int remainingRequests, TimeSpan retryAfter)
+    public RateLimitResult(
+        bool isRateLimited,
+        int remainingRequests,
+        TimeSpan retryAfter)
     {
         IsRateLimited = isRateLimited;
         RemainingRequests = remainingRequests;

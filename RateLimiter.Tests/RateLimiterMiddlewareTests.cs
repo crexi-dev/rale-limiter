@@ -27,7 +27,7 @@ public class RateLimiterMiddlewareTests
 
         _stateStorage = (IRateLimitStateStorage<int>)_ruleStorage;
         _algorithm = new FixedWindowAlgorithm(_stateStorage);
-        _middleware = new RateLimiterMiddleware(_ruleStorage, _stateStorage, _algorithm, _configuration);
+        _middleware = new RateLimiterMiddleware(_ruleStorage, _algorithm, _configuration);
     }
 
     [Test]
@@ -146,7 +146,6 @@ public class RateLimiterMiddlewareTests
 
         var middleware = new RateLimiterMiddleware(
             _ruleStorage,
-            _stateStorage,
             _algorithm,
             configuration);
 
