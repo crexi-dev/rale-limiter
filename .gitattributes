@@ -1,3 +1,0 @@
-# Force LF line endings
-*.cs text eol=lf
-*.csproj text eol=lf
