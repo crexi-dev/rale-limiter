@@ -7,15 +7,18 @@ public class RateLimiterMiddleware
     private readonly IRateLimiterRuleStorage _rulesStorage;
     private readonly IRateLimitStateStorage<int> _ruleStateStorage;
     private readonly IRateLimitAlgorithm _algorithm;
+    private readonly RateLimiterMiddlewareConfiguration _configuration;
 
     public RateLimiterMiddleware(
         IRateLimiterRuleStorage rulesStorage,
         IRateLimitStateStorage<int> ruleStateStorage,
-        IRateLimitAlgorithm algorithm)
+        IRateLimitAlgorithm algorithm,
+        RateLimiterMiddlewareConfiguration configuration)
     {
         _rulesStorage = rulesStorage;
         _ruleStateStorage = ruleStateStorage;
         _algorithm = algorithm;
+        _configuration = configuration;
     }
 
     public async Task<RateLimitResult> HandleRequestAsync(RateLimiterRequest request)
@@ -25,7 +28,12 @@ public class RateLimiterMiddleware
         // If rule doesn't exist then let the request through.
         if (rule == null)
         {
-            return new RateLimitResult(false, -1, TimeSpan.Zero);
+            if (_configuration.NoAssociatedRuleBehaviorHandling == NoAssociatedRuleBehavior.AllowRequest)
+            {
+                return new RateLimitResult(false, -1, TimeSpan.Zero);
+            }
+
+            return new RateLimitResult(true, 0, TimeSpan.Zero);
         }
 
         // block requests associated with "blacklist" rules

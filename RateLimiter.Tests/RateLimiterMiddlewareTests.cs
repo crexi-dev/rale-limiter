@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 
@@ -12,19 +11,23 @@ public class RateLimiterMiddlewareTests
     private IRateLimitStateStorage<int> _stateStorage = null!;
     private IRateLimitAlgorithm _algorithm = null!;
     private RateLimiterMiddleware _middleware = null!;
+    private RateLimiterMiddlewareConfiguration _configuration = null!;
 
     [SetUp]
     public void SetUp()
     {
-        _ruleStorage = new InMemoryRateLimiterStorage();
-        _stateStorage = (IRateLimitStateStorage<int>)_ruleStorage;
+        _configuration = new RateLimiterMiddlewareConfiguration
+        {
+            NoAssociatedRuleBehaviorHandling = NoAssociatedRuleBehavior.AllowRequest
+        };
 
+        _ruleStorage = new InMemoryRateLimiterStorage();
         _ruleStorage.AddOrUpdateRuleAsync(RateLimiterRules.DatabaseRule).GetAwaiter().GetResult();
         _ruleStorage.AddOrUpdateRuleAsync(RateLimiterRules.ExpensiveApiRule).GetAwaiter().GetResult();
 
+        _stateStorage = (IRateLimitStateStorage<int>)_ruleStorage;
         _algorithm = new FixedWindowAlgorithm(_stateStorage);
-
-        _middleware = new RateLimiterMiddleware(_ruleStorage, _stateStorage, _algorithm);
+        _middleware = new RateLimiterMiddleware(_ruleStorage, _stateStorage, _algorithm, _configuration);
     }
 
     [Test]
@@ -105,16 +108,54 @@ public class RateLimiterMiddlewareTests
 
         var request2 = new RateLimiterRequest("payment", new RateLimitDescriptor("userid", "foobar2@gmail.com"));
 
+        // Act
         var allTasks = Task.WhenAll(
             _middleware.HandleRequestAsync(request1),
             _middleware.HandleRequestAsync(request2));
 
         var results = await allTasks;
 
+        // Assert
         foreach (var result in results)
         {
             Assert.IsTrue(result.IsRateLimited);
         }
+    }
 
+    [Test]
+    public async Task Should_Allow_Requests_Not_Associated_With_A_Rule()
+    {
+        // Arrange
+        var request = new RateLimiterRequest("database", new EmptyRateLimitDescriptor());
+
+        // Act
+        var result = await _middleware.HandleRequestAsync(request);
+
+        // Assert
+        Assert.IsFalse(result.IsRateLimited);
+    }
+
+    [Test]
+    public async Task Should_RateLimit_Requests_Not_Associated_With_A_Rule_If_So_Configured()
+    {
+        // Arrange
+        var configuration = new RateLimiterMiddlewareConfiguration
+        {
+            NoAssociatedRuleBehaviorHandling = NoAssociatedRuleBehavior.RateLimitRequest
+        };
+
+        var middleware = new RateLimiterMiddleware(
+            _ruleStorage,
+            _stateStorage,
+            _algorithm,
+            configuration);
+
+        var request = new RateLimiterRequest("database", new EmptyRateLimitDescriptor());
+
+        // Act
+        var result = await middleware.HandleRequestAsync(request);
+
+        // Assert
+        Assert.IsTrue(result.IsRateLimited);
     }
 }
