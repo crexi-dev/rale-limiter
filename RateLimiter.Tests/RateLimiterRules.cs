@@ -28,4 +28,13 @@ public static class RateLimiterRules
         new[] { new EmptyRateLimitDescriptor() },
         new RateLimit(1, TimeSpan.FromSeconds(5)));
 
+    public static RateLimitRule BlacklistRule = new(
+        "payment",
+        new[]
+        {
+            new RateLimitDescriptor("userid", "foobar1@gmail.com"),
+            new RateLimitDescriptor("userid", "foobar2@gmail.com")
+        },
+        new RateLimit(0, TimeSpan.Zero));
+
 }
