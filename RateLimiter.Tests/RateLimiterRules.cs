@@ -25,7 +25,7 @@ public static class RateLimiterRules
 
     public static RateLimitRule ExpensiveApiRule = new(
         "research",
-        new[] { new RateLimitDescriptor("dummy", "dummy") },
+        new[] { new EmptyRateLimitDescriptor() },
         new RateLimit(1, TimeSpan.FromSeconds(5)));
 
 }

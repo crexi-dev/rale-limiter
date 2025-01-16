@@ -61,7 +61,7 @@ public class FixedWindowAlgorithmTests
     public async Task Test_Single_Execution_Per_Window()
     {
         // Arrange
-        var rule = await _ruleStorage.GetRuleAsync("research", new RateLimitDescriptor("dummy", "dummy"));
+        var rule = await _ruleStorage.GetRuleAsync("research", new EmptyRateLimitDescriptor());
 
         var result = await _algorithm.HandleRequestAsync(rule!);
 

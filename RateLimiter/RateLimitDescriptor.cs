@@ -43,3 +43,10 @@ public class RateLimitDescriptor
         return hash.ToHashCode();
     }
 }
+
+public class EmptyRateLimitDescriptor : RateLimitDescriptor
+{
+    public EmptyRateLimitDescriptor() : base(string.Empty, string.Empty)
+    {
+    }
+}
