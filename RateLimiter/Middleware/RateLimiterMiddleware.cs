@@ -16,6 +16,10 @@ public class RateLimiterMiddleware
         IRateLimitAlgorithm algorithm,
         RateLimiterMiddlewareConfiguration configuration)
     {
+        ArgumentNullException.ThrowIfNull(rulesStorage);
+        ArgumentNullException.ThrowIfNull(algorithm);
+        ArgumentNullException.ThrowIfNull(configuration);
+
         _rulesStorage = rulesStorage;
         _algorithm = algorithm;
         _configuration = configuration;
@@ -23,6 +27,8 @@ public class RateLimiterMiddleware
 
     public async Task<RateLimitResult> HandleRequestAsync(RateLimiterRequest request)
     {
+        ArgumentNullException.ThrowIfNull(request);
+
         var rule = await _rulesStorage.GetRuleAsync(request.Domain, request.Descriptor).ConfigureAwait(false);
 
         // If rule doesn't exist then let the request through.

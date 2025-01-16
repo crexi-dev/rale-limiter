@@ -9,6 +9,9 @@ public class RateLimit
 
     public RateLimit(int maxRequests, TimeSpan windowDuration)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(maxRequests, nameof(maxRequests));
+        ArgumentOutOfRangeException.ThrowIfLessThan(windowDuration, TimeSpan.Zero, nameof(windowDuration));
+        
         MaxRequests = maxRequests;
         WindowDuration = windowDuration;
     }

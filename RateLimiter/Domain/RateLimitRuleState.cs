@@ -9,6 +9,8 @@ public class RateLimitRuleState
 
     public RateLimitRuleState(int requestsMade, DateTime windowStart)
     {
+        ArgumentOutOfRangeException.ThrowIfNegative(requestsMade, nameof(requestsMade));
+        
         RequestsMade = requestsMade;
         WindowStart = windowStart;
     }

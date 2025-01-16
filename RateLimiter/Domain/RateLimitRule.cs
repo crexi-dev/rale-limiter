@@ -13,9 +13,18 @@ public class RateLimitRule
 
     public RateLimitRule(
         string domain,
-        IEnumerable<RateLimitDescriptor> descriptors,
+        IList<RateLimitDescriptor> descriptors,
         RateLimit rateLimit)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(domain);
+        ArgumentNullException.ThrowIfNull(descriptors);
+        ArgumentNullException.ThrowIfNull(rateLimit);
+
+        if (!descriptors.Any())
+        {
+            throw new ArgumentException($"No descriptors have been provided for argument {nameof(descriptors)}.");
+        }
+
         Domain = domain;
         Descriptors = descriptors;
         RateLimit = rateLimit;

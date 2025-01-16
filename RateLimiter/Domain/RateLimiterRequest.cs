@@ -1,4 +1,6 @@
-﻿namespace RateLimiter.Domain;
+using System;
+
+namespace RateLimiter.Domain;
 
 public class RateLimiterRequest
 {
@@ -7,6 +9,9 @@ public class RateLimiterRequest
 
     public RateLimiterRequest(string domain, RateLimitDescriptor descriptor)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(domain);
+        ArgumentNullException.ThrowIfNull(descriptor);
+
         Domain = domain;
         Descriptor = descriptor;
     }

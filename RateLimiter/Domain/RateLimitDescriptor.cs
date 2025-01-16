@@ -9,6 +9,9 @@ public class RateLimitDescriptor
 
     public RateLimitDescriptor(string key, string value)
     {
+        ArgumentNullException.ThrowIfNull(key);
+        ArgumentNullException.ThrowIfNull(value);
+
         Key = key;
         Value = value;
     }

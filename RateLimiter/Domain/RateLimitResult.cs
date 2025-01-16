@@ -13,6 +13,9 @@ public class RateLimitResult
         int remainingRequests,
         TimeSpan retryAfter)
     {
+        ArgumentOutOfRangeException.ThrowIfLessThan(remainingRequests, -1, nameof(remainingRequests));
+        ArgumentOutOfRangeException.ThrowIfLessThan(retryAfter, TimeSpan.Zero, nameof(retryAfter));
+
         IsRateLimited = isRateLimited;
         RemainingRequests = remainingRequests;
         RetryAfter = retryAfter;

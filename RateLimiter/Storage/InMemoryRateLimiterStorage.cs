@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,8 @@ public class InMemoryRateLimiterStorage : IRateLimiterRuleStorage, IRateLimitSta
 
     public Task AddOrUpdateRuleAsync(RateLimitRule rule, CancellationToken token = default)
     {
+        ArgumentNullException.ThrowIfNull(rule);
+
         lock (_lock)
         {
             if (!_rulesDatabase.TryGetValue(rule, out var existingRule))
@@ -37,6 +40,9 @@ public class InMemoryRateLimiterStorage : IRateLimiterRuleStorage, IRateLimitSta
         RateLimitDescriptor descriptor,
         CancellationToken token = default)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(domain);
+        ArgumentNullException.ThrowIfNull(descriptor);
+
         lock (_lock)
         {
             var rule = _rulesDatabase.Where(
@@ -72,6 +78,8 @@ public class InMemoryRateLimiterStorage : IRateLimiterRuleStorage, IRateLimitSta
         RateLimitRuleState state,
         CancellationToken token = default)
     {
+        ArgumentNullException.ThrowIfNull(state);
+
         _stateDatabase.AddOrUpdate(
             key,
             state,

@@ -12,11 +12,15 @@ public class FixedWindowAlgorithm : IRateLimitAlgorithm
 
     public FixedWindowAlgorithm(IRateLimitStateStorage<int> stateStorage)
     {
+        ArgumentNullException.ThrowIfNull(stateStorage);
+
         _stateStorage = stateStorage;
     }
 
     public async Task<RateLimitResult> HandleRequestAsync(RateLimitRule rule, CancellationToken token = default)
     {
+        ArgumentNullException.ThrowIfNull(rule);
+
         var stateKey = rule.GetHashCode();
 
         // get the rule's state or a new state if this is the first execution of the rule
