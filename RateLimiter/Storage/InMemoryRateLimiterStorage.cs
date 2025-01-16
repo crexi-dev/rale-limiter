@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using RateLimiter.Domain;
 
-namespace RateLimiter;
+namespace RateLimiter.Storage;
 
 public class InMemoryRateLimiterStorage : IRateLimiterRuleStorage, IRateLimitStateStorage<int>
 {

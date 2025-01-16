@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using RateLimiter.Domain;
 
-namespace RateLimiter;
+namespace RateLimiter.Storage;
 
 public interface IRateLimitStateStorage<in T> where T : IEquatable<T>
 {

@@ -1,7 +1,10 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using RateLimiter.Algorithms;
 using RateLimiter.Domain;
+using RateLimiter.Middleware;
+using RateLimiter.Storage;
 
 namespace RateLimiter.Tests;
 
@@ -23,9 +26,6 @@ public class RateLimiterMiddlewareTests
         };
 
         _ruleStorage = new InMemoryRateLimiterStorage();
-        _ruleStorage.AddOrUpdateRuleAsync(RateLimiterRules.DatabaseRule).GetAwaiter().GetResult();
-        _ruleStorage.AddOrUpdateRuleAsync(RateLimiterRules.ExpensiveApiRule).GetAwaiter().GetResult();
-
         _stateStorage = (IRateLimitStateStorage<int>)_ruleStorage;
         _algorithm = new FixedWindowAlgorithm(_stateStorage);
         _middleware = new RateLimiterMiddleware(_ruleStorage, _algorithm, _configuration);
@@ -35,12 +35,20 @@ public class RateLimiterMiddlewareTests
     public async Task Test_Bursts()
     {
         // Arrange
+
+        var rule = new RateLimitRule(
+            "team-b",
+            new[] { new RateLimitDescriptor("location", "us") },
+            new RateLimit(5, TimeSpan.FromSeconds(1)));
+
+        await _ruleStorage.AddOrUpdateRuleAsync(rule);
+
         RateLimitResult result;
 
-        var maxRequests = 5;
-        var windowDuration = TimeSpan.FromSeconds(1);
+        var maxRequests = rule.RateLimit.MaxRequests;
+        var windowDuration = rule.RateLimit.WindowDuration;
 
-        var request = new RateLimiterRequest("database", new RateLimitDescriptor("type", "cosmos"));
+        var request = new RateLimiterRequest("team-b", new RateLimitDescriptor("location", "us"));
 
         // Act & Assert - should allow the requests
         for (var i = maxRequests; i > 0; i--)
@@ -73,8 +81,15 @@ public class RateLimiterMiddlewareTests
     public async Task Test_Single_Execution_Per_Window()
     {
         // Arrange
-        var windowDuration = TimeSpan.FromSeconds(5);
-        var request = new RateLimiterRequest("research", new EmptyRateLimitDescriptor());
+        var rule = new RateLimitRule(
+            "team-b",
+            new[] { new RateLimitDescriptor("location", "eu") },
+            new RateLimit(1, TimeSpan.FromSeconds(5)));
+
+        await _ruleStorage.AddOrUpdateRuleAsync(rule);
+
+        var windowDuration = rule.RateLimit.WindowDuration;
+        var request = new RateLimiterRequest("team-b", new RateLimitDescriptor("location", "eu"));
 
         var result = await _middleware.HandleRequestAsync(request);
 
@@ -103,10 +118,18 @@ public class RateLimiterMiddlewareTests
     public async Task Blacklist_Rules_Rate_Limits_All_Requests()
     {
         // Arrange
-        await _ruleStorage.AddOrUpdateRuleAsync(RateLimiterRules.BlacklistRule);
+        var rule = new RateLimitRule(
+            "payment",
+            new[]
+            {
+                new RateLimitDescriptor("userid", "foobar1@gmail.com"),
+                new RateLimitDescriptor("userid", "foobar2@gmail.com")
+            },
+            new RateLimit(0, TimeSpan.Zero));
+
+        await _ruleStorage.AddOrUpdateRuleAsync(rule);
 
         var request1 = new RateLimiterRequest("payment", new RateLimitDescriptor("userid", "foobar1@gmail.com"));
-
         var request2 = new RateLimiterRequest("payment", new RateLimitDescriptor("userid", "foobar2@gmail.com"));
 
         // Act
@@ -127,7 +150,7 @@ public class RateLimiterMiddlewareTests
     public async Task Should_Allow_Requests_Not_Associated_With_A_Rule()
     {
         // Arrange
-        var request = new RateLimiterRequest("database", new EmptyRateLimitDescriptor());
+        var request = new RateLimiterRequest("foo", new EmptyRateLimitDescriptor());
 
         // Act
         var result = await _middleware.HandleRequestAsync(request);
@@ -150,12 +173,45 @@ public class RateLimiterMiddlewareTests
             _algorithm,
             configuration);
 
-        var request = new RateLimiterRequest("database", new EmptyRateLimitDescriptor());
+        var request = new RateLimiterRequest("foo", new EmptyRateLimitDescriptor());
 
         // Act
         var result = await middleware.HandleRequestAsync(request);
 
         // Assert
         Assert.IsTrue(result.IsRateLimited);
+    }
+
+    [Test]
+    public async Task Test_Rule_With_Multiple_Descriptors()
+    {
+        // Arrange
+        var rule = new RateLimitRule(
+            "marketing",
+            new[] { new RateLimitDescriptor("phone", "555-1234"), new RateLimitDescriptor("phone", "555-5678") },
+            new RateLimit(2, TimeSpan.FromSeconds(1)));
+
+        await _ruleStorage.AddOrUpdateRuleAsync(rule);
+
+        var request1 = new RateLimiterRequest("marketing", new RateLimitDescriptor("phone", "555-1234"));
+        var request2 = new RateLimiterRequest("marketing", new RateLimitDescriptor("phone", "555-5678"));
+        var request3 = new RateLimiterRequest("marketing", new RateLimitDescriptor("phone", "555-1234"));
+
+        // Act
+        var result1 = await _middleware.HandleRequestAsync(request1);
+        var result2 = await _middleware.HandleRequestAsync(request2);
+        var result3 = await _middleware.HandleRequestAsync(request3);
+
+        // Assert
+        Assert.IsFalse(result1.IsRateLimited);
+        Assert.IsFalse(result2.IsRateLimited);
+        Assert.IsTrue(result3.IsRateLimited);
+
+        // Wait for a second and retry - should not be rate limited
+        await Task.Delay(rule.RateLimit.WindowDuration);
+        result1 = await _middleware.HandleRequestAsync(request1);
+
+        Assert.IsFalse(result1.IsRateLimited);
+
     }
 }

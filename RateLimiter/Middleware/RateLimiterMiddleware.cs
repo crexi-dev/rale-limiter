@@ -1,8 +1,10 @@
 using System;
 using System.Threading.Tasks;
+using RateLimiter.Algorithms;
 using RateLimiter.Domain;
+using RateLimiter.Storage;
 
-namespace RateLimiter;
+namespace RateLimiter.Middleware;
 public class RateLimiterMiddleware
 {
     private readonly IRateLimiterRuleStorage _rulesStorage;

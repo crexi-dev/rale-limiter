@@ -1,4 +1,4 @@
-﻿namespace RateLimiter;
+﻿namespace RateLimiter.Middleware;
 
 public class RateLimiterMiddlewareConfiguration
 {

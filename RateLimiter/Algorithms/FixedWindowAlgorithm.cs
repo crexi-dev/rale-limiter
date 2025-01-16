@@ -2,8 +2,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using RateLimiter.Domain;
+using RateLimiter.Storage;
 
-namespace RateLimiter;
+namespace RateLimiter.Algorithms;
 
 public class FixedWindowAlgorithm : IRateLimitAlgorithm
 {
