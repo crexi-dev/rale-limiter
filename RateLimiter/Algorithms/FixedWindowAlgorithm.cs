@@ -57,12 +57,18 @@ public class FixedWindowAlgorithm : IRateLimitAlgorithm
         }
 
         // the request is rate limited
-        var retryAfter = TimeSpan.FromSeconds(Math.Ceiling((rule.RateLimit.WindowDuration - (currentTime - state.WindowStart)).TotalSeconds));
-
         return new RateLimitResult(
             true,
             0,
-            retryAfter);
+            CalculateRetryAfter(rule, currentTime, state));
+    }
+
+    private static TimeSpan CalculateRetryAfter(
+        RateLimitRule rule,
+        DateTime currentTime,
+        RateLimitRuleState state)
+    {
+        return TimeSpan.FromSeconds(Math.Ceiling((rule.RateLimit.WindowDuration - (currentTime - state.WindowStart)).TotalSeconds));
     }
 
     private static DateTime GetCurrentTime() => DateTime.UtcNow;
