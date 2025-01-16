@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RateLimiter;
+namespace RateLimiter.Domain;
 
 public class RateLimitRule
 {

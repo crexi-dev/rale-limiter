@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using RateLimiter.Domain;
 
 namespace RateLimiter;
 public class RateLimiterMiddleware

@@ -1,6 +1,6 @@
 using System;
 
-namespace RateLimiter;
+namespace RateLimiter.Domain;
 
 public class RateLimit
 {

@@ -1,4 +1,4 @@
-namespace RateLimiter;
+namespace RateLimiter.Domain;
 
 public class EmptyRateLimitDescriptor : RateLimitDescriptor
 {

@@ -1,4 +1,5 @@
 using System;
+using RateLimiter.Domain;
 
 namespace RateLimiter.Tests;
 public static class RateLimiterRules
