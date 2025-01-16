@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -6,23 +7,25 @@ using System.Threading.Tasks;
 
 namespace RateLimiter;
 
-public class InMemoryRateLimiterRuleStorage : IRateLimiterRuleStorage
+public class InMemoryRateLimiterStorage : IRateLimiterRuleStorage, IRateLimitStateStorage<int>
 {
-    private readonly HashSet<RateLimitRule> _database = new();
+    private readonly HashSet<RateLimitRule> _rulesDatabase = new();
+    private readonly ConcurrentDictionary<int, RateLimitRuleState> _stateDatabase = new();
+
     private readonly object _lock = new();
 
     public Task AddOrUpdateRuleAsync(RateLimitRule rule, CancellationToken token = default)
     {
         lock (_lock)
         {
-            if (!_database.TryGetValue(rule, out var existingRule))
+            if (!_rulesDatabase.TryGetValue(rule, out var existingRule))
             {
-                _database.Add(rule);
+                _rulesDatabase.Add(rule);
             }
             else
             {
-                _database.Remove(existingRule);
-                _database.Add(rule);
+                _rulesDatabase.Remove(existingRule);
+                _rulesDatabase.Add(rule);
             }
         }
 
@@ -36,7 +39,7 @@ public class InMemoryRateLimiterRuleStorage : IRateLimiterRuleStorage
     {
         lock (_lock)
         {
-            var rule = _database.Where(
+            var rule = _rulesDatabase.Where(
                     r => string.Equals(r.Domain, domain, StringComparison.InvariantCultureIgnoreCase))
                 .SingleOrDefault(r => r.Descriptors.Any(d => d.Equals(descriptor)));
 
@@ -52,5 +55,26 @@ public class InMemoryRateLimiterRuleStorage : IRateLimiterRuleStorage
 
             return Task.FromResult(rule)!;
         }
+    }
+
+    public Task<RateLimitRuleState?> GetStateAsync(int key, CancellationToken token = default)
+    {
+        if (!_stateDatabase.TryGetValue(key, out var state))
+        {
+            return Task.FromResult<RateLimitRuleState?>(null);
+        }
+
+        return Task.FromResult(state)!;
+    }
+
+    public Task AddOrUpdateStateAsync(int key, RateLimitRuleState state, CancellationToken token = default)
+    {
+        _stateDatabase.AddOrUpdate(
+            key,
+            state,
+            (_, _) => state
+        );
+
+        return Task.CompletedTask;
     }
 }

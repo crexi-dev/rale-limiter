@@ -14,11 +14,11 @@ public class FixedWindowAlgorithmTests
     [SetUp]
     public void SetUp()
     {
-        _ruleStorage = new InMemoryRateLimiterRuleStorage();
+        _ruleStorage = new InMemoryRateLimiterStorage();
+        _stateStorage = (IRateLimitStateStorage<int>)_ruleStorage;
         _ruleStorage.AddOrUpdateRuleAsync(RateLimiterRules.DatabaseRule).GetAwaiter().GetResult();
         _ruleStorage.AddOrUpdateRuleAsync(RateLimiterRules.ExpensiveApiRule).GetAwaiter().GetResult();
 
-        _stateStorage = new InMemoryRateLimitStateStorage();
         _algorithm = new FixedWindowAlgorithm(_stateStorage);
     }
 
