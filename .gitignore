@@ -1,4 +1,17 @@
-.vs
-packages
-bin 
-obj
+# Rider files
+**/.idea/.idea.RateLimiter/.idea/
+
+# MacOS files
+.DS_Store
+
+
+*.suo
+*.user
+.vs/
+[Bb]in/
+[Oo]bj/
+_UpgradeReport_Files/
+[Pp]ackages/
+
+Thumbs.db
+Desktop.ini
