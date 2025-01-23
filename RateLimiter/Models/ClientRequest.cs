@@ -1,5 +1,8 @@
 namespace Crexi.RateLimiter.Models;
 
+/// <summary>
+/// Primary input class to the rate limiter engine for incoming requests
+/// </summary>
 public class ClientRequest
 {
     public required string ClientId { get; set; }

@@ -5,7 +5,6 @@ namespace Crexi.RateLimiter.Models;
 /// </summary>
 public enum PolicyType
 {
-    SlidingWindow,
-    FixedWindow,
-    ConcurrentRequests
+    SlidingWindow = 1,
+    ConcurrentRequests = 2
 }

@@ -1,16 +1,29 @@
-using System.Linq;
-
 namespace Crexi.RateLimiter.Logic;
 
+/// <summary>
+/// Main entrypoint to the library. This class connects request tracking and rate limiting logic
+/// </summary>
 public class RateLimitEngine : IRateLimitEngine
 {
+    
+    /// <summary>
+    /// Main entry point to validate if a request can be allowed
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="requestTracker"></param>
+    /// <param name="policies"></param>
+    /// <param name="logger"></param>
+    /// <returns></returns>
+    /// <exception cref="NotSupportedException"></exception>
     public RateLimitEngineResult CheckClientRequest(
         ClientRequest request,
-        ConcurrentQueue<ClientRequest> requests,
-        List<RateLimitPolicySettings>? policies)
+        IClientRequestTracker requestTracker,
+        IList<RateLimitPolicy>? policies,
+        ILogger logger)
     {
         if (policies is null || !policies.Any())
         {
+            logger.LogInformation($"No rate limit policies are configured.");
             return new RateLimitEngineResult() { IsAllowed = true };
         }
         
@@ -20,35 +33,35 @@ public class RateLimitEngine : IRateLimitEngine
             switch (policy.PolicyType)
             {
                 case PolicyType.SlidingWindow:
-                    var passed = SlidingWindowEvaluator.CheckRequest(request, requests, policy);
-                    policyResults.Add(new RateLimitPolicyResult()
-                    {
-                        HasPassedPolicy = passed,
-                        PolicyName = policy.PolicyName 
-                    } );
+                    var requestQueue = requestTracker.GetRequestQueue(request.ClientId);
+                    policyResults.Add(SlidingWindowEvaluator.CheckRequest(request, requestQueue, policy));
                     break;
+
+                case PolicyType.ConcurrentRequests:
+                    var activeRequestCount = requestTracker.GetActiveRequestCount(request.ClientId);
+                    policyResults.Add(ConcurrentRequestEvaluator.CheckRequest(request, activeRequestCount, policy));
+                    break;
+                
+                default:
+                    logger.LogCritical($"Policy type {policy.PolicyType} is not supported.");
+                    throw new NotSupportedException($"Policy type {policy.PolicyType} is not supported.");
             }
         });
 
         var result = new RateLimitEngineResult()
         {
-            IsAllowed = true,
-            PassingPolicyNames = new(),
-            FailingPolicyNames = new(),
+            IsAllowed = policyResults.All(a => a.HasPassedPolicy),
+            
+            PassingPolicyNames = policyResults
+                .Where(w => w.HasPassedPolicy)
+                .Select(s => s.PolicyName)
+                .ToList(),
+            
+            FailingPolicyNames = policyResults
+                .Where(w => w.HasPassedPolicy == false)
+                .Select(s => s.PolicyName)
+                .ToList(),
         };
-        
-        foreach (var policyResult in policyResults)
-        {
-            if (policyResult.HasPassedPolicy)
-            {
-                result.PassingPolicyNames.Add(policyResult.PolicyName);
-            }
-            else
-            {
-                result.IsAllowed = false;
-                result.FailingPolicyNames.Add(policyResult.PolicyName);
-            }
-        }
 
         return result;
     }

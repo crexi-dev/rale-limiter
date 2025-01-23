@@ -1,4 +1,41 @@
-﻿**Rate-limiting pattern**
+﻿**Rate Limiter Take Home Implementation**
+
+Two rate limit policies are available in this iteration:
+* Sliding time window - For each unique client ID, this policy limits the number of calls made within the last time window (TimeSpan) 
+* Concurrent requests - For each unique client ID, this policy limits the active number of requests. When requests complete, middleware needs to make a call to mark a request as complete
+
+**Filter groups**
+
+Filter groups allow policies to be either applied or excluded depending on properties in the client request. Filter groups can contain multiple filters and combinations
+* Region -  https://en.wikipedia.org/wiki/ISO_3166-2 - ISO-3166-2 format with 4 letter codes for country and state/province. Examples for California and British Columbia: US-CA, CA-BC
+* Subscription level - FREE, PREMIER, PARTNER
+
+**Example Use Cases for Filter Groups**
+* California users can have a different override limits by subscription level. Free tier users can have a lowere limit that premium
+* Overlapping filter groups are not fully supported. The first set of group filters that match will be the the one that applies. For example, if there is an override rule for all PREMIUM users and another override for California PREMIUM users, the override that is defined first will be applied 
+
+**Key components**
+
+The logic can be divided into the following components
+* Rate limit engine
+* Client request tracker
+* Rate policy evaluators
+
+Tracking of client requests is separate from rate policy evaluation. The rate limit engine ties all the components together, acting as the main entry point for the library
+
+**Limitations/Future implementation**
+
+* Client request tracking is in-memory and cannot scale to high level requests
+* Tied to the in-memory limitation, request history is not capped. A background process to clear old requests or inline pruning would solve this
+* Token based or fixed window rate limit policies
+* Wildcards for filters could be a good shortcut
+* Configuration/Dependency Injection for policy configuration
+
+___
+
+**PROBLEM STATEMENT**
+
+**Rate-limiting pattern**
 
 Rate limiting involves restricting the number of requests that a client can make.
 A client is identified with an access token, which is used for every request to a resource.

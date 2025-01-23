@@ -1,54 +1,29 @@
 namespace Crexi.RateLimiter.Logic.PolicyEvaluators;
 
 /// <summary>
-/// Logic only class determine if a client request exceeds limits within the last X timespan
+/// Logic only / stateless class that checks if the current client has exceeded concurrent request limits
 /// </summary>
-public static class SlidingWindowEvaluator
+public static class ConcurrentRequestEvaluator
 {
     /// <summary>
-    /// Main entrypoint for evaluating if a request exceeds limits within a sliding time span window
+    /// Main entry point to evaluate if a client request exceeds concurrency rate limits
     /// </summary>
     /// <param name="request"></param>
-    /// <param name="requestHistory"></param>
+    /// <param name="activeRequestCount"></param>
     /// <param name="settings"></param>
     /// <returns></returns>
     public static RateLimitPolicyResult CheckRequest(
         ClientRequest request,
-        ConcurrentQueue<ClientRequest> requestHistory,
+        long activeRequestCount,
         RateLimitPolicy settings)
     {
         var targetLimit = CalculateLimit(request, settings);
 
-        // If requests under the limit, no need to process further
-        if (requestHistory.Count < targetLimit || settings.TimeSpanWindow == null)
-        {
-            return new RateLimitPolicyResult()
-            {
-                HasPassedPolicy = true,
-                PolicyName = settings.PolicyName
-            };
-        }
-        
-        var windowStart = DateTime.UtcNow.Add(-settings.TimeSpanWindow.Value.Duration()); 
-        long requestsBeforeStart = 0;
-        
-        foreach (var req in requestHistory.ToList())
-        {
-            if (windowStart < req.RequestTime)
-            {
-                requestsBeforeStart++;
-            }
-            else
-            {
-                break;
-            }
-        }
-
         return new RateLimitPolicyResult()
         {
-            HasPassedPolicy =  (requestHistory.Count - requestsBeforeStart) > targetLimit,
+            HasPassedPolicy = activeRequestCount < targetLimit,
             PolicyName = settings.PolicyName
-        }; 
+        };
     }
 
     private static long CalculateLimit(ClientRequest request, RateLimitPolicy settings)

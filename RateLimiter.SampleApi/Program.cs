@@ -1,3 +1,5 @@
+using Crexi.RateLimiterSampleApi.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -19,6 +21,7 @@ if (app.Environment.IsDevelopment())
     builder.Logging.AddConsole();
 }
 
+app.UseMiddleware<RateLimitMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

@@ -3,7 +3,7 @@ namespace Crexi.RateLimiter.Models;
 /// <summary>
 /// RateLimitPolicy stores the configuration of a single rate limiting rule   
 /// </summary>
-public class RateLimitPolicySettings
+public class RateLimitPolicy
 {
     /// <summary>
     /// PolicyName should be unique with convention ApiName-PolicyName-Filters, ie ListingsApi-SlidingWindow-US-CA
@@ -19,24 +19,24 @@ public class RateLimitPolicySettings
     /// <summary>
     /// Limit number denotes the inclusive threshold number of requests allowed
     /// </summary>
-    public required int Limit { get; set; }
+    public required long Limit { get; set; }
     
     /// <summary>
     /// Used to create a timespan for fixed and sliding window rate limits
     /// </summary>
-    public TimeSpan? TimeSpanWindow { get; set; } 
-    
+    public TimeSpan? TimeSpanWindow { get; set; }
+
     /// <summary>
     /// When ApplyClientTagFilter is true, only requests that have the specified tags will be evaluated for this policy
     /// </summary>
-    public bool ApplyClientTagFilter { get; set; }
-    
+    public bool ApplyClientTagFilter { get; set; } = false;
+
     /// <summary>
-    /// ClientTagFilters verify if the client request should fall under this policy.
+    /// ClientFilters verify if the client request should fall under this policy.
     /// Tags defined here will be matched up to the client request.
     /// Examples: Region=["CA-US","ON-CA", "JP-26"], SubscriptionTier=["FREE"]
     /// </summary>
-    public ConcurrentDictionary<string, HashSet<string>>? ClientTagFilters { get; set; }
+    public List<ClientFilterGroup> ClientFilterGroups { get; set; } = new();
 }
 
 
