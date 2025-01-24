@@ -17,7 +17,7 @@ public static class SlidingWindowEvaluator
         ConcurrentQueue<ClientRequest> requestHistory,
         RateLimitPolicy settings)
     {
-        var targetLimit = CalculateLimit(request, settings);
+        var targetLimit = ClientFilterEvaluator.CalculateLimit(request, settings);
 
         // If requests under the limit, no need to process further
         if (requestHistory.Count < targetLimit || settings.TimeSpanWindow == null)
@@ -49,42 +49,5 @@ public static class SlidingWindowEvaluator
             HasPassedPolicy =  (requestHistory.Count - requestsBeforeStart) > targetLimit,
             PolicyName = settings.PolicyName
         }; 
-    }
-
-    private static long CalculateLimit(ClientRequest request, RateLimitPolicy settings)
-    {
-        if (!settings.ApplyClientTagFilter)
-        {
-            return settings.Limit;
-        }
-
-        var overrideLimit = settings.Limit;
-        foreach (var clientFilterGroup in settings.ClientFilterGroups)
-        {
-            var allFiltersMatch = true;
-            foreach (var clientFilter in clientFilterGroup.ClientFilters)
-            {
-                var clientValue = clientFilter.PropertyName switch
-                {
-                    nameof(ClientRequest.RegionCountryCode) => request.RegionCountryCode,
-                    nameof(ClientRequest.SubscriptionLevel) => request.SubscriptionLevel,
-                    _ => null
-                };
-
-                if (clientValue != clientFilter.TargetValue)
-                {
-                    allFiltersMatch = false;
-                    break;
-                }
-            }
-
-            if (allFiltersMatch)
-            {
-                overrideLimit = clientFilterGroup.LimitOverride;
-                break;
-            }
-        }
-
-        return overrideLimit;
     }
 }

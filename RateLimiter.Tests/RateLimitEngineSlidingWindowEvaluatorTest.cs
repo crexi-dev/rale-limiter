@@ -109,7 +109,7 @@ public class RateLimitEngineSlidingWindowEvaluatorTest
                 },
                 new ClientFilterGroup()
                 {
-                    LimitOverride = 10000,
+                    LimitOverride = 1,
                     ClientFilters = 
                     [
                         new ClientFilter

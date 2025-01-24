@@ -15,9 +15,9 @@ public class RateLimitMiddleware(RequestDelegate next, ILogger<RateLimitMiddlewa
     private static List<RateLimitPolicy> _rateLimitPolicies = new();
     private static ClientRequestTracker _clientRequestTracker = new();
     
-    // HARDCODED FOR TEST PURPOSES ONLY
+    // HARDCODED FOR DEMONSTRATION PURPOSES ONLY
     private const long RATE_LIMIT_MINUTES = 60;
-    private const long RATE_LIMIT_CALL_COUNT = 10;
+    private const long RATE_LIMIT_CALL_COUNT = 5;
     
     static RateLimitMiddleware()
     {
@@ -27,7 +27,30 @@ public class RateLimitMiddleware(RequestDelegate next, ILogger<RateLimitMiddlewa
             PolicyType = PolicyType.SlidingWindow,
             Limit = RATE_LIMIT_CALL_COUNT,
             TimeSpanWindow = TimeSpan.FromMinutes(RATE_LIMIT_MINUTES),
+            ApplyClientTagFilter = true
         };
+        
+        // California (US-CA) users with PREMIUM subscription have double the limit 
+        rateLimitPolicy.ClientFilterGroups.Add(
+            new ClientFilterGroup
+            {
+                LimitOverride = 2 * RATE_LIMIT_CALL_COUNT,
+                ClientFilters = new ()
+                {
+                    new ClientFilter
+                    {
+                        PropertyName = nameof(ClientRequest.RegionCountryCode),
+                        TargetValue = "US-CA",
+                        HasTargetValue = true
+                    },
+                    new ClientFilter
+                    {
+                        PropertyName = nameof(ClientRequest.SubscriptionLevel),
+                        TargetValue = "PREMIUM",
+                        HasTargetValue = true
+                    }
+                }
+            });
         
         _rateLimitPolicies.Add(rateLimitPolicy);
     }

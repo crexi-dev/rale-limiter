@@ -13,7 +13,7 @@ public class ClientFilter
     /// <summary>
     /// Flag indicating to include/exclude a value, example: NOT in California => HasTargetValue = false 
     /// </summary>
-    public required bool HasTargetValue { get; set; } 
+    public required bool HasTargetValue { get; set; } = true;
     
     /// <summary>
     /// Target value of the filter, examples for California and British Columns: US-CA, CA-BC
