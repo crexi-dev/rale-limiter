@@ -1,13 +1,15 @@
 ﻿using NUnit.Framework;
 
-namespace RateLimiter.Tests;
-
-[TestFixture]
-public class RateLimiterTest
+namespace RateLimiter.Tests
 {
-	[Test]
-	public void Example()
+	[TestFixture]
+	public class RateLimiterTest
 	{
-		Assert.That(true, Is.True);
+		[Test]
+		public void Example()
+		{
+			Assert.That(true, Is.True);
+		}
 	}
 }
+
