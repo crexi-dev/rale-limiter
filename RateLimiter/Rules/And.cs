@@ -7,11 +7,11 @@ using RateLimiter.Interfaces;
 
 namespace RateLimiter.Rules
 {
-    sealed class And : IRule
+    public class And : IRule
     {
-        private readonly IRule Rules;
+        private readonly IRule[] Rules;
 
-        And(IRule[] rules)
+        public And(IRule[] rules)
         {
             Rules = rules;
         }

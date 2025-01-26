@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RateLimiter.Interfaces
 {
-    interface ITimespanHistory : IHistory
+    public interface ITimespanHistory : IHistory
     {
         DateTime GetLastRequestDate(IIdentifier identifier);
     }

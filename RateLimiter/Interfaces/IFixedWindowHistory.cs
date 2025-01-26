@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RateLimiter.Interfaces
 {
-    interface IFixedWindowHistory : IHistory
+    public interface IFixedWindowHistory : IHistory
     {
         int GetRequestCount(IIdentifier identifier, DateTime start, DateTime end);
 

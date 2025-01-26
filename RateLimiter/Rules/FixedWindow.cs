@@ -7,7 +7,7 @@ using RateLimiter.Interfaces;
 
 namespace RateLimiter.Rules
 {
-    sealed class FixedWindow : IRule
+    public class FixedWindow : IRule
     {
         private readonly IFixedWindowHistory FixedWindowHistory;
         private readonly uint MaxCount;
@@ -22,7 +22,7 @@ namespace RateLimiter.Rules
 
         public bool Check(IIdentifier identifier)
         {
-            var now = DateTime.Now();
+            var now = DateTime.Now;
             var history = FixedWindowHistory.GetRequestCount(identifier, now.AddSeconds(-Window), now);
             var isAllowed = history <= MaxCount;
 

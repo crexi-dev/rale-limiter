@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RateLimiter.Interfaces
 {
-    interface IRule
+    public interface IRule
     {
         bool Check(IIdentifier identifier);
     }

@@ -7,18 +7,18 @@ using RateLimiter.Interfaces;
 
 namespace RateLimiter.Identifiers
 {
-    sealed class Token : IIdentifier
+    public class Token : IIdentifier
     {
-        private readonly string Token { get; set; }
+        private  string TokenKey { get; set; }
 
         public Token(string token)
         {
-            Token = token;
+            TokenKey = token;
         }
 
         public string ToString()
         {
-            return Token;
+            return TokenKey;
         }
     }
 }

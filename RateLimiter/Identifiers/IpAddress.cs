@@ -7,18 +7,18 @@ using RateLimiter.Interfaces;
 
 namespace RateLimiter.Identifiers
 {
-    sealed class IpAddress : IIdentifier
+    public class IpAddress : IIdentifier
     {
-        private readonly string IpAddress { get; set; }
+        private  string IpAddressValue { get; set; }
 
         public IpAddress(string ipAddress)
         {
-            IpAddress = ipAddress;
+            IpAddressValue = ipAddress;
         }
 
         public string ToString()
         {
-            return ipAddress;
+            return IpAddressValue;
         }
     }
 }

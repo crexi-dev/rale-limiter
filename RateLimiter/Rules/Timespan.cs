@@ -7,22 +7,22 @@ using RateLimiter.Interfaces;
 
 namespace RateLimiter.Rules
 {
-    class Timespan : IRule
+    public class Timespan : IRule
     {
         private readonly ITimespanHistory TimespanHistory;
-        private readonly uint Timespan;
+        private readonly uint TimespanValue;
 
         public Timespan(ITimespanHistory timespanHistory, uint timespan)
         {
             TimespanHistory = timespanHistory;
-            Timespan = timespan;
+            TimespanValue = timespan;
         }
 
         public bool Check(IIdentifier identifier)
         {
-            var now = DateTime.Now();
+            var now = DateTime.Now;
             var history = TimespanHistory.GetLastRequestDate(identifier);
-            var isAllowed = history.AddSecond(Timespan) <= now;
+            var isAllowed = history.AddSeconds(TimespanValue) <= now;
 
             if (isAllowed)
             {

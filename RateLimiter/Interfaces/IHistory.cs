@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RateLimiter.Interfaces
 {
-    interface IHistory
+    public interface IHistory
     {
         void Record(IIdentifier identifier, DateTime now);
     }

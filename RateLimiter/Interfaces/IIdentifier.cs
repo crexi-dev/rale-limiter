@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RateLimiter.Interfaces
 {
-    interface IIdentifier
+    public interface IIdentifier
     {
         string ToString();
     }
