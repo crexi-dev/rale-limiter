@@ -1,7 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
-    <LangVersion>latest</LangVersion>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
-</Project>  
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<OutputType>Exe</OutputType>
+		<StartupObject>RateLimiter.Program</StartupObject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<!-- Entity Framework Core In-Memory Provider -->
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.0" />
+
+		<!-- Moq for Mocking in Tests (if needed) -->
+		<PackageReference Include="Moq" Version="4.20.2" />
+
+		<!-- NUnit for Unit Testing -->
+		<PackageReference Include="NUnit" Version="3.13.3" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.2" />
+	</ItemGroup>
+</Project>
