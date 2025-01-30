@@ -17,8 +17,6 @@ public class RateLimiterTests
 			_rateLimiter = new RateLimiter();
 		}
 
-
-
 		[Test]
 		public void IsRequestAllowed_ShouldReturnTrue_WhenAllRulesAllow()
 		{
@@ -74,97 +72,5 @@ public class RateLimiterTests
 		}
 	}
 
-//[TestFixture]
-//public class RateLimiterTest
-//{
-//	[Test]
-//	public void Example()
-//	{
-//		Assert.That(true, Is.True);
-//	}
 
-
-//	private RateLimiter _rateLimiter;
-
-//	[SetUp]
-//	public void SetUp()
-//	{
-//		_rateLimiter = new RateLimiter();
-//	}
-
-//	[Test]
-//	public void XRequestsPerTimespanRule_AllowsRequestsWithinLimit()
-//	{
-//		var rule = new XRequestsPerTimespanRule(5, TimeSpan.FromMinutes(1));
-//		_rateLimiter.AddGlobalRule(rule);
-
-//		var factors = new Dictionary<string, string>();
-
-//		for (int i = 0; i < 5; i++)
-//		{
-//			Assert.IsTrue(_rateLimiter.IsRequestAllowed("resource1", "client1", factors));
-//		}
-
-//		Assert.IsFalse(_rateLimiter.IsRequestAllowed("resource1", "client1", factors));
-//	}
-
-//	[Test]
-//	public void TimespanSinceLastCallRule_AllowsRequestAfterTimespan()
-//	{
-//		var rule = new TimespanSinceLastCallRule(TimeSpan.FromSeconds(1));
-//		_rateLimiter.AddGlobalRule(rule);
-
-//		var factors = new Dictionary<string, string>();
-
-//		Assert.IsTrue(_rateLimiter.IsRequestAllowed("resource1", "client1", factors));
-//		Assert.IsFalse(_rateLimiter.IsRequestAllowed("resource1", "client1", factors));
-
-//		System.Threading.Thread.Sleep(1000);
-
-//		Assert.IsTrue(_rateLimiter.IsRequestAllowed("resource1", "client1", factors));
-//	}
-
-//	[Test]
-//	public void RegionBasedRule_AllowsRequestsBasedOnRegion()
-//	{
-//		var rule = new RegionBasedRule(5, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(5));
-//		_rateLimiter.AddGlobalRule(rule);
-
-//		var usFactors = new Dictionary<string, string> { { "region", "US" } };
-//		var euFactors = new Dictionary<string, string> { { "region", "EU" } };
-
-//		for (int i = 0; i < 5; i++)
-//		{
-//			Assert.IsTrue(_rateLimiter.IsRequestAllowed("resource1", "client1", usFactors));
-//		}
-
-//		Assert.IsFalse(_rateLimiter.IsRequestAllowed("resource1", "client1", usFactors));
-
-//		Assert.IsTrue(_rateLimiter.IsRequestAllowed("resource1", "client2", euFactors));
-//		Assert.IsFalse(_rateLimiter.IsRequestAllowed("resource1", "client2", euFactors));
-
-//		System.Threading.Thread.Sleep(5000);
-
-//		Assert.IsTrue(_rateLimiter.IsRequestAllowed("resource1", "client2", euFactors));
-//	}
-
-//	[Test]
-//	public void RateLimiter_LogsRequests()
-//	{
-//		var rule = new XRequestsPerTimespanRule(5, TimeSpan.FromMinutes(1));
-//		_rateLimiter.AddGlobalRule(rule);
-
-//		var factors = new Dictionary<string, string>();
-
-//		for (int i = 0; i < 5; i++)
-//		{
-//			_rateLimiter.IsRequestAllowed("resource1", "client1", factors);
-//		}
-
-//		var log = _rateLimiter.GetRequestLog();
-
-//		Assert.AreEqual(5, log.Count());
-//		Assert.IsTrue(log.All(entry => entry.ClientId == "client1" && entry.Resource == "resource1"));
-//	}
-//}
 
