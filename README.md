@@ -11,8 +11,8 @@ Filter groups allow policies to be either applied or excluded depending on prope
 * Subscription level - FREE, PREMIER, PARTNER
 
 **Example Use Cases for Filter Groups**
-* California users can have a different override limits by subscription level. Free tier users can have a lowere limit that premium
-* Overlapping filter groups are not fully supported. The first set of group filters that match will be the the one that applies. For example, if there is an override rule for all PREMIUM users and another override for California PREMIUM users, the override that is defined first will be applied 
+* California users can have a different override limits by subscription level. Free tier users can be configured to have lower limits than premium tier users
+* Venn overlap limitation - Overlapping filter groups are not fully supported. The first set of group filters that match will be the the one that applies. For example, if there is an override rule for all PREMIUM users and another override for California PREMIUM users, the override that is defined first will be applied.
 
 **Key components**
 
@@ -27,8 +27,8 @@ Tracking of client requests is separate from rate policy evaluation. The rate li
 
 * Client request tracking is in-memory and cannot scale to high level requests
 * Tied to the in-memory limitation, request history is not capped. A background process to clear old requests or inline pruning would solve this
-* Token based or fixed window rate limit policies
-* Wildcards for filters could be a good shortcut
+* Token based or fixed window rate limit policies are possible use cases
+* Wildcards for filters can make configuration for countries easier. For example, "JP-*" for all prefectures in Japan 
 * Configuration/Dependency Injection for policy configuration
 
 ___
