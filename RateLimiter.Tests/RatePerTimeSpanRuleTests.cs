@@ -14,16 +14,19 @@ namespace RateLimiter.Tests;
 
 public class RatePerTimeSpanRuleTests
 {
-    private readonly Mock<IRequestsStorage> _requestsStorageMock;
+    private readonly Mock<IRequestsStorage> _requestsStorageMock = new();
+    private readonly Mock<IOptionsSnapshot<RatePerTimeSpanRuleSettings>> _optionsMock = new();
     private readonly RatePerTimeSpanRule _rule;
-    private readonly RatePerTimeSpanRuleSettings _settings = new() { IntervalInMinutes = 1, RequestsCount = 3 };
+    private readonly RatePerTimeSpanRuleSettings _settings = new()
+    {
+        IntervalInMinutes = 1, 
+        RequestsCount = 3, 
+        Region = "Us"
+    };
 
     public RatePerTimeSpanRuleTests()
     {
-        _requestsStorageMock = new Mock<IRequestsStorage>();
-        Mock<IOptionsSnapshot<RatePerTimeSpanRuleSettings>> optionsMock = new();
-        optionsMock.Setup(o => o.Value).Returns(_settings);
-        _rule = new RatePerTimeSpanRule(optionsMock.Object, _requestsStorageMock.Object);
+        _rule = new RatePerTimeSpanRule(_optionsMock.Object, _requestsStorageMock.Object);
     }
 
     [Fact]
@@ -31,7 +34,7 @@ public class RatePerTimeSpanRuleTests
     {
         // Arrange
         var request = new Request(Guid.NewGuid(), RegionType.Us, DateTime.UtcNow);
-
+        _optionsMock.Setup(o => o.Value).Returns(_settings);
         _requestsStorageMock
             .Setup(r => r.Get(request.Id))
             .Returns([new Request(request.Id, RegionType.Us, DateTime.UtcNow.AddMinutes(-1))]);
@@ -48,7 +51,7 @@ public class RatePerTimeSpanRuleTests
     {
         // Arrange
         var request = new Request(Guid.NewGuid(), RegionType.Us, DateTime.UtcNow);
-
+        _optionsMock.Setup(o => o.Value).Returns(_settings);
         var existingRequests = Enumerable.Range(0, _settings.RequestsCount)
             .Select(i => new Request(request.Id, RegionType.Us, DateTime.UtcNow.AddMinutes(-i)))
             .ToList();
@@ -60,5 +63,20 @@ public class RatePerTimeSpanRuleTests
 
         // Assert
         result.Should().BeFalse();
+    }
+    
+    [Fact]
+    public void Validate_RegionIsEmpty_ShouldThrowArgumentException()
+    {
+        // Arrange
+        var request = new Request(Guid.NewGuid(), RegionType.Us, DateTime.UtcNow);
+        _optionsMock.Setup(o => o.Value)
+            .Returns(new RatePerTimeSpanRuleSettings { Region = "invalid-region" });
+
+        // Act
+        Action act = () => _rule.Validate(request);
+        
+        // Assert
+        Assert.Throws<ArgumentException>(act);
     }
 }

@@ -13,16 +13,14 @@ namespace RateLimiter.Tests;
 
 public class TimeSpanSinceLastCallRuleTests
 {
-    private readonly Mock<IRequestsStorage> _requestsStorageMock;
+    private readonly Mock<IRequestsStorage> _requestsStorageMock = new();
+    private readonly Mock<IOptionsSnapshot<TimeSpanSinceLastCallRuleSettings>> _optionsMock = new();
     private readonly TimeSpanSinceLastCallRule _rule;
-    private readonly TimeSpanSinceLastCallRuleSettings _settings = new() { MinimumIntervalInMinutes = 1 };
+    private readonly TimeSpanSinceLastCallRuleSettings _settings = new() { MinimumIntervalInMinutes = 1, Region = "Eu" };
 
     public TimeSpanSinceLastCallRuleTests()
     {
-        _requestsStorageMock = new Mock<IRequestsStorage>();
-        Mock<IOptionsSnapshot<TimeSpanSinceLastCallRuleSettings>> optionsMock = new();
-        optionsMock.Setup(o => o.Value).Returns(_settings);
-        _rule = new TimeSpanSinceLastCallRule(optionsMock.Object, _requestsStorageMock.Object);
+        _rule = new TimeSpanSinceLastCallRule(_optionsMock.Object, _requestsStorageMock.Object);
     }
 
     [Fact]
@@ -30,7 +28,7 @@ public class TimeSpanSinceLastCallRuleTests
     {
         // Arrange
         var request = new Request(Guid.NewGuid(), RegionType.Eu, DateTime.UtcNow);
-
+        _optionsMock.Setup(o => o.Value).Returns(_settings);
         _requestsStorageMock
             .Setup(r => r.Get(request.Id))
             .Returns([]);
@@ -48,7 +46,7 @@ public class TimeSpanSinceLastCallRuleTests
         // Arrange
         var request = new Request(Guid.NewGuid(), RegionType.Eu, DateTime.UtcNow);
         var previousRequest = new Request(request.Id, RegionType.Eu, DateTime.UtcNow.AddMinutes(-0.5));
-
+        _optionsMock.Setup(o => o.Value).Returns(_settings);
         _requestsStorageMock
             .Setup(r => r.Get(request.Id))
             .Returns([previousRequest]);
@@ -58,5 +56,20 @@ public class TimeSpanSinceLastCallRuleTests
 
         // Assert
         result.Should().BeFalse();
+    }
+    
+    [Fact]
+    public void Validate_RegionIsEmpty_ShouldThrowArgumentException()
+    {
+        // Arrange
+        var request = new Request(Guid.NewGuid(), RegionType.Us, DateTime.UtcNow);
+        _optionsMock.Setup(o => o.Value)
+            .Returns(new TimeSpanSinceLastCallRuleSettings { Region = "invalid-region" });
+
+        // Act
+        Action act = () => _rule.Validate(request);
+        
+        // Assert
+        Assert.Throws<ArgumentException>(act);
     }
 }

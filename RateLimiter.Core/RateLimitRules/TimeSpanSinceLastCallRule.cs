@@ -15,19 +15,22 @@ public class TimeSpanSinceLastCallRule(
     IRequestsStorage requestsStorage)
     : IRateLimitRule
 {
-    private static RegionType RegionType => RegionType.Eu;
-    
     public RuleType RuleType => RuleType.TimeSpanSinceLastCall;
     
     public bool Validate(Request request)
     {
-        if (request.RegionType != RegionType)
+        if (!Enum.TryParse<RegionType>(options.Value.Region, out var regionType))
+        {
+            throw new ArgumentException("Incorrect Region value in TimeSpanSinceLastCallRuleSettings");
+        }
+        
+        if (request.RegionType != regionType)
         {
             return true;
         }
         
         var requests = requestsStorage.Get(request.Id)
-            .Where(x => x.RegionType == RegionType)
+            .Where(x => x.RegionType == regionType)
             .ToList();
         
         if (requests.Count == 0)
