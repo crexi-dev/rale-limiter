@@ -20,23 +20,23 @@ public class RateLimitFilter(IRateLimitExecutor rateLimitExecutor) : IAsyncActio
 
         var headers = context.HttpContext.Request.Headers;
         
-        if (!TryGetHeaderValue(headers, "Identifier", out var identifier) ||
+        if (!TryGetHeaderValue(headers, "Identifier", out var identifier) || 
             !Guid.TryParse(identifier, out var parsedIdentifier))
         {
             context.Result = CreateBadRequestContentResult("Missing or invalid required header: Identifier");
             return;
         }
-
-        if (!TryGetHeaderValue(headers, "RegionType", out var regionType) ||
-            !Enum.TryParse<RegionType>(regionType, out var parsedRegionType))
-        {
-            context.Result = CreateBadRequestContentResult("Missing or invalid required header: RegionType");
-            return;
-        }
         
-        var isValid = rateLimitExecutor.Execute(
-            ruleAttribute.RuleTypes,
-            new Request(parsedIdentifier, parsedRegionType, DateTime.UtcNow));
+        var parsedRegionType = RegionType.None;
+        if (TryGetHeaderValue(headers, "RegionType", out var regionType) && 
+            Enum.TryParse<RegionType>(regionType, out var region))
+        {
+            parsedRegionType = region;
+        }
+
+        var request = new Request(parsedIdentifier, parsedRegionType, DateTime.UtcNow);
+
+        var isValid = rateLimitExecutor.Execute(ruleAttribute.RuleTypes, request);
 
         if (!isValid)
         {
@@ -46,8 +46,8 @@ public class RateLimitFilter(IRateLimitExecutor rateLimitExecutor) : IAsyncActio
 
         await next();
     }
-    
-    private static bool TryGetHeaderValue(IHeaderDictionary headers, string key, out string value)
+
+    private static bool TryGetHeaderValue(IHeaderDictionary headers, string key, out string? value)
     {
         if (headers.TryGetValue(key, out var headerValue) && !string.IsNullOrWhiteSpace(headerValue))
         {
@@ -55,10 +55,10 @@ public class RateLimitFilter(IRateLimitExecutor rateLimitExecutor) : IAsyncActio
             return true;
         }
 
-        value = string.Empty;
+        value = null;
         return false;
     }
-    
+
     private static ContentResult CreateBadRequestContentResult(string message) =>
         new() { StatusCode = StatusCodes.Status400BadRequest, Content = message };
 }

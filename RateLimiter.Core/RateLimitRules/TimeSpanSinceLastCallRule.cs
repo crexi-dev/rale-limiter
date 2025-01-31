@@ -15,14 +15,19 @@ public class TimeSpanSinceLastCallRule(
     IRequestsStorage requestsStorage)
     : IRateLimitRule
 {
-    public RegionType RegionType => RegionType.Eu;
-
+    private static RegionType RegionType => RegionType.Eu;
+    
     public RuleType RuleType => RuleType.TimeSpanSinceLastCall;
     
     public bool Validate(Request request)
     {
+        if (request.RegionType != RegionType)
+        {
+            return true;
+        }
+        
         var requests = requestsStorage.Get(request.Id)
-            .Where(x => x.RegionType == request.RegionType)
+            .Where(x => x.RegionType == RegionType)
             .ToList();
         
         if (requests.Count == 0)

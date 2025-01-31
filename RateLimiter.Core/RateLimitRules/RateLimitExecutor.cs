@@ -10,10 +10,8 @@ public class RateLimitRulesExecutor(IEnumerable<IRateLimitRule> existingRules) :
 {
     public bool Execute(IReadOnlyCollection<RuleType> ruleTypes, Request request)
     {
-        var applicableRules = existingRules
-            .Where(r => r.RegionType == request.RegionType && ruleTypes.Contains(r.RuleType))
-            .ToList();
-
-        return applicableRules.All(rule => rule.Validate(request));
+        return existingRules
+            .Where(r => ruleTypes.Contains(r.RuleType))
+            .All(rule => rule.Validate(request));
     }
 }

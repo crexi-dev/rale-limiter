@@ -15,12 +15,17 @@ public class RatePerTimeSpanRule(
     IRequestsStorage requestsStorage)
     : IRateLimitRule
 {
-    public RegionType RegionType => RegionType.Us;
+    private static RegionType RegionType => RegionType.Us;
     
     public RuleType RuleType => RuleType.RequestPerTimeSpan;
     
     public bool Validate(Request request)
     {
+        if (request.RegionType != RegionType)
+        {
+            return true;
+        }
+        
         requestsStorage.RemoveOldRequests(
             request.Id,
             request.RegionType,
