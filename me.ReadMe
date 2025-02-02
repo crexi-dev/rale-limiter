@@ -1,0 +1,33 @@
+I spent a little over 8 hours Saturday, then slept on it overnight.  As already noted, the cache is not complete -
+it's missing tests and the rules cache needs to be implemented separately (for this probably straight concurrentdictionary)
+so it's perminant.  If I was spending more time, I'd probably throw it into a sqlite db or some other local file based data store
+so that any rule changes made during operation could be reloaded if the app would be restarted.  
+Regardless, I the minimal stuff would take another hour or 2 and I could refine with more time, but I've got to get other things
+done this weekend and I believe this shows approach, thought, and general coding style of the moment.  Hopefully it is enough to 
+move forward to a conversation on the whys, hows, and decisions made.  Either way I appreciate the challenge and had fun 
+thinking/woring it through.
+
+LNB.
+
+Assumptions
+	1. Portability isn't important - this is tied to AspNet and Net8.
+	2. ContextParser is defined elsewhere, so will always be mocked in for our purposes. (no implementation)
+	3. While rule execution is time critical, adding/updating rules is not time critical.  
+	4. When getting rules to run, we will get the most specific match (i.e. if no match for requested client-endpoint, but match for endpoint, we'll return the endpoint match)
+		Essentially adding a region, tier, or client specific ruleset will override any less specific rule sets.
+
+Notes:
+	1. I generally prefer "self-documenting" code, but have comments sprinkled in the code where I wanted to leave a note about a direction I went.
+	2. I lumped things into the same projects.  Depending on how this would be packaged, I'd probably break them out a bit more, but for the purposes here I figured it works and makes navigation easier.
+	3. It might just be my lack of knowledge/imagination, but it seems that there aren't a ton of evaluations to make on rate limiting data, 
+		so this is set up so it's easy to configure the limits, but adding completely new rules is more tied down - requiring dev.
+		I considered using string rules (at BAM, currently working through a purpose built rule/expression engine borrowing from and inspired by the MS Rules Engine and it's use of dynamic linq).
+		If the state of that project was a few days further along I might have, but as is, I hope this is sufficient.
+	4. The tests are pretty vanilla - no auto data, etc - just enough to demonstrate the code basically works.  
+	5. Some tests aren't very transparent.  See #4 for reason/excuse.
+	6. ResourceAccess is probably the weakest portion of this.  It was the last done and really the target was function - I dedicated more time to the logic.
+		Thread safety is a little fragile here, too...
+	7. I went overboard adding the rule window.  It's a very basic implementation (i.e. logic doesn't support spanning days), but I figured since I was having fun...
+
+
+	
