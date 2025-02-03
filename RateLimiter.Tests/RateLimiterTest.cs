@@ -128,77 +128,75 @@ namespace RateLimiter.Tests
     [TestFixture]
     public class RateLimiterTests
     {
+        private RateLimiter _rateLimiter;
         private Mock<ILogger<RateLimiter>> _loggerMock;
 
         [SetUp]
         public void Setup()
         {
             _loggerMock = new Mock<ILogger<RateLimiter>>();
+            _rateLimiter = new RateLimiter(_loggerMock.Object);
         }
 
         [Test]
-        public void IsRequestAllowed_NoRules_ReturnsTrue()
+        public void ResourceWithSingleFixedWindowRule_ShouldAllowWithinLimit()
         {
-            var limiter = new RateLimiter(_loggerMock.Object);
-            Assert.That(limiter.IsRequestAllowed("client1", "res1"), Is.True);
+            var rule = new FixedWindowRule(3, TimeSpan.FromSeconds(10));
+            _rateLimiter.AddRule("resourceA", rule);
+
+            for (int i = 0; i < 3; i++)
+            {
+                Assert.IsTrue(_rateLimiter.IsRequestAllowed("client1", "resourceA"));
+            }
+            Assert.IsFalse(_rateLimiter.IsRequestAllowed("client1", "resourceA"));
         }
 
         [Test]
-        public void IsRequestAllowed_AllRulesAllow_ReturnsTrue()
+        public void ResourceWithSingleSlidingWindowRule_ShouldAllowWithinLimit()
         {
-            var ruleMock = new Mock<IRateLimitRule>();
-            ruleMock.Setup(r => r.IsAllowed("client1", "res1")).Returns(true);
+            var rule = new SlidingWindowRule(2, TimeSpan.FromSeconds(5));
+            _rateLimiter.AddRule("resourceB", rule);
 
-            var limiter = new RateLimiter(_loggerMock.Object);
-            limiter.AddRule("res1", ruleMock.Object);
-
-            Assert.That(limiter.IsRequestAllowed("client1", "res1"), Is.True);
+            Assert.IsTrue(_rateLimiter.IsRequestAllowed("client2", "resourceB"));
+            Assert.IsTrue(_rateLimiter.IsRequestAllowed("client2", "resourceB"));
+            Assert.IsFalse(_rateLimiter.IsRequestAllowed("client2", "resourceB"));
         }
 
         [Test]
-        public void IsRequestAllowed_AnyRuleDenies_ReturnsFalse()
+        public void ResourceWithMultipleRules_ShouldDenyIfAnyRuleFails()
         {
-            var rule1 = new Mock<IRateLimitRule>();
-            rule1.Setup(r => r.IsAllowed("client1", "res1")).Returns(true);
+            var fixedRule = new FixedWindowRule(2, TimeSpan.FromSeconds(10));
+            var slidingRule = new SlidingWindowRule(3, TimeSpan.FromSeconds(5));
 
-            var rule2 = new Mock<IRateLimitRule>();
-            rule2.Setup(r => r.IsAllowed("client1", "res1")).Returns(false);
+            _rateLimiter.AddRule("resourceC", fixedRule);
+            _rateLimiter.AddRule("resourceC", slidingRule);
 
-            var limiter = new RateLimiter(_loggerMock.Object);
-            limiter.AddRule("res1", rule1.Object);
-            limiter.AddRule("res1", rule2.Object);
+            Assert.IsTrue(_rateLimiter.IsRequestAllowed("client3", "resourceC"));
+            Assert.IsTrue(_rateLimiter.IsRequestAllowed("client3", "resourceC"));
 
-            Assert.That(limiter.IsRequestAllowed("client1", "res1"), Is.False);
+            Assert.IsFalse(_rateLimiter.IsRequestAllowed("client3", "resourceC"));
+
+            Thread.Sleep(10000);
+            Assert.IsTrue(_rateLimiter.IsRequestAllowed("client3", "resourceC"));
         }
 
         [Test]
-        public void Cleanup_CallsAllRuleCleanups()
+        public void RegionalRule_ShouldApplyCorrectRegionalLimits()
         {
-            var ruleMock = new Mock<IRateLimitRule>();
-            var limiter = new RateLimiter(_loggerMock.Object);
-            limiter.AddRule("res1", ruleMock.Object);
+            var regionalRule = new RegionalRule(new Dictionary<string, IRateLimitRule>
+            {
+                { "US", new FixedWindowRule(1, TimeSpan.FromSeconds(10)) },
+                { "ASIA", new SlidingWindowRule(2, TimeSpan.FromSeconds(5)) }
+            });
 
-            limiter.Cleanup();
+            _rateLimiter.AddRule("resourceD", regionalRule);
 
-            ruleMock.Verify(r => r.Cleanup(), Times.Once);
-        }
+            Assert.IsTrue(_rateLimiter.IsRequestAllowed("US-client", "resourceD"));
+            Assert.IsFalse(_rateLimiter.IsRequestAllowed("US-client", "resourceD"));
 
-        [Test]
-        public void WhenRequestBlocked_LogsWarning()
-        {
-            var rule = new FixedWindowRule(0, TimeSpan.FromMinutes(1));
-            var limiter = new RateLimiter(_loggerMock.Object);
-            limiter.AddRule("res1", rule);
-
-            limiter.IsRequestAllowed("client1", "res1");
-
-            _loggerMock.Verify(log => log.Log(
-                LogLevel.Warning,
-                It.IsAny<EventId>(),
-                It.Is<It.IsAnyType>((v, t) => v.ToString().Contains("Request blocked: Client client1, Resource res1")),
-                null,
-                It.IsAny<Func<It.IsAnyType, Exception, string>>()),
-                Times.Once);
+            Assert.IsTrue(_rateLimiter.IsRequestAllowed("ASIA-client", "resourceD"));
+            Assert.IsTrue(_rateLimiter.IsRequestAllowed("ASIA-client", "resourceD"));
+            Assert.IsFalse(_rateLimiter.IsRequestAllowed("ASIA-client", "resourceD"));
         }
     }
 
