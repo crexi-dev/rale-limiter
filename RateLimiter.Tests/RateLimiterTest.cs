@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Microsoft.Extensions.Logging;
-using System.Timers;
+using RateLimiter.Rules;
 
 namespace RateLimiter.Tests
 {
