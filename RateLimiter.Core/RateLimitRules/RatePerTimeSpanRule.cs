@@ -19,12 +19,7 @@ public class RatePerTimeSpanRule(
 
     public bool Validate(Request request)
     {
-        if (!Enum.TryParse<RegionType>(options.Value.Region, out var regionType))
-        {
-            throw new ArgumentException("Incorrect Region value in RatePerTimeSpanRuleSettings");
-        }
-
-        if (request.RegionType != regionType)
+        if (request.RegionType != options.Value.RegionType)
         {
             return true;
         }
@@ -36,7 +31,7 @@ public class RatePerTimeSpanRule(
         
         var requests = requestsStorage.Get(request.Id);
 
-        if (requests.Count(x => x.RegionType == regionType) == options.Value.RequestsCount)
+        if (requests.Count(x => x.RegionType == options.Value.RegionType) == options.Value.RequestsCount)
         {
             return false;
         }

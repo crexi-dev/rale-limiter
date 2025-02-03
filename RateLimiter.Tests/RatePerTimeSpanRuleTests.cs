@@ -21,7 +21,7 @@ public class RatePerTimeSpanRuleTests
     {
         IntervalInMinutes = 1, 
         RequestsCount = 3, 
-        Region = "Us"
+        RegionType = RegionType.Us
     };
 
     public RatePerTimeSpanRuleTests()
@@ -63,20 +63,5 @@ public class RatePerTimeSpanRuleTests
 
         // Assert
         result.Should().BeFalse();
-    }
-    
-    [Fact]
-    public void Validate_RegionIsEmpty_ShouldThrowArgumentException()
-    {
-        // Arrange
-        var request = new Request(Guid.NewGuid(), RegionType.Us, DateTime.UtcNow);
-        _optionsMock.Setup(o => o.Value)
-            .Returns(new RatePerTimeSpanRuleSettings { Region = "invalid-region" });
-
-        // Act
-        Action act = () => _rule.Validate(request);
-        
-        // Assert
-        Assert.Throws<ArgumentException>(act);
     }
 }

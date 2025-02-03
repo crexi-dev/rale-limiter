@@ -16,7 +16,11 @@ public class TimeSpanSinceLastCallRuleTests
     private readonly Mock<IRequestsStorage> _requestsStorageMock = new();
     private readonly Mock<IOptionsSnapshot<TimeSpanSinceLastCallRuleSettings>> _optionsMock = new();
     private readonly TimeSpanSinceLastCallRule _rule;
-    private readonly TimeSpanSinceLastCallRuleSettings _settings = new() { MinimumIntervalInMinutes = 1, Region = "Eu" };
+    private readonly TimeSpanSinceLastCallRuleSettings _settings = new()
+    {
+        MinimumIntervalInMinutes = 1,
+        RegionType = RegionType.Eu
+    };
 
     public TimeSpanSinceLastCallRuleTests()
     {
@@ -56,20 +60,5 @@ public class TimeSpanSinceLastCallRuleTests
 
         // Assert
         result.Should().BeFalse();
-    }
-    
-    [Fact]
-    public void Validate_RegionIsEmpty_ShouldThrowArgumentException()
-    {
-        // Arrange
-        var request = new Request(Guid.NewGuid(), RegionType.Us, DateTime.UtcNow);
-        _optionsMock.Setup(o => o.Value)
-            .Returns(new TimeSpanSinceLastCallRuleSettings { Region = "invalid-region" });
-
-        // Act
-        Action act = () => _rule.Validate(request);
-        
-        // Assert
-        Assert.Throws<ArgumentException>(act);
     }
 }

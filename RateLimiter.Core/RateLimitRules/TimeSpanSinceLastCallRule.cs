@@ -19,18 +19,13 @@ public class TimeSpanSinceLastCallRule(
     
     public bool Validate(Request request)
     {
-        if (!Enum.TryParse<RegionType>(options.Value.Region, out var regionType))
-        {
-            throw new ArgumentException("Incorrect Region value in TimeSpanSinceLastCallRuleSettings");
-        }
-        
-        if (request.RegionType != regionType)
+        if (request.RegionType != options.Value.RegionType)
         {
             return true;
         }
         
         var requests = requestsStorage.Get(request.Id)
-            .Where(x => x.RegionType == regionType)
+            .Where(x => x.RegionType == options.Value.RegionType)
             .ToList();
         
         if (requests.Count == 0)

@@ -1,4 +1,5 @@
 ﻿using RateLimiter.Contracts;
+using RateLimiter.Enums;
 
 namespace RateLimiter.RateLimitSettings;
 
@@ -6,5 +7,5 @@ public class TimeSpanSinceLastCallRuleSettings : ISetting
 {
     public int MinimumIntervalInMinutes { get; init; }
     
-    public string Region { get; init; } = string.Empty;
+    public RegionType RegionType { get; init; }
 }
