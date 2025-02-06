@@ -18,8 +18,7 @@ namespace RateLimiter.Rules
 
         public async Task<bool> EvaluateAsync(HttpContext httpContext)
         {
-            // get from token or resolve by ip
-            string country = Country.EU;
+            string country = ResolveCountry();
             if (!_configs.TryGetValue(country, out var config))
             {
                 // no limit for current country, so skip it
@@ -45,6 +44,12 @@ namespace RateLimiter.Rules
             };
             await _cache.SetStringAsync(cacheKey, JsonSerializer.Serialize(0), options);
             return true;
+        }
+
+        private string ResolveCountry()
+        {
+            // get from token or resolve by ip
+            return Country.EU;
         }
     }
 }
