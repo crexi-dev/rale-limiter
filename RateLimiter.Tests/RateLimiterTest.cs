@@ -1,13 +1,15 @@
-﻿using NUnit.Framework;
+﻿
+using FluentAssertions;
+
+using Xunit;
 
 namespace RateLimiter.Tests;
 
-[TestFixture]
 public class RateLimiterTest
 {
-	[Test]
+	[Fact]
 	public void Example()
-	{
-		Assert.That(true, Is.True);
-	}
+    {
+        true.Should().BeFalse();
+    }
 }
