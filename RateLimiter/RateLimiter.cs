@@ -16,9 +16,14 @@ public class RateLimiter : IRateLimitRequests
         _rules = rulesFactory.GetRules();
     }
 
-    public (bool, string) IsRequestAllowed(IEnumerable<RateLimited> rules)
+    public (bool, string) IsRequestAllowed(IEnumerable<RateLimitedResource> rateLimitedResources)
     {
-        var passed = _rules.All(rule => rule.IsAllowed("foo"));
+        // get the matching rules
+        var rules = _rules.Where(r => rateLimitedResources.Select(x => x.Discriminator)
+            .ToList().Contains(r.Discriminator));
+
+        // ensure they all pass
+        var passed = rules.All(x => x.IsAllowed(x.Discriminator.ToString()));
 
         return passed ? (passed, string.Empty) :
             (passed, "some message about banging on our door too much");

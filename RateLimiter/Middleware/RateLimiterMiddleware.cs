@@ -1,10 +1,11 @@
-﻿using System.Linq;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
 
+using RateLimiter.Abstractions;
 using RateLimiter.Config;
 
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RateLimiter.Middleware;
@@ -29,14 +30,14 @@ public class RateLimiterMiddleware
     {
         var endpoint = context.Features.Get<IEndpointFeature>()?.Endpoint;
 
-        var attributes = endpoint?.Metadata.GetOrderedMetadata<RateLimited>();
+        var rateLimitedResources = endpoint?.Metadata.GetOrderedMetadata<RateLimitedResource>();
 
-        if (attributes is not null && attributes.Any())
+        if (rateLimitedResources is not null && rateLimitedResources.Any())
         {
             // TODO: Do not default to this discriminator
             var token = context.Request.Query["clientToken"];
 
-            var (isAllowed, message) = _rateLimiter.IsRequestAllowed(attributes);
+            var (isAllowed, message) = _rateLimiter.IsRequestAllowed(rateLimitedResources);
 
             if (!isAllowed)
             {

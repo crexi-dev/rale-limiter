@@ -13,7 +13,12 @@ namespace RateLimiter.Tests.Rules
         [Fact]
         public void WhenFoo_DoesBar()
         {
-            var rule = new FixedWindowRule(3, TimeSpan.FromSeconds(3));
+            // TODO: Turn this into a theory and attempt to handle edge cases
+            var rule = new FixedWindowRule(new FixedWindowRuleConfiguration()
+            {
+                MaxRequests = 3,
+                WindowDuration = TimeSpan.FromSeconds(3)
+            });
 
             // First 3 requests allowed
             rule.IsAllowed("client1").Should().BeTrue();

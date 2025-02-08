@@ -19,8 +19,8 @@ namespace RateLimiter.Tests.Api.Controllers
             _logger = logger;
         }
 
-        [RateLimited(LimiterType = LimiterType.RequestsPerTimespan, Config = "nameOfTheConfigEntry", Discriminator = LimiterDiscriminator.IpAddress)]
-        [RateLimited(LimiterType = LimiterType.RequestsPerTimespan, Config = "nameOfTheConfigEntry", Discriminator = LimiterDiscriminator.GeoLocation)]
+        [RateLimitedResource(RateLimiterRuleName = "GeoBased")]
+        [RateLimitedResource(RateLimiterRuleName = "RequestPerTimespan-Default")]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {

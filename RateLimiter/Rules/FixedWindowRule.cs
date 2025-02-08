@@ -11,10 +11,10 @@ public class FixedWindowRule : IRateLimitRule
     private readonly TimeSpan _windowDuration;
     private readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> _clientWindows;
 
-    public FixedWindowRule(int maxRequests, TimeSpan windowDuration)
+    public FixedWindowRule(FixedWindowRuleConfiguration configuration)
     {
-        _maxRequests = maxRequests;
-        _windowDuration = windowDuration;
+        _maxRequests = configuration.MaxRequests;
+        _windowDuration = configuration.WindowDuration;
         _clientWindows = new ConcurrentDictionary<string, (int, DateTime)>();
     }
 
