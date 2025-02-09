@@ -7,7 +7,7 @@ public sealed class RateLimitedResource : Attribute
 {
     public LimiterType LimiterType { get; set; }
 
-    public string RateLimiterRuleName { get; set; }
+    public string RuleName { get; set; }
 
     public LimiterDiscriminator Discriminator { get; set; }
 }

@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using RateLimiter.Config;
 
 namespace RateLimiter.Rules;
 
@@ -34,4 +35,6 @@ public class FixedWindowRule : IRateLimitRule
 
         return window.Count <= _maxRequests;
     }
+
+    public LimiterDiscriminator Discriminator { get; set; }
 }

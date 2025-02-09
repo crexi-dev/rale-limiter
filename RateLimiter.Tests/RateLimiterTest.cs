@@ -8,8 +8,12 @@ namespace RateLimiter.Tests;
 public class RateLimiterTest
 {
 	[Fact]
-	public void Example()
+	public void WhenFoo_DoesBar()
     {
-        true.Should().BeFalse();
+        // arrange
+
+        // act
+
+        // assert
     }
 }

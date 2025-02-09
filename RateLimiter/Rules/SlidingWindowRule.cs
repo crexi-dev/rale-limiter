@@ -1,6 +1,7 @@
 ﻿using RateLimiter.Abstractions;
 
 using System;
+using RateLimiter.Config;
 
 namespace RateLimiter.Rules;
 
@@ -10,4 +11,6 @@ public class SlidingWindowRule : IRateLimitRule
     {
         throw new NotImplementedException();
     }
+
+    public LimiterDiscriminator Discriminator { get; set; }
 }
