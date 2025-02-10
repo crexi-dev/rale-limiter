@@ -1,0 +1,14 @@
+flowchart TB
+    A[Client] -->|HTTP/S| API
+    subgraph API
+      
+      subgraph Middleware      
+        subgraph RateLimitingMiddleware
+            subgraph RateLimiter
+                RateLimiterRulesFactory
+                RateLimiterConfiguation
+                RateLimiterRuleConfiguration
+            end
+        end
+      end
+    end
