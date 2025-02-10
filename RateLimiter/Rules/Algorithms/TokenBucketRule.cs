@@ -14,7 +14,5 @@ public class TokenBucketRule : IRateLimitRuleAlgorithm
         throw new NotImplementedException();
     }
 
-    public LimiterDiscriminator Discriminator { get; set; }
-
     public RateLimitingAlgorithm Algorithm { get; set; } = RateLimitingAlgorithm.TokenBucket;
 }

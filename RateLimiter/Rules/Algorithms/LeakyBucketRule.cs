@@ -3,7 +3,7 @@ using RateLimiter.Enums;
 
 using System;
 
-namespace RateLimiter.Rules;
+namespace RateLimiter.Rules.Algorithms;
 
 public class LeakyBucketRule : IRateLimitRuleAlgorithm
 {
@@ -13,8 +13,6 @@ public class LeakyBucketRule : IRateLimitRuleAlgorithm
     {
         throw new NotImplementedException();
     }
-
-    public LimiterDiscriminator Discriminator { get; set; }
 
     public RateLimitingAlgorithm Algorithm { get; set; } = RateLimitingAlgorithm.LeakyBucket;
 }

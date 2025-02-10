@@ -1,9 +1,9 @@
 ﻿using RateLimiter.Abstractions;
-
-using System;
 using RateLimiter.Enums;
 
-namespace RateLimiter.Rules;
+using System;
+
+namespace RateLimiter.Rules.Algorithms;
 
 public class SlidingWindowRule : IRateLimitRuleAlgorithm
 {
@@ -13,8 +13,6 @@ public class SlidingWindowRule : IRateLimitRuleAlgorithm
     {
         throw new NotImplementedException();
     }
-
-    public LimiterDiscriminator Discriminator { get; set; }
 
     public RateLimitingAlgorithm Algorithm { get; set; } = RateLimitingAlgorithm.SlidingWindow;
 }

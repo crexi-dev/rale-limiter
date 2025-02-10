@@ -2,10 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 
 using RateLimiter.Abstractions;
+using RateLimiter.Common;
 using RateLimiter.Discriminators;
 using RateLimiter.Middleware;
-
-using System;
 
 namespace RateLimiter.DependencyInjection;
 
@@ -14,16 +13,19 @@ public static class RateLimiterRegister
     public static IServiceCollection AddRateLimiting(this IServiceCollection services)
     {
         // TODO: Need the configuration
+        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IProvideDiscriminators, DiscriminatorProvider>();
         services.AddSingleton<IProvideRateLimitRules, RateLimiterRulesFactory>();
         services.AddSingleton<IRateLimitRequests, RateLimiter>();
         return services;
     }
 
-    // TODO: Allow consumers to register their own custom Rules (shows extensibility)
-    public static IServiceCollection AddCustomRule<T>(this IServiceCollection services, T customRule) where T : Type
+    // TODO: Allow consumers to register their own custom discriminators (shows extensibility)
+    public static IServiceCollection WithCustomDiscriminator<T>(this IServiceCollection services)
+        where T : class, IProvideADiscriminator
     {
         //want
+        services.AddKeyedSingleton<IProvideADiscriminator, T>(typeof(T).Name);
         //services.AddKeyedSingleton<IDefineRateLimitRules, RequestPerTimespanRule>("RequestPerTimespanRule");
 
         //services.AddSingleton<IDefineRateLimitRules, customRule>();

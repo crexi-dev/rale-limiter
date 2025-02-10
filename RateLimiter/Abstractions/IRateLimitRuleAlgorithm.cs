@@ -8,7 +8,5 @@ public interface IRateLimitRuleAlgorithm
 
     bool IsAllowed(string discriminator);
 
-    LimiterDiscriminator Discriminator { get; set; }
-
     RateLimitingAlgorithm Algorithm { get; set; }
 }

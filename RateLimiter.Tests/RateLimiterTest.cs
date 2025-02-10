@@ -19,6 +19,7 @@ using RateLimiter.Enums;
 
 using System.Collections.Generic;
 using System.Threading;
+
 using Xunit;
 
 using static RateLimiter.Config.RateLimiterConfiguration;
@@ -48,7 +49,7 @@ public class RateLimiterTest
             .Returns(appOptions.Value);
 
         mocker.Use<IDateTimeProvider>(new DateTimeProvider());
-        mocker.Use<IProvideDiscriminators>(new DiscriminatorProvider());
+        mocker.Use<IProvideDiscriminators>(new DiscriminatorProvider(null));
 
         //// mock the rules as would be defined within appSettings
         //var rateLimitRules = GenerateRateLimitRules();

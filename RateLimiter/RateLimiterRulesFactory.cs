@@ -25,6 +25,7 @@ public class RateLimiterRulesFactory : IProvideRateLimitRules
                         Name = rule.Name,
                         Algorithm = rule.Algorithm is null or RateLimitingAlgorithm.Default ? configuration.DefaultAlgorithm : rule.Algorithm.Value,
                         Discriminator = rule.Discriminator,
+                        CustomDiscriminatorName = rule.CustomDiscriminatorType,
                         DiscriminatorMatch = rule.DiscriminatorMatch,
                         DiscriminatorRequestHeaderKey = rule.DiscriminatorRequestHeaderKey,
                         MaxRequests = rule.MaxRequests ?? configuration.DefaultMaxRequests,
@@ -39,6 +40,7 @@ public class RateLimiterRulesFactory : IProvideRateLimitRules
                         Name = rule.Name,
                         Algorithm = rule.Algorithm is null or RateLimitingAlgorithm.Default ? configuration.DefaultAlgorithm : rule.Algorithm.Value,
                         Discriminator = rule.Discriminator,
+                        CustomDiscriminatorName = rule.CustomDiscriminatorType,
                         DiscriminatorMatch = rule.DiscriminatorMatch,
                         DiscriminatorRequestHeaderKey = rule.DiscriminatorRequestHeaderKey,
                         TimespanSinceMilliseconds = rule.TimespanMilliseconds is null ?

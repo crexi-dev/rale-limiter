@@ -6,15 +6,25 @@ using RateLimiter.Enums;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace RateLimiter.Discriminators
 {
     public class DiscriminatorProvider : IProvideDiscriminators
     {
+        private readonly IServiceProvider _serviceProvider;
+
+        public DiscriminatorProvider(IServiceProvider serviceProvider)
+        {
+            _serviceProvider = serviceProvider;
+        }
+
         public Hashtable GetDiscriminators(
             HttpContext context,
             IEnumerable<IDefineRateLimitRules> rules)
         {
+            // TODO: These values should likely be cached in the caller
+
             var results = new Hashtable();
 
             // for each rule in here, we need to generate the discriminator value
@@ -40,6 +50,17 @@ namespace RateLimiter.Discriminators
                         results.Add(rule.Name, context.Request.Headers.Host);
                         break;
                     case LimiterDiscriminator.Custom:
+                        // hmmm ... need to instantiate the custom discriminator registered and execute it?
+                        if (string.IsNullOrEmpty(rule.CustomDiscriminatorName))
+                        {
+                            throw new MissingFieldException("No value for {@CustomDiscriminatorName",
+                                nameof(rule.CustomDiscriminatorName));
+                        }
+
+                        var foo = _serviceProvider.GetRequiredKeyedService<IProvideADiscriminator>(rule.CustomDiscriminatorName);
+                        var fooValue = foo.GetDiscriminator(context);
+                        results.Add(rule.Name, fooValue);
+                        break;
                     case LimiterDiscriminator.GeoLocation:
                     case LimiterDiscriminator.IpSubNet:
                     default:

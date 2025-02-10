@@ -10,6 +10,8 @@ public interface IDefineRateLimitRules
 
     LimiterDiscriminator Discriminator { get; set; }
 
+    string? CustomDiscriminatorName { get; set; }
+
     string? DiscriminatorRequestHeaderKey { get; set; }
 
     string? DiscriminatorMatch { get; set; }

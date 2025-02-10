@@ -42,7 +42,5 @@ public class FixedWindowRule : IRateLimitRuleAlgorithm
         return window.Count <= _maxRequests;
     }
 
-    public LimiterDiscriminator Discriminator { get; set; }
-
     public RateLimitingAlgorithm Algorithm { get; set; } = RateLimitingAlgorithm.FixedWindow;
 }

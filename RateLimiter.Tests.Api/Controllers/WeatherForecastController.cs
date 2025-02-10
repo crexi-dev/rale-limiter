@@ -20,8 +20,8 @@ namespace RateLimiter.Tests.Api.Controllers
             _logger = logger;
         }
 
-        //[RateLimitedResource(RuleName = "GeoBased")]
-        [RateLimitedResource(RuleName = "RequestsPerTimespan-Default")]
+        [RateLimitedResource(RuleName = "GeoTokenRule-US")]
+        //[RateLimitedResource(RuleName = "RequestsPerTimespan-Default")]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
