@@ -2,7 +2,7 @@
 
 namespace RateLimiter.Abstractions;
 
-public interface IDefineRateLimitRules
+public interface IDefineARateLimitRule
 {
     LimiterType Type { get; }
 

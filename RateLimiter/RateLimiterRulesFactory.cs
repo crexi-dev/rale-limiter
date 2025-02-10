@@ -10,9 +10,9 @@ namespace RateLimiter;
 
 public class RateLimiterRulesFactory : IProvideRateLimitRules
 {
-    public IEnumerable<IDefineRateLimitRules> GetRules(RateLimiterConfiguration configuration)
+    public IEnumerable<IDefineARateLimitRule> GetRules(RateLimiterConfiguration configuration)
     {
-        var rules = new List<IDefineRateLimitRules>();
+        var rules = new List<IDefineARateLimitRule>();
 
         // Load rules defined via appSettings
         foreach (var rule in configuration.Rules)

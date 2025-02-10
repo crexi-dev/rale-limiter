@@ -6,7 +6,7 @@ namespace RateLimiter.Discriminators
 {
     public class GeoBasedDiscriminator : IProvideADiscriminator
     {
-        public string GetDiscriminator(HttpContext context)
+        public string GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule)
         {
             // get the ip address via cache/external source
 

@@ -4,9 +4,9 @@ using Microsoft.AspNetCore.Http;
 
 namespace RateLimiter.Abstractions;
 
-public interface IProvideDiscriminators
+public interface IProvideDiscriminatorValues
 {
-    Hashtable GetDiscriminators(
+    Hashtable GetDiscriminatorValues(
         HttpContext context,
-        IEnumerable<IDefineRateLimitRules> rules);
+        IEnumerable<IDefineARateLimitRule> rules);
 }

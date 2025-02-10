@@ -7,13 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
+
 builder.Services.AddRateLimiting()
-    .WithCustomDiscriminator<GeoTokenDiscriminator>();
-
-builder.Services.Configure<RateLimiterConfiguration>(
-    builder.Configuration.GetSection("RateLimiter"));
-
-//builder.Services.AddKeyedSingleton<IProvideADiscriminator, GeoTokenDiscriminator>(nameof(GeoTokenDiscriminator));
+    .WithCustomDiscriminator<GeoTokenDiscriminator>()
+    .WithConfiguration<RateLimiterConfiguration>(builder.Configuration.GetSection("RateLimiter"));
 
 var app = builder.Build();
 

@@ -5,7 +5,7 @@ using System;
 
 namespace RateLimiter.Rules
 {
-    public class TimespanElapsedRule : IDefineRateLimitRules
+    public class TimespanElapsedRule : IDefineARateLimitRule
     {
         public LimiterType Type { get; } = LimiterType.TimespanElapsed;
 

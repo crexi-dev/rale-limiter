@@ -2,15 +2,14 @@
 
 using RateLimiter.Abstractions;
 
-using System;
-
 namespace RateLimiter.Discriminators
 {
     public class IpAddressDiscriminator : IProvideADiscriminator
     {
-        public string GetDiscriminator(HttpContext context)
+        public string GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule)
         {
-            throw new NotImplementedException();
+            // TODO: This is likely incorrect. Cannot test b/c shows "localhost"
+            return context.Request.Headers.Host.ToString();
         }
     }
 }

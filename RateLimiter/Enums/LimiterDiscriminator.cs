@@ -2,10 +2,10 @@
 
 public enum LimiterDiscriminator
 {
-    ApiKey,
     Custom,
     GeoLocation,
     IpAddress,
     IpSubNet,
+    QueryString,
     RequestHeader
 }

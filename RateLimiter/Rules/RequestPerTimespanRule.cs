@@ -5,7 +5,7 @@ using System;
 
 namespace RateLimiter.Rules
 {
-    public class RequestPerTimespanRule : IDefineRateLimitRules
+    public class RequestPerTimespanRule : IDefineARateLimitRule
     {
         public LimiterType Type { get; } = LimiterType.RequestsPerTimespan;
 

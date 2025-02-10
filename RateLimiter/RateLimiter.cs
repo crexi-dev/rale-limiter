@@ -20,19 +20,19 @@ public class RateLimiter : IRateLimitRequests
     private readonly IDateTimeProvider _dateTimeProvider;
 
     /// <summary>
-    /// List of rules as defined in appSettings.RateLimiter section
+    /// List of rules as defined in appSettings.RateLimiter section (or via Fluent registration)
     /// </summary>
-    private readonly IEnumerable<IDefineRateLimitRules> _rules;
+    private readonly IEnumerable<IDefineARateLimitRule> _rules;
 
-    private readonly IProvideDiscriminators _discriminatorsProvider;
-    private readonly Dictionary<string, IRateLimitRuleAlgorithm> _ruleNameAlgorithm;
+    private readonly IProvideDiscriminatorValues _discriminatorsProvider;
+    private readonly Dictionary<string, IAmARateLimitAlgorithm> _ruleNameAlgorithm;
 
     public RateLimiter(
         ILogger<RateLimiter> logger,
         IDateTimeProvider dateTimeProvider,
         IOptions<RateLimiterConfiguration> options,
         IProvideRateLimitRules rulesFactory,
-        IProvideDiscriminators discriminatorsProvider)
+        IProvideDiscriminatorValues discriminatorsProvider)
     {
         _logger = logger;
         _dateTimeProvider = dateTimeProvider;
@@ -62,16 +62,20 @@ public class RateLimiter : IRateLimitRequests
         }
 
         // get the algorithm required for each rule to be evaluated (move to ctor?)
-        var requiredAlgorithms = _ruleNameAlgorithm.Where(x => matchingRules.Select(y => y.Name).Contains(x.Key))
-            .Select(x => x.Value);
+        //var requiredAlgorithms = _ruleNameAlgorithm
+        //    .Where(x => matchingRules.Select(y => y.Name)
+        //        .Contains(x.Key))
+        //    .Select(x => x.Value);
 
         // need to get the discriminator for each incoming rate limit configuration
-        var discriminators = _discriminatorsProvider.GetDiscriminators(context, matchingRules); //key: name value: discriminatorValue
+        var discriminatorValues = _discriminatorsProvider
+            .GetDiscriminatorValues(context, matchingRules); //key: name value: discriminatorValue
 
+        // TODO: Make this a single call (no iterations)
         var passed = true;
         foreach (var rule in matchingRules)
         {
-            passed = _ruleNameAlgorithm[rule.Name].IsAllowed(discriminators[rule.Name].ToString());
+            passed = _ruleNameAlgorithm[rule.Name].IsAllowed(discriminatorValues[rule.Name].ToString());
             if (!passed)
                 break;
         }
@@ -91,11 +95,11 @@ public class RateLimiter : IRateLimitRequests
     /// <returns></returns>
     /// <exception cref="InvalidCastException"></exception>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    private Dictionary<string, IRateLimitRuleAlgorithm> GenerateAlgorithmsFromRules(IEnumerable<IDefineRateLimitRules> rules)
+    private Dictionary<string, IAmARateLimitAlgorithm> GenerateAlgorithmsFromRules(IEnumerable<IDefineARateLimitRule> rules)
     {
-        var values = new Dictionary<string, IRateLimitRuleAlgorithm>();
+        var values = new Dictionary<string, IAmARateLimitAlgorithm>();
 
-        var algorithms = new Dictionary<string, IRateLimitRuleAlgorithm>();
+        var algorithms = new Dictionary<string, IAmARateLimitAlgorithm>();
 
         foreach (var rule in rules)
         {
@@ -111,7 +115,7 @@ public class RateLimiter : IRateLimitRequests
                     // do we have an algorithm that meets these requirements?
                     var algoKey = $"{typedRule.Algorithm}|{typedRule.MaxRequests}|{typedRule.TimespanMilliseconds}";
 
-                    if (!algorithms.ContainsKey(algoKey))
+                    if (!algorithms.TryGetValue(algoKey, out var existingAlgo))
                     {
                         // create the required algo with the required config
                         var algo = GetAlgorithm(
@@ -120,10 +124,10 @@ public class RateLimiter : IRateLimitRequests
                             typedRule.MaxRequests,
                             typedRule.TimespanMilliseconds);
                         values.Add(typedRule.Name, algo);
+                        algorithms.Add(algoKey, algo);
                     }
                     else
                     {
-                        var existingAlgo = algorithms[algoKey];
                         values.Add(typedRule.Name, existingAlgo);
                     }
                     break;
@@ -137,26 +141,24 @@ public class RateLimiter : IRateLimitRequests
         return values;
     }
 
-    private static IRateLimitRuleAlgorithm GetAlgorithm(
+    private static IAmARateLimitAlgorithm GetAlgorithm(
         IDateTimeProvider dateTimeProvider,
         RateLimitingAlgorithm algo,
         int? maxRequests,
         TimeSpan? timespanMilliseconds)
     {
-        switch (algo)
+        return algo switch
         {
-            case RateLimitingAlgorithm.Default:
-            case RateLimitingAlgorithm.FixedWindow:
-                return new FixedWindowRule(dateTimeProvider, new FixedWindowRuleConfiguration()
+            RateLimitingAlgorithm.Default or RateLimitingAlgorithm.FixedWindow => new FixedWindow(dateTimeProvider,
+                new FixedWindowConfiguration()
                 {
                     MaxRequests = maxRequests.Value,
                     WindowDuration = timespanMilliseconds.Value
-                });
-            case RateLimitingAlgorithm.TokenBucket:
-            case RateLimitingAlgorithm.LeakyBucket:
-            case RateLimitingAlgorithm.SlidingWindow:
-            default:
-                throw new ArgumentOutOfRangeException(nameof(algo), algo, null);
-        }
+                }),
+            RateLimitingAlgorithm.TokenBucket => new TokenBucket(),
+            RateLimitingAlgorithm.LeakyBucket => new LeakyBucket(dateTimeProvider, maxRequests.Value, timespanMilliseconds.Value),
+            RateLimitingAlgorithm.SlidingWindow => new SlidingWindow(dateTimeProvider, maxRequests.Value, timespanMilliseconds.Value),
+            _ => throw new ArgumentOutOfRangeException(nameof(algo), algo, null)
+        };
     }
 }

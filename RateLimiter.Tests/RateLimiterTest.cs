@@ -49,7 +49,7 @@ public class RateLimiterTest
             .Returns(appOptions.Value);
 
         mocker.Use<IDateTimeProvider>(new DateTimeProvider());
-        mocker.Use<IProvideDiscriminators>(new DiscriminatorProvider(null));
+        mocker.Use<IProvideDiscriminatorValues>(new DiscriminatorProvider(null, null));
 
         //// mock the rules as would be defined within appSettings
         //var rateLimitRules = GenerateRateLimitRules();
@@ -123,8 +123,8 @@ public class RateLimiterTest
             fixture.Build<RateLimiterRuleItemConfiguration>()
                 .With(x => x.Name, "ApiKey-Default")
                 .With(x => x.Type, LimiterType.RequestsPerTimespan)
-                .With(x => x.Discriminator, LimiterDiscriminator.ApiKey)
-                .With(x => x.DiscriminatorMatch, string.Empty)
+                .With(x => x.Discriminator, LimiterDiscriminator.QueryString)
+                .With(x => x.DiscriminatorMatch, "x-crexi-token")
                 .With(x => x.DiscriminatorRequestHeaderKey, string.Empty)
                 .With(x => x.Algorithm, RateLimitingAlgorithm.Default)
                 .With(x => x.TimespanMilliseconds, 4000)

@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 using RateLimiter.Abstractions;
 using RateLimiter.Enums;
@@ -6,22 +8,25 @@ using RateLimiter.Enums;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace RateLimiter.Discriminators
 {
-    public class DiscriminatorProvider : IProvideDiscriminators
+    public class DiscriminatorProvider : IProvideDiscriminatorValues
     {
+        private readonly ILogger<DiscriminatorProvider> _logger;
         private readonly IServiceProvider _serviceProvider;
 
-        public DiscriminatorProvider(IServiceProvider serviceProvider)
+        public DiscriminatorProvider(
+            ILogger<DiscriminatorProvider> logger,
+            IServiceProvider serviceProvider)
         {
+            _logger = logger;
             _serviceProvider = serviceProvider;
         }
 
-        public Hashtable GetDiscriminators(
+        public Hashtable GetDiscriminatorValues(
             HttpContext context,
-            IEnumerable<IDefineRateLimitRules> rules)
+            IEnumerable<IDefineARateLimitRule> rules)
         {
             // TODO: These values should likely be cached in the caller
 
@@ -30,24 +35,25 @@ namespace RateLimiter.Discriminators
             // for each rule in here, we need to generate the discriminator value
             foreach (var rule in rules)
             {
-                // TODO: Create discriminator-specific classes for each of these
                 switch (rule.Discriminator)
                 {
-                    case LimiterDiscriminator.ApiKey:
-                        results.Add(rule.Name, context.Request.Query["api-key"]);
+                    case LimiterDiscriminator.QueryString:
+                        var qsd = new QueryStringDiscriminator();
+                        var qsdResult = qsd.GetDiscriminator(context, rule);
+                        results.Add(rule.Name, qsdResult);
                         break;
                     case LimiterDiscriminator.RequestHeader:
                         if (string.IsNullOrEmpty(rule.DiscriminatorRequestHeaderKey))
                         {
-                            // log
-                            throw new MissingFieldException(
-                                $"{nameof(rule.DiscriminatorRequestHeaderKey)} was not provided");
+                            // TODO: Log
+                            throw new MissingFieldException($"{nameof(rule.DiscriminatorRequestHeaderKey)} was not provided");
                         }
                         results.Add(rule.Name, context.Request.Query[rule.DiscriminatorRequestHeaderKey]);
                         break;
                     case LimiterDiscriminator.IpAddress:
-                        // TODO: This is likely incorrect. Cannot test b/c shows "localhost"
-                        results.Add(rule.Name, context.Request.Headers.Host);
+                        var ipad = new IpAddressDiscriminator();
+                        var ipadResult = ipad.GetDiscriminator(context, rule);
+                        results.Add(rule.Name, ipadResult);
                         break;
                     case LimiterDiscriminator.Custom:
                         // hmmm ... need to instantiate the custom discriminator registered and execute it?
@@ -58,7 +64,7 @@ namespace RateLimiter.Discriminators
                         }
 
                         var foo = _serviceProvider.GetRequiredKeyedService<IProvideADiscriminator>(rule.CustomDiscriminatorName);
-                        var fooValue = foo.GetDiscriminator(context);
+                        var fooValue = foo.GetDiscriminator(context, rule);
                         results.Add(rule.Name, fooValue);
                         break;
                     case LimiterDiscriminator.GeoLocation:

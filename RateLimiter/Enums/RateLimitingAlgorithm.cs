@@ -3,8 +3,8 @@
 public enum RateLimitingAlgorithm
 {
     Default,
-    TokenBucket,
-    LeakyBucket,
     FixedWindow,
-    SlidingWindow
+    LeakyBucket,
+    SlidingWindow,
+    TokenBucket
 }

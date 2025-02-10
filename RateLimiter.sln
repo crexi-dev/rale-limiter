@@ -12,6 +12,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		dev-notes.md = dev-notes.md
 		overview.mermaid = overview.mermaid
 		README.md = README.md
+		submission.md = submission.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EFA099B0-7DF4-40D2-8CAA-92730F7E25BF}"

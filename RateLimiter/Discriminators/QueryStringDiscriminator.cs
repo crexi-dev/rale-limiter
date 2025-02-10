@@ -6,9 +6,9 @@ using System;
 
 namespace RateLimiter.Discriminators
 {
-    public class ApiKeyDiscriminator : IProvideADiscriminator
+    public class QueryStringDiscriminator : IProvideADiscriminator
     {
-        public string GetDiscriminator(HttpContext context)
+        public string GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule)
         {
             throw new NotImplementedException();
         }

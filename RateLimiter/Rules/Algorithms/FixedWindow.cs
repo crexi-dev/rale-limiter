@@ -6,16 +6,16 @@ using System.Collections.Concurrent;
 
 namespace RateLimiter.Rules.Algorithms;
 
-public class FixedWindowRule : IRateLimitRuleAlgorithm
+public class FixedWindow : IAmARateLimitAlgorithm
 {
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly int _maxRequests;
     private readonly TimeSpan _windowDuration;
     private readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> _clientWindows;
 
-    public FixedWindowRule(
+    public FixedWindow(
         IDateTimeProvider dateTimeProvider,
-        FixedWindowRuleConfiguration configuration)
+        FixedWindowConfiguration configuration)
     {
         _dateTimeProvider = dateTimeProvider;
         _maxRequests = configuration.MaxRequests;
@@ -23,7 +23,7 @@ public class FixedWindowRule : IRateLimitRuleAlgorithm
         _clientWindows = new ConcurrentDictionary<string, (int, DateTime)>();
     }
 
-    public string Name { get; set; } = nameof(FixedWindowRule);
+    public string Name { get; init; } = nameof(FixedWindow);
 
     public bool IsAllowed(string discriminator)
     {
@@ -42,5 +42,5 @@ public class FixedWindowRule : IRateLimitRuleAlgorithm
         return window.Count <= _maxRequests;
     }
 
-    public RateLimitingAlgorithm Algorithm { get; set; } = RateLimitingAlgorithm.FixedWindow;
+    public RateLimitingAlgorithm Algorithm { get; init; } = RateLimitingAlgorithm.FixedWindow;
 }

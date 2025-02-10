@@ -4,7 +4,7 @@ using System;
 
 namespace RateLimiter.Rules;
 
-public record FixedWindowRuleConfiguration
+public record FixedWindowConfiguration
 {
     public string Name { get; set; }
 

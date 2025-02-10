@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using RateLimiter.Abstractions;
 using RateLimiter.Common;
+using RateLimiter.Config;
 using RateLimiter.Discriminators;
 using RateLimiter.Middleware;
 
@@ -12,24 +14,31 @@ public static class RateLimiterRegister
 {
     public static IServiceCollection AddRateLimiting(this IServiceCollection services)
     {
-        // TODO: Need the configuration
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        services.AddSingleton<IProvideDiscriminators, DiscriminatorProvider>();
+        services.AddSingleton<IProvideDiscriminatorValues, DiscriminatorProvider>();
         services.AddSingleton<IProvideRateLimitRules, RateLimiterRulesFactory>();
         services.AddSingleton<IRateLimitRequests, RateLimiter>();
         return services;
     }
-
-    // TODO: Allow consumers to register their own custom discriminators (shows extensibility)
+    
+    /// <summary>
+    /// Allow consumers to register their own custom discriminators (shows extensibility)
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="services"></param>
+    /// <returns></returns>
     public static IServiceCollection WithCustomDiscriminator<T>(this IServiceCollection services)
         where T : class, IProvideADiscriminator
     {
-        //want
         services.AddKeyedSingleton<IProvideADiscriminator, T>(typeof(T).Name);
-        //services.AddKeyedSingleton<IDefineRateLimitRules, RequestPerTimespanRule>("RequestPerTimespanRule");
+        return services;
+    }
 
-        //services.AddSingleton<IDefineRateLimitRules, customRule>();
-        //services.AddSingleton<IDefineRateLimitRules, typeof(customRule)>();
+    public static IServiceCollection WithConfiguration<TRateLimiterConfiguration>(
+        this IServiceCollection services,
+        IConfigurationSection section)
+    {
+        services.Configure<RateLimiterConfiguration>(section);
         return services;
     }
 
@@ -39,7 +48,7 @@ public static class RateLimiterRegister
         return app;
     }
 
-    public static RouteHandlerBuilder WithRateLimiting(this RouteHandlerBuilder builder)
+    public static RouteHandlerBuilder WithRateLimitingRule(this RouteHandlerBuilder builder, string ruleName)
     {
         // TODO: Implement
         return builder;

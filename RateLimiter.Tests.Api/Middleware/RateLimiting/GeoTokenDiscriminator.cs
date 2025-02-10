@@ -4,9 +4,8 @@ namespace RateLimiter.Tests.Api.Middleware.RateLimiting;
 
 public class GeoTokenDiscriminator : IProvideADiscriminator
 {
-    public string GetDiscriminator(HttpContext context)
+    public string GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule)
     {
-        // get the token
         return context.Request.Headers["x-crexi-token"].FirstOrDefault() ?? string.Empty;
     }
 }
