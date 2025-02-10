@@ -1,4 +1,47 @@
-﻿**Rate-limiting pattern**
+﻿**Implementation - Brandon Choi**
+
+I utilized the builder pattern to provide a clear and straightforward way to construct rate limiting rules. Composite rules were implemented to support both logical AND and OR operations, allowing for flexible combinations of rules. Additionally, I employed a simple decorator pattern to seamlessly extend rule evaluation with additional logic.
+
+Here are usage examples:
+
+1. Combining rules using AND operation:
+```
+var maxRequestsRule = new MaxRequestsPerTimeSpanRule(5, TimeSpan.FromSeconds(10));
+var minTimeRule = new MinimumTimeBetweenRequestsRule(TimeSpan.FromSeconds(2));
+
+var builder = new RateLimitRuleBuilder();
+var combinedRule = builder
+    .Add(maxRequestsRule) 
+    .Add(minTimeRule)     
+    .Build();
+```
+
+2. Combining rules using OR operation:
+```
+var maxRequestsRule = new MaxRequestsPerTimeSpanRule(1, TimeSpan.FromSeconds(10));
+var minTimeRule = new MinimumTimeBetweenRequestsRule(TimeSpan.FromSeconds(5));
+
+var builder = new RateLimitRuleBuilder();
+var combinedRule = builder
+    .Or(new List<IRateLimitRule> { maxRequestsRule, minTimeRule })
+    .Build();
+```
+
+3. Region specific rules:
+```
+var usRule = new MaxRequestsPerTimeSpanRule(5, TimeSpan.FromSeconds(10));
+var euRule = new MinimumTimeBetweenRequestsRule(TimeSpan.FromSeconds(5));
+
+var regionBuilder = new RateLimitRuleBuilder();
+var regionCombinedRule = regionBuilder
+    .AddForRegion(usRule, Region.US)
+    .AddForRegion(euRule, Region.EU)
+    .Build();
+```
+
+#
+
+**Rate-limiting pattern**
 
 Rate limiting involves restricting the number of requests that a client can make.
 A client is identified with an access token, which is used for every request to a resource.
