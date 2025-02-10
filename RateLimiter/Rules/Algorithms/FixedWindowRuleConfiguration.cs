@@ -1,4 +1,4 @@
-﻿using RateLimiter.Config;
+﻿using RateLimiter.Enums;
 
 using System;
 

@@ -1,9 +1,11 @@
 ﻿using FluentAssertions;
 
 using RateLimiter.Rules;
+using RateLimiter.Rules.Algorithms;
 
 using System;
 using System.Threading;
+using RateLimiter.Common;
 using Xunit;
 
 namespace RateLimiter.Tests.Rules
@@ -14,11 +16,13 @@ namespace RateLimiter.Tests.Rules
         public void WhenFoo_DoesBar()
         {
             // TODO: Turn this into a theory and attempt to handle edge cases
-            var rule = new FixedWindowRule(new FixedWindowRuleConfiguration()
-            {
-                MaxRequests = 3,
-                WindowDuration = TimeSpan.FromSeconds(3)
-            });
+            var rule = new FixedWindowRule(
+                new DateTimeProvider(),
+                new FixedWindowRuleConfiguration()
+                {
+                    MaxRequests = 3,
+                    WindowDuration = TimeSpan.FromSeconds(3)
+                });
 
             // First 3 requests allowed
             rule.IsAllowed("client1").Should().BeTrue();

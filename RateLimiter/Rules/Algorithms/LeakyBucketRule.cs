@@ -1,16 +1,20 @@
 ﻿using RateLimiter.Abstractions;
+using RateLimiter.Enums;
 
 using System;
-using RateLimiter.Config;
 
 namespace RateLimiter.Rules;
 
-public class LeakyBucketRule : IRateLimitRule
+public class LeakyBucketRule : IRateLimitRuleAlgorithm
 {
+    public string Name { get; set; }
+
     public bool IsAllowed(string discriminator)
     {
         throw new NotImplementedException();
     }
 
     public LimiterDiscriminator Discriminator { get; set; }
+
+    public RateLimitingAlgorithm Algorithm { get; set; } = RateLimitingAlgorithm.LeakyBucket;
 }

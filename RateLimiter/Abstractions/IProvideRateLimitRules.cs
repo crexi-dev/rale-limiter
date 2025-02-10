@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using RateLimiter.Config;
+
+using System.Collections.Generic;
 
 namespace RateLimiter.Abstractions;
 
 public interface IProvideRateLimitRules
 {
-    IEnumerable<IRateLimitRule> GetRules();
+    IEnumerable<IDefineRateLimitRules> GetRules(RateLimiterConfiguration config);
 }

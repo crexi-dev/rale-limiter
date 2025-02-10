@@ -1,27 +1,33 @@
 ﻿using RateLimiter.Abstractions;
+using RateLimiter.Enums;
 
 using System;
 using System.Collections.Concurrent;
-using RateLimiter.Config;
 
-namespace RateLimiter.Rules;
+namespace RateLimiter.Rules.Algorithms;
 
-public class FixedWindowRule : IRateLimitRule
+public class FixedWindowRule : IRateLimitRuleAlgorithm
 {
+    private readonly IDateTimeProvider _dateTimeProvider;
     private readonly int _maxRequests;
     private readonly TimeSpan _windowDuration;
     private readonly ConcurrentDictionary<string, (int Count, DateTime WindowStart)> _clientWindows;
 
-    public FixedWindowRule(FixedWindowRuleConfiguration configuration)
+    public FixedWindowRule(
+        IDateTimeProvider dateTimeProvider,
+        FixedWindowRuleConfiguration configuration)
     {
+        _dateTimeProvider = dateTimeProvider;
         _maxRequests = configuration.MaxRequests;
         _windowDuration = configuration.WindowDuration;
         _clientWindows = new ConcurrentDictionary<string, (int, DateTime)>();
     }
 
+    public string Name { get; set; } = nameof(FixedWindowRule);
+
     public bool IsAllowed(string discriminator)
     {
-        var now = DateTime.UtcNow;
+        var now = _dateTimeProvider.UtcNow();
 
         // Atomically update or create a window for the client
         var window = _clientWindows.AddOrUpdate(
@@ -37,4 +43,6 @@ public class FixedWindowRule : IRateLimitRule
     }
 
     public LimiterDiscriminator Discriminator { get; set; }
+
+    public RateLimitingAlgorithm Algorithm { get; set; } = RateLimitingAlgorithm.FixedWindow;
 }

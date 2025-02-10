@@ -1,16 +1,58 @@
 ﻿using RateLimiter.Abstractions;
+using RateLimiter.Config;
+using RateLimiter.Enums;
+using RateLimiter.Rules;
 
+using System;
 using System.Collections.Generic;
 
 namespace RateLimiter;
 
 public class RateLimiterRulesFactory : IProvideRateLimitRules
 {
-    public IEnumerable<IRateLimitRule> GetRules()
+    public IEnumerable<IDefineRateLimitRules> GetRules(RateLimiterConfiguration configuration)
     {
-        // Load built-in rules
+        var rules = new List<IDefineRateLimitRules>();
 
         // Load rules defined via appSettings
-        return new List<IRateLimitRule>();
+        foreach (var rule in configuration.Rules)
+        {
+            switch (rule.Type)
+            {
+                case LimiterType.RequestsPerTimespan:
+                    rules.Add(new RequestPerTimespanRule()
+                    {
+                        Name = rule.Name,
+                        Algorithm = rule.Algorithm is null or RateLimitingAlgorithm.Default ? configuration.DefaultAlgorithm : rule.Algorithm.Value,
+                        Discriminator = rule.Discriminator,
+                        DiscriminatorMatch = rule.DiscriminatorMatch,
+                        DiscriminatorRequestHeaderKey = rule.DiscriminatorRequestHeaderKey,
+                        MaxRequests = rule.MaxRequests ?? configuration.DefaultMaxRequests,
+                        TimespanMilliseconds = rule.TimespanMilliseconds is null ?
+                            TimeSpan.FromMilliseconds(configuration.DefaultTimespanMilliseconds) :
+                            TimeSpan.FromMilliseconds(rule.TimespanMilliseconds.Value)
+                    });
+                    break;
+                case LimiterType.TimespanElapsed:
+                    rules.Add(new TimespanElapsedRule()
+                    {
+                        Name = rule.Name,
+                        Algorithm = rule.Algorithm is null or RateLimitingAlgorithm.Default ? configuration.DefaultAlgorithm : rule.Algorithm.Value,
+                        Discriminator = rule.Discriminator,
+                        DiscriminatorMatch = rule.DiscriminatorMatch,
+                        DiscriminatorRequestHeaderKey = rule.DiscriminatorRequestHeaderKey,
+                        TimespanSinceMilliseconds = rule.TimespanMilliseconds is null ?
+                            TimeSpan.FromMilliseconds(configuration.DefaultTimespanMilliseconds) :
+                            TimeSpan.FromMilliseconds(rule.TimespanMilliseconds.Value)
+                    });
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        // TODO: Load user-defined rules?  Not sure if we will do that.  User-defined Discriminators, sure - but not a rule ...
+
+        return rules;
     }
 }

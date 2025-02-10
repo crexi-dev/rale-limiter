@@ -1,4 +1,4 @@
-﻿namespace RateLimiter.Config;
+﻿namespace RateLimiter.Enums;
 
 public enum LimiterDiscriminator
 {

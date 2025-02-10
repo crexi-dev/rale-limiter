@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+
 using RateLimiter.Config;
 
 namespace RateLimiter.Tests.Api.Controllers
@@ -19,8 +20,8 @@ namespace RateLimiter.Tests.Api.Controllers
             _logger = logger;
         }
 
-        [RateLimitedResource(RuleName = "GeoBased")]
-        [RateLimitedResource(RuleName = "RequestPerTimespan-Default")]
+        //[RateLimitedResource(RuleName = "GeoBased")]
+        [RateLimitedResource(RuleName = "RequestsPerTimespan-Default")]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {

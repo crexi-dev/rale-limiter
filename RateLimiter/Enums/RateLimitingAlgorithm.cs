@@ -1,7 +1,8 @@
-﻿namespace RateLimiter.Config;
+﻿namespace RateLimiter.Enums;
 
 public enum RateLimitingAlgorithm
 {
+    Default,
     TokenBucket,
     LeakyBucket,
     FixedWindow,

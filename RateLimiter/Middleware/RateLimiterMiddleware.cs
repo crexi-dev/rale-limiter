@@ -34,17 +34,11 @@ public class RateLimiterMiddleware
 
         if (rateLimitedResources is not null && rateLimitedResources.Any())
         {
-            // TODO: Do not default to this discriminator
-            var token = context.Request.Query["clientToken"];
-
-            var (isAllowed, message) = _rateLimiter.IsRequestAllowed(rateLimitedResources);
+            var (isAllowed, message) = _rateLimiter.IsRequestAllowed(context, rateLimitedResources);
 
             if (!isAllowed)
             {
-                // if invalid, or rate-limited:
-                // log
-                // return 429
-                _logger.LogWarning("Client was rate limited with {@Token}", token);
+                _logger.LogWarning("Client was rate limited with {@Message}", message);
                 context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
                 await context.Response.WriteAsync(message);
                 return;
