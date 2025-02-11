@@ -1,12 +1,12 @@
-﻿using System.Collections;
+﻿using Microsoft.AspNetCore.Http;
+
 using System.Collections.Generic;
-using Microsoft.AspNetCore.Http;
 
 namespace RateLimiter.Abstractions;
 
 public interface IProvideDiscriminatorValues
 {
-    Hashtable GetDiscriminatorValues(
+    Dictionary<string, (bool IsMatch, string MatchValue)> GetDiscriminatorValues(
         HttpContext context,
         IEnumerable<IDefineARateLimitRule> rules);
 }

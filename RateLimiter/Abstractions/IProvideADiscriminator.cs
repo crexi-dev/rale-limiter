@@ -4,6 +4,6 @@ namespace RateLimiter.Abstractions
 {
     public interface IProvideADiscriminator
     {
-        string GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule);
+        (bool IsMatch, string MatchValue) GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule);
     }
 }

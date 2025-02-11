@@ -12,7 +12,7 @@ public interface IDefineARateLimitRule
 
     string? CustomDiscriminatorName { get; set; }
 
-    string? DiscriminatorRequestHeaderKey { get; set; }
+    string? DiscriminatorKey { get; set; }
 
     string? DiscriminatorMatch { get; set; }
 

@@ -6,5 +6,6 @@ public enum RateLimitingAlgorithm
     FixedWindow,
     LeakyBucket,
     SlidingWindow,
+    TimespanElapsed,
     TokenBucket
 }

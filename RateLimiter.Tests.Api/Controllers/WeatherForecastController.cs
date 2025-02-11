@@ -21,6 +21,7 @@ namespace RateLimiter.Tests.Api.Controllers
         }
 
         [RateLimitedResource(RuleName = "GeoTokenRule-US")]
+        [RateLimitedResource(RuleName = "GeoTokenRule-EU")]
         //[RateLimitedResource(RuleName = "RequestsPerTimespan-Default")]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()

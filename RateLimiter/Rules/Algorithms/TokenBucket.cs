@@ -8,10 +8,17 @@ namespace RateLimiter.Rules.Algorithms;
 
 public class TokenBucket : IAmARateLimitAlgorithm
 {
-    private readonly double _maxTokens;
-    private readonly double _refillRatePerSecond; // Tokens added per second
+    private readonly int _maxTokens;
+    private readonly int _refillRatePerSecond; // Tokens added per second
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly ConcurrentDictionary<string, BucketState> _buckets;
+    private readonly ConcurrentDictionary<string, BucketState> _buckets = new();
+
+    public TokenBucket(IDateTimeProvider dateTimeProvider, TokenBucketConfiguration config)
+    {
+        _dateTimeProvider = dateTimeProvider;
+        _maxTokens = config.MaxTokens;
+        _refillRatePerSecond = config.RefillRatePerSecond;
+    }
 
     public string Name { get; init; } = nameof(TokenBucket);
 
@@ -26,7 +33,7 @@ public class TokenBucket : IAmARateLimitAlgorithm
             var timeElapsed = now - bucket.LastRefillTime;
 
             // Refill tokens based on elapsed time
-            double tokensToAdd = timeElapsed.TotalSeconds * _refillRatePerSecond;
+            var tokensToAdd = timeElapsed.TotalSeconds * _refillRatePerSecond;
             bucket.Tokens = Math.Min(bucket.Tokens + tokensToAdd, _maxTokens);
             bucket.LastRefillTime = now;
 

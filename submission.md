@@ -2,15 +2,15 @@
 A class library for providing configurable and extensible rate limiting for web applications.
 ***
 ## Approach
-lorem ipsum
+With my understanding of the instructions, I felt that my job was to design a _framework_ for rate limiting ... something that you would pull down from NuGet and integrate within your own API to facilitate rate limiting.  That is what I am providing.
 ***
 ## Decisions/Assumptions
-Per the instructions, most of the time was spent around designing the rate limiting framework itself with much less concern about the implementation details for each of the four algorithms.
+Per the instructions, most of the time was spent around designing the rate limiting framework itself with much less concern about the implementation details for each of the four algorithms.  As a matter of fact, the algorithms for 4 of the 5 implementations were "lifted" directly from the internet.
 
-While unit tests are provided for each, no time was spent running benchmarks in attempts to tweak performance and minimize memory usage.
+In addition to a lack of unit tests on the implementation algorithms, no time was spent running benchmarks in attempts to tweak performance and minimize memory usage.  In a real-world scenario, this is basically a placeholder for another team member to research, implement, test, benchmark, and adjust.
 ***
 ## Registration, Configuration & Usage
-lorem ipsum
+Details below:
 ***
 ### Service Registration
 Registration of _RateLimiter's_ required services is provided via a fluent api.
@@ -37,11 +37,11 @@ Configuration spec:
 	  "Name": "MyDistinctRuleName",
 	  "Type": "RequestPerTimespan|TimespanElapsed",
 	  "Discriminator": "Custom|GeoLocation|IpAddress|IpSubnet|QueryString|RequestHeader",
-	  "DiscriminatorMatch": <string?>,
+	  "DiscriminatorMatch": "*"|<string?>|<string>",
 	  "DiscriminatorCustomType": <string?>,
 	  "MaxRequests": <int?>,
 	  "TimespanMilliseconds": <int?>,
-	  "Algorithm": "Default|FixedWindow|LeakyBucket|SlidingWindow|TokenBucket"
+	  "Algorithm": "Default|FixedWindow|LeakyBucket|SlidingWindow|TokenBucket|TimespanElapsed"
 	}
   ]
 }

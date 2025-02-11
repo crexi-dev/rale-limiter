@@ -4,7 +4,6 @@ using RateLimiter.Enums;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace RateLimiter.Rules.Algorithms;
 
@@ -13,13 +12,13 @@ public class SlidingWindow : IAmARateLimitAlgorithm
     private readonly int _maxRequests;
     private readonly TimeSpan _windowDuration;
     private readonly IDateTimeProvider _dateTimeProvider;
-    private readonly ConcurrentDictionary<string, List<DateTime>> _clientTimestamps;
+    private readonly ConcurrentDictionary<string, List<DateTime>> _clientTimestamps = new();
 
-    public SlidingWindow(IDateTimeProvider dateTimeProvider, int maxRequests, TimeSpan windowDuration)
+    public SlidingWindow(IDateTimeProvider dateTimeProvider, SlidingWindowConfiguration configuration)
     {
         _dateTimeProvider = dateTimeProvider;
-        _maxRequests = maxRequests;
-        _windowDuration = windowDuration;
+        _maxRequests = configuration.MaxRequests;
+        _windowDuration = configuration.WindowDuration;
     }
 
     public string Name { get; init; } = nameof(SlidingWindow);

@@ -4,7 +4,7 @@ using RateLimiter.Abstractions;
 
 namespace RateLimiter.Discriminators
 {
-    public class QueryStringDiscriminator : IProvideADiscriminator
+    public class RequestHeaderDiscriminator : IProvideADiscriminator
     {
         public (bool IsMatch, string MatchValue) GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule)
         {
@@ -14,7 +14,7 @@ namespace RateLimiter.Discriminators
                 return (false, string.Empty);
             }
 
-            if (!context.Request.Query.TryGetValue(rateLimitRule.DiscriminatorKey, out var value))
+            if (!context.Request.Headers.TryGetValue(rateLimitRule.DiscriminatorKey, out var value))
             {
                 return (false, string.Empty);
             }

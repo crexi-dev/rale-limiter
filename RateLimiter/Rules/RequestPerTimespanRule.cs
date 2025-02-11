@@ -14,7 +14,7 @@ namespace RateLimiter.Rules
         public LimiterDiscriminator Discriminator { get; set; }
         public string? CustomDiscriminatorName { get; set; }
 
-        public string? DiscriminatorRequestHeaderKey { get; set; }
+        public string? DiscriminatorKey { get; set; }
 
         public string? DiscriminatorMatch { get; set; }
 

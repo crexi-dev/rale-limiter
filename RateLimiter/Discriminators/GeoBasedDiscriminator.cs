@@ -6,14 +6,14 @@ namespace RateLimiter.Discriminators
 {
     public class GeoBasedDiscriminator : IProvideADiscriminator
     {
-        public string GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule)
+        public (bool IsMatch, string MatchValue) GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule)
         {
             // get the ip address via cache/external source
 
             // perform a geo lookup on it
 
             // return the geolocation
-            return "US";
+            return (false, "US");
         }
     }
 }

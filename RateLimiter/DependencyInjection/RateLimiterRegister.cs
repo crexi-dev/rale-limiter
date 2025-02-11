@@ -7,6 +7,7 @@ using RateLimiter.Common;
 using RateLimiter.Config;
 using RateLimiter.Discriminators;
 using RateLimiter.Middleware;
+using RateLimiter.Rules.Algorithms;
 
 namespace RateLimiter.DependencyInjection;
 
@@ -17,6 +18,7 @@ public static class RateLimiterRegister
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
         services.AddSingleton<IProvideDiscriminatorValues, DiscriminatorProvider>();
         services.AddSingleton<IProvideRateLimitRules, RateLimiterRulesFactory>();
+        services.AddSingleton<IProvideRateLimitAlgorithms, AlgorithmProvider>();
         services.AddSingleton<IRateLimitRequests, RateLimiter>();
         return services;
     }
@@ -36,7 +38,7 @@ public static class RateLimiterRegister
 
     public static IServiceCollection WithConfiguration<TRateLimiterConfiguration>(
         this IServiceCollection services,
-        IConfigurationSection section)
+        IConfigurationSection section) where TRateLimiterConfiguration : RateLimiterConfiguration
     {
         services.Configure<RateLimiterConfiguration>(section);
         return services;

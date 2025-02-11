@@ -15,10 +15,11 @@ namespace RateLimiter.Rules
 
         public string? CustomDiscriminatorName { get; set; }
 
-        public string? DiscriminatorRequestHeaderKey { get; set; }
+        public string? DiscriminatorKey { get; set; }
 
         public string? DiscriminatorMatch { get; set; }
 
+        // TODO: Restrict the options for setting an algorithm?
         public RateLimitingAlgorithm Algorithm { get; set; } = RateLimitingAlgorithm.Default;
 
         public TimeSpan TimespanSinceMilliseconds { get; set; }
