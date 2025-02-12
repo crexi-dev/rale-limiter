@@ -1,6 +1,0 @@
-@RateLimiter.Tests.Api.Minimal_HostAddress = http://localhost:5256
-
-GET {{RateLimiter.Tests.Api.Minimal_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
