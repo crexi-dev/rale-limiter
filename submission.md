@@ -99,7 +99,7 @@ app.MapGet("/weatherforecast", () =>
 ***
 ## Internal Class Hierarchy & Components
 | Class | Hierarchy | Purpose |
-| ----------- | ----------- |
+| ----------- | ----------- |----------- |
 | [RateLimiterRegister](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/DependencyInjection/RateLimiterRegister.cs) | | Static class with extension methods for DI registration for consumer's convenience
 | | [RateLimiterConfiguration](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/Config/RateLimiterConfiguration.cs) | Used by RateLimitRegister to deserialize the rate limiting configuration from JSON.
 | [RateLimitedResource](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/Config/RateLimitedResource.cs) | |Attribute for specifying that a resource should be rate limited. Supports both class and method locations.
