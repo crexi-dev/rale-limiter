@@ -1,10 +1,10 @@
 # RateLimiter
-A class library for providing configurable and extensible rate limiting for web applications.
+A class library for providing [configurable](#json-config-anchor-point) and [extensible](#extensibility-anchor-point) rate limiting for web applications.
 ***
 ## Approach
 With my understanding of the instructions, I felt that my job was to design a _framework_ for rate limiting ... something that you would pull down from NuGet and integrate within your own API to facilitate rate limiting.  That is what I am providing.
 
-I started with a top-down approach.  That is to say, I started with the question of: "If I was going to be the consumer, how would I want to be able to use it?"  I started at the controller level, desgined my attributes, how I'd like to configure my rules, and went from there.
+I started with a top-down approach.  That is to say, I started with the question of: "If I was going to be the consumer, how would I want to be able to use it?"  I started at the controller level, desgined my [attributes](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/Config/RateLimitedResource.cs), how I'd like to configure my [rules](https://github.com/jrandallsexton/rate-limiter/tree/master/RateLimiter/Rules), and went from there.
 
 I cannot say at this time whether or not this approached worked better than going bottom-up.  I will say, however, that I feel implementation details have leaked - but then again, what's the saying?  Something like "all abstractions are leaky"?
 ***
@@ -17,7 +17,7 @@ In addition to a lack of unit tests on the implementation algorithms, no time wa
 Details below:
 ***
 ### Service Registration
-Registration of _RateLimiter's_ required services is provided via a fluent api.
+Registration of _RateLimiter's_ required services is provided via a fluent api exposed by [RateLimiterRegister](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/DependencyInjection/RateLimiterRegister.cs).
 
 Example:
 ```
@@ -103,6 +103,7 @@ lorem ipsum
 lorem ipsum
 ***
 ## Extensibility
+<a name="extensibility-anchor-point"></a>
 Consumers can add their own custom discriminators for more complex scenarios.  The process of doing so consists of 3 parts:
 
 1. Provide a class that implements _IProvideADiscriminator_.
