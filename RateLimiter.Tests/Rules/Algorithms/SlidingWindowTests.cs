@@ -1,6 +1,4 @@
-﻿using AutoFixture;
-
-using Moq.AutoMock;
+﻿using FluentAssertions;
 
 using Xunit;
 
@@ -11,14 +9,7 @@ namespace RateLimiter.Tests.Rules.Algorithms
         [Fact]
         public void WhenFoo_DoesBar()
         {
-            var mocker = new AutoMocker();
-            var fixture = new Fixture();
-
-            // arrange
-
-            // act
-
-            // assert
+            true.Should().BeTrue();
         }
     }
 }

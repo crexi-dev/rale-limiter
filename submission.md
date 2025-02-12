@@ -53,14 +53,26 @@ Configuration spec:
 ### Usage in Controller-Based Applications
 Registration of a rate limiting rule (or multiple rules) requires an attribute with a single parameter - the distinct name of the rule configured within the RateLimiter.Rules section.
 
-Example usage:
+The attribute is valid at either the controller or endpoint (method) level.
+
+Example usage - Controller/Class Level
+```
+    [RateLimitedResource(RuleName = "RequestsPerTimespan-Default")]
+    [ApiController]
+    [Route("[controller]")]
+    public class WeatherForecastController : ControllerBase {
+	  // class implementation
+	}
+```
+
+Example usage - Endpoint/Method Level:
 
 ```
 [RateLimitedResource(RuleName="MyFirstDistinctRuleName")]
 [RateLimitedResource(RuleName="MySecondDistinctRuleName")]
 [HttpGet(Name="GetWeatherForecast")]
 public IEnumerable<WeatherForecast> Get() {
-  // implementation
+  // method implementation
 }
 ```
 ***
@@ -71,7 +83,7 @@ Example usage:
 ```
 app.MapGet("/weatherforecast", () =>
 {
-   // implementation
+   // method implementation
 })
 .WithName("GetWeatherForecast")
 .WithRateLimitingRule("MyFirstDistinctRuleName")

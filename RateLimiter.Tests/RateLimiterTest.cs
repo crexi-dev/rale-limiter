@@ -16,6 +16,7 @@ using RateLimiter.Common;
 using RateLimiter.Config;
 using RateLimiter.Discriminators;
 using RateLimiter.Enums;
+using RateLimiter.Rules.Algorithms;
 
 using System.Collections.Generic;
 using System.Threading;
@@ -29,7 +30,7 @@ namespace RateLimiter.Tests;
 public class RateLimiterTest
 {
 	[Fact]
-	public void WhenFoo_DoesBar()
+	public void IsRequestAllowed()
     {
         var mocker = new AutoMocker();
         var fixture = new Fixture();
@@ -42,7 +43,6 @@ public class RateLimiterTest
             DefaultTimespanMilliseconds = 3000,
             Rules = GenerateRateLimitRules()
         });
-        //mocker.Use(appOptions);
 
         mocker.GetMock<IOptions<RateLimiterConfiguration>>()
             .Setup(s => s.Value)
@@ -73,6 +73,9 @@ public class RateLimiterTest
                 { "Host", "192.168.0.1"}
             })
             .SetupRequestMethod("GET");
+
+        var algoProvider = mocker.CreateInstance<AlgorithmProvider>();
+        mocker.Use<IProvideRateLimitAlgorithms>(algoProvider);
 
         var limiter = mocker.CreateInstance<RateLimiter>();
         
@@ -125,7 +128,7 @@ public class RateLimiterTest
                 .With(x => x.Type, LimiterType.RequestsPerTimespan)
                 .With(x => x.Discriminator, LimiterDiscriminator.QueryString)
                 .With(x => x.DiscriminatorMatch, "x-crexi-token")
-                .With(x => x.DiscriminatorRequestHeaderKey, string.Empty)
+                .With(x => x.DiscriminatorRequestHeaderKey, "US")
                 .With(x => x.Algorithm, RateLimitingAlgorithm.Default)
                 .With(x => x.TimespanMilliseconds, 4000)
                 .Create()

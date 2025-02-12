@@ -4,6 +4,7 @@ using RateLimiter.Config;
 
 namespace RateLimiter.Tests.Api.Controllers
 {
+    [RateLimitedResource(RuleName = "RequestsPerTimespan-Default")]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
@@ -22,7 +23,6 @@ namespace RateLimiter.Tests.Api.Controllers
 
         [RateLimitedResource(RuleName = "GeoTokenRule-US")]
         [RateLimitedResource(RuleName = "GeoTokenRule-EU")]
-        //[RateLimitedResource(RuleName = "RequestsPerTimespan-Default")]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
@@ -33,6 +33,18 @@ namespace RateLimiter.Tests.Api.Controllers
                 Summary = Summaries[Random.Shared.Next(Summaries.Length)]
             })
             .ToArray();
+        }
+
+        [HttpGet("{maxRandom}")]
+        public IEnumerable<WeatherForecast> GetAlt(int maxRandom)
+        {
+            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+                {
+                    Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
+                    TemperatureC = Random.Shared.Next(-20, 55),
+                    Summary = Summaries[Random.Shared.Next(Summaries.Length)]
+                })
+                .ToArray();
         }
     }
 }

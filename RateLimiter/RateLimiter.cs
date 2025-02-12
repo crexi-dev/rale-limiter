@@ -126,8 +126,10 @@ public class RateLimiter : IRateLimitRequests
 
         // TODO: Make this a single call (no iterations)
         var passed = true;
+        var lastRule = string.Empty;
         foreach (var rule in matchingRules)
         {
+            lastRule = rule.Name;
             passed = _ruleNameAlgorithm[rule.Name]
                 .IsAllowed(discriminatorValues.First(x => x.Key == rule.Name).Value.MatchValue);
             if (!passed)
@@ -136,7 +138,7 @@ public class RateLimiter : IRateLimitRequests
 
         // TODO: We would want to make this configurable - what status code to use and what we tell the client
         return passed ? (passed, string.Empty) :
-            (passed, "some message about banging on our door too much");
+            (passed, $"some message about banging on our door too much due to: {lastRule}");
     }
 
     /// <summary>

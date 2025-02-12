@@ -28,7 +28,6 @@ namespace RateLimiter.Tests.Rules.Algorithms
             var result = sut.GetAlgorithm(algo, 5, TimeSpan.FromMilliseconds(3000));
 
             // assert
-            //result.Name.Should().Be(typeof(algo));
             result.Algorithm.Should().Be(expectedAlgorithm);
         }
     }
