@@ -26,7 +26,7 @@ public class RateLimiterConfiguration
 
         public string? DiscriminatorMatch { get; set; }
 
-        public string? DiscriminatorRequestHeaderKey { get; set; }
+        public string? DiscriminatorKey { get; set; }
 
         public int? MaxRequests { get; set; }
 

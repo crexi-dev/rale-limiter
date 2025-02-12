@@ -27,7 +27,7 @@ public class RateLimiterRulesFactory : IProvideRateLimitRules
                         Discriminator = rule.Discriminator,
                         CustomDiscriminatorName = rule.CustomDiscriminatorType,
                         DiscriminatorMatch = rule.DiscriminatorMatch,
-                        DiscriminatorKey = rule.DiscriminatorRequestHeaderKey,
+                        DiscriminatorKey = rule.DiscriminatorKey,
                         MaxRequests = rule.MaxRequests ?? configuration.DefaultMaxRequests,
                         TimespanMilliseconds = rule.TimespanMilliseconds is null ?
                             TimeSpan.FromMilliseconds(configuration.DefaultTimespanMilliseconds) :
@@ -42,7 +42,7 @@ public class RateLimiterRulesFactory : IProvideRateLimitRules
                         Discriminator = rule.Discriminator,
                         CustomDiscriminatorName = rule.CustomDiscriminatorType,
                         DiscriminatorMatch = rule.DiscriminatorMatch,
-                        DiscriminatorKey = rule.DiscriminatorRequestHeaderKey,
+                        DiscriminatorKey = rule.DiscriminatorKey,
                         TimespanSinceMilliseconds = rule.TimespanMilliseconds is null ?
                             TimeSpan.FromMilliseconds(configuration.DefaultTimespanMilliseconds) :
                             TimeSpan.FromMilliseconds(rule.TimespanMilliseconds.Value)

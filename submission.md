@@ -42,6 +42,7 @@ Configuration spec:
 	  "Name": "MyDistinctRuleName",
 	  "Type": "RequestPerTimespan|TimespanElapsed",
 	  "Discriminator": "Custom|GeoLocation|IpAddress|IpSubnet|QueryString|RequestHeader",
+          "DiscriminatorKey": <string?>,
 	  "DiscriminatorMatch": "*"|<string?>|<string>",
 	  "DiscriminatorCustomType": <string?>,
 	  "MaxRequests": <int?>,
@@ -54,7 +55,39 @@ Configuration spec:
 #### FluentApi Configuration
 ~~TBD~~ (will not be implemented at this time; please use json-based configuration)
 
-***
+#### Discriminator Configuration
+A discriminator is used for obtaining some information from the HttpContext.  It can be a value from a querystring or a request header.
+
+Discriminators return a tuple of (bool IsMatch, string MatchValue).  If IsMatch is false, the rule using this discriminator will not be applicable for this request.
+
+Discriminators can apply to all values or only if they match a certain condition.
+
+Example configurations:
+
+1. All Values
+```
+{
+  "Discriminator": "IpAddress",
+  "DiscriminatorMatch": "*"
+}
+```
+2. Specific Values
+```
+{
+  ...
+  "Discriminator": "QueryString",
+  "DiscriminatorKey": "SomeQueryStringKey"
+  "DiscriminatorMatch": "ValueIWantToMatchOn"
+  ...
+},
+{
+  ...
+  "Discriminator": "RequestHeader",
+  "DiscriminatorKey": "x-my-header"
+  "DiscriminatorMatch": "x-my-header-value"
+  ...
+}
+```
 ### Usage in Controller-Based Applications
 Registration of a rate limiting rule (or multiple rules) requires an attribute with a single parameter - the distinct name of the rule configured within the RateLimiter.Rules section.
 
