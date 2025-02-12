@@ -29,6 +29,10 @@ namespace RateLimiter.Tests;
 
 public class RateLimiterTest
 {
+    /// <summary>
+    /// Note: This test class is not true unit testing and would not exist in this project
+    /// Chose to use concrete implementations in some places to facilitate functional testing
+    /// </summary>
 	[Fact]
 	public void IsRequestAllowed()
     {
