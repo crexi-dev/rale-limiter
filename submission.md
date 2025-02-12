@@ -3,6 +3,10 @@ A class library for providing configurable and extensible rate limiting for web 
 ***
 ## Approach
 With my understanding of the instructions, I felt that my job was to design a _framework_ for rate limiting ... something that you would pull down from NuGet and integrate within your own API to facilitate rate limiting.  That is what I am providing.
+
+I started with a top-down approach.  That is to say, I started with the question of: "If I was going to be the consumer, how would I want to be able to use it?"  I started at the controller level, desgined my attributes, how I'd like to configure my rules, and went from there.
+
+I cannot say at this time whether or not this approached worked better than going bottom-up.  I will say, however, that I feel implementation details have leaked - but then again, what's the saying?  Something like "all abstractions are leaky"?
 ***
 ## Decisions/Assumptions
 Per the instructions, most of the time was spent around designing the rate limiting framework itself with much less concern about the implementation details for each of the four algorithms.  As a matter of fact, the algorithms for 4 of the 5 implementations were "lifted" directly from the internet.
@@ -57,12 +61,12 @@ The attribute is valid at either the controller or endpoint (method) level.
 
 Example usage - Controller/Class Level
 ```
-    [RateLimitedResource(RuleName = "RequestsPerTimespan-Default")]
-    [ApiController]
-    [Route("[controller]")]
-    public class WeatherForecastController : ControllerBase {
-	  // class implementation
-	}
+[RateLimitedResource(RuleName = "RequestsPerTimespan-Default")]
+[ApiController]
+[Route("[controller]")]
+public class WeatherForecastController : ControllerBase {
+	// class implementation
+}
 ```
 
 Example usage - Endpoint/Method Level:
@@ -77,6 +81,8 @@ public IEnumerable<WeatherForecast> Get() {
 ```
 ***
 ### Usage in MinimalApi-Based Application
+***_Not Yet Implemented_***
+
 Registration of a rate limiting rule (or multiple rules) requires usage of the FluentApi with a single parameter - the distinct name of the rule configured within the RateLimiter.Rules section.
 
 Example usage:
