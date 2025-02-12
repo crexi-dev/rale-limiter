@@ -120,6 +120,8 @@ flowchart TB
                 RateLimiterRulesFactory
                 RateLimiterConfiguation
                 RateLimiterRuleConfiguration
+                DiscriminatorProvider
+                AlgorithmProvider
             end
         end
       end
