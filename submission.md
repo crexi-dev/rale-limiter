@@ -8,10 +8,12 @@ I started with a top-down approach.  That is to say, I started with the question
 
 I cannot say at this time whether or not this approached worked better than going bottom-up.  I will say, however, that I feel implementation details have leaked - but then again, what's the saying?  Something like "all abstractions are leaky"?
 ***
-## Decisions/Assumptions
+## Decision & Disclaimer
 Per the instructions, most of the time was spent around designing the rate limiting framework itself with much less concern about the implementation details for each of the four algorithms.  As a matter of fact, the algorithms for 4 of the 5 implementations were "lifted" directly from the internet.
 
 In addition to a lack of unit tests on the implementation algorithms, no time was spent running benchmarks in attempts to tweak performance and minimize memory usage.  In a real-world scenario, this is basically a placeholder for another team member to research, implement, test, benchmark, and adjust.
+
+Lastly, an example consumer is presented in RateLimiter.Tests.Api.  This project is not a "test project" in the normal sense of unit/integration tests.  Its sole puprpose was to provide a client for consuming the RateLimiter library.
 ***
 ## Registration, Configuration & Usage
 
@@ -51,7 +53,7 @@ Configuration spec:
   ]
 }
 ```
-#### FluentApi Configuration
+#### Fluent Api Configuration
 ~~TBD~~ (will not be implemented at this time; please use json-based configuration)
 
 #### Discriminator Overview & Configuration
@@ -91,7 +93,7 @@ Example configurations:
 ### Usage in Controller-Based Applications
 Registration of a rate limiting rule (or multiple rules) requires an attribute with a single parameter - the distinct name of the rule configured within the RateLimiter.Rules section.
 
-The attribute is valid at either the controller or endpoint (method) level.
+The attribute is valid at either the controller (class) or endpoint (method) level.
 
 Example usage - Controller/Class Level
 ```
