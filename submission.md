@@ -14,8 +14,7 @@ Per the instructions, most of the time was spent around designing the rate limit
 In addition to a lack of unit tests on the implementation algorithms, no time was spent running benchmarks in attempts to tweak performance and minimize memory usage.  In a real-world scenario, this is basically a placeholder for another team member to research, implement, test, benchmark, and adjust.
 ***
 ## Registration, Configuration & Usage
-Details below:
-***
+
 ### Service Registration
 Registration of _RateLimiter's_ required services is provided via a fluent api exposed by [RateLimiterRegister](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/DependencyInjection/RateLimiterRegister.cs).
 
@@ -55,12 +54,12 @@ Configuration spec:
 #### FluentApi Configuration
 ~~TBD~~ (will not be implemented at this time; please use json-based configuration)
 
-#### Discriminator Configuration
-A discriminator is used for obtaining some information from the HttpContext.  It can be a value from a querystring or a request header.
+#### Discriminator Overview & Configuration
+A discriminator is used for obtaining some information from the HttpContext.  It can be a value from a querystring, a request header, or anything you want it to be via use of a [custom discriminator](#extensibility-anchor-point).
 
 Discriminators return a tuple of (bool IsMatch, string MatchValue).  If IsMatch is false, the rule using this discriminator will not be applicable for this request.
 
-Discriminators can apply to all values or only if they match a certain condition.
+Discriminators can apply to all values or only if they match a certain condition. In a more mature version of this library, RegEx-based matching would be supported.
 
 Example configurations:
 
@@ -88,6 +87,7 @@ Example configurations:
   ...
 }
 ```
+***
 ### Usage in Controller-Based Applications
 Registration of a rate limiting rule (or multiple rules) requires an attribute with a single parameter - the distinct name of the rule configured within the RateLimiter.Rules section.
 
