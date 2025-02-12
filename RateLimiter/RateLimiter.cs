@@ -50,7 +50,7 @@ public class RateLimiter : IRateLimitRequests
     }
 
     /// <summary>
-    /// Validate configuration and registrations upon instantiation in order to prevent downstream runtime errors & exceptions
+    /// Incomplete: Validate configuration and registrations upon instantiation in order to prevent downstream runtime errors & exceptions
     /// </summary>
     private void ValidateConfiguration()
     {

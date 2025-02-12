@@ -1,5 +1,5 @@
 # RateLimiter
-A class library for providing [configurable](#json-config-anchor-point) and [extensible](#extensibility-anchor-point) rate limiting for web applications.
+A class library for providing [configurable](#configuration-anchor-point) and [extensible](#extensibility-anchor-point) rate limiting for web applications.
 ***
 ## Approach
 With my understanding of the instructions, I felt that my job was to design a _framework_ for rate limiting ... something that you would pull down from NuGet and integrate within your own API to facilitate rate limiting.  That is what I am providing.
@@ -26,6 +26,7 @@ builder.Services.AddRateLimiting()
 ```
 ***
 ### Configuration
+<a name="configuration-anchor-point"></a>
 _RateLimiter_ can be configured via a standard appSettings.json section (or other configuration provider, i.e. Azure App Config) or via use of a fluent api.
 
 #### AppSettings.json Configuration
@@ -96,17 +97,48 @@ app.MapGet("/weatherforecast", () =>
 .WithRateLimitingRule("MySecondDistinctRuleName");
 ```
 ***
-## Internal Class Hierarchy
-lorem ipsum
+## Internal Class Hierarchy & Components
+| Class | Hierarchy | Purpose |
+| ----------- | ----------- |
+| [RateLimiterRegister](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/DependencyInjection/RateLimiterRegister.cs) | | Static class with extension methods for DI registration for consumer's convenience
+| | [RateLimiterConfiguration](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/Config/RateLimiterConfiguration.cs) | Used by RateLimitRegister to deserialize the rate limiting configuration from JSON.
+| [RateLimitedResource](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/Config/RateLimitedResource.cs) | |Attribute for specifying that a resource should be rate limited. Supports both class and method locations.
+| [RateLimiterMiddleware](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/Middleware/RateLimiterMiddleware.cs) | |Middleware for processing RateLimitedResource attributes and passing the HttpContext to RateLimiter.
+| [RateLimiter](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/RateLimiter.cs) | | Primary class resposible for processing incoming requests, obtaining discriminator values, determining matches, and processing via provided algorithms.
+| | [RateLimiterRulesFactory](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/RateLimiterRulesFactory.cs) | Used by RateLimiter at start-up to load all rules as configured by the consuming assembly
+| | [DiscriminatorProvider](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/Discriminators/DiscriminatorProvider.cs) | Used by RateLimiter at start-up to load all discriminators (native and custom)
+| | [AlgorithmProvider](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/Rules/Algorithms/AlgorithmProvider.cs) | Used by RateLimiter at start-up to load all algorithms as required within the configuration of the consuming assembly
+```mermaid
+flowchart TB
+    A[Client] -->|HTTP/S| API
+    subgraph API
+      
+      subgraph Middleware      
+        subgraph RateLimitingMiddleware
+            subgraph RateLimiter
+                RateLimiterRulesFactory
+                RateLimiterConfiguation
+                RateLimiterRuleConfiguration
+            end
+        end
+      end
+    end
+```
 ***
-## Configurability
-lorem ipsum
+## Pseudocode
+### RateLimiter.IsRequestAllowed()
+1. Get applicable rules from complete rules collection (pre-loaded)
+2. Get the discriminators for each applicable rule
+3. Invoke the discriminator for each and evaluate _IsMatch_
+4. Trim the current rules collection to those whose discriminator matched their respective condition (if present)
+5. Process each rule usig the matching logo (pre-loaded)
+6. Return the result
 ***
 ## Extensibility
 <a name="extensibility-anchor-point"></a>
 Consumers can add their own custom discriminators for more complex scenarios.  The process of doing so consists of 3 parts:
 
-1. Provide a class that implements _IProvideADiscriminator_.
+1. Provide a class that implements _IProvideADiscriminator_. (Example in RateLimiter.Tests.Api [GeoTokenDiscriminator](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter.Tests.Api/Middleware/RateLimiting/GeoTokenDiscriminator.cs))
 2. Create a rule in your [json-based configuration](#json-config-anchor-point) that specifies that class name in the _DiscriminatorCustomType_ property on a _Rules_ entry.
 3. Modify the service registration to include your custom discriminator as shown below
 
@@ -117,3 +149,5 @@ builder.Services.AddRateLimiting()
 ```
 
 Multiple custom discriminators can be added provided they each have a unique name.  A run-time exception will be thrown immediately upon application start in the case of a duplicated name.
+
+_The example for this is the sole purpose of RateLimiter.Tests.Api - which is not a test assembly, per-se - but I needed to have a place for a client in order to demonstrate consumption and usage.__
