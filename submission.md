@@ -108,6 +108,7 @@ app.MapGet("/weatherforecast", () =>
 | | [RateLimiterRulesFactory](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/RateLimiterRulesFactory.cs) | Used by RateLimiter at start-up to load all rules as configured by the consuming assembly
 | | [DiscriminatorProvider](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/Discriminators/DiscriminatorProvider.cs) | Used by RateLimiter at start-up to load all discriminators (native and custom)
 | | [AlgorithmProvider](https://github.com/jrandallsexton/rate-limiter/blob/master/RateLimiter/Rules/Algorithms/AlgorithmProvider.cs) | Used by RateLimiter at start-up to load all algorithms as required within the configuration of the consuming assembly
+***
 ```mermaid
 flowchart TB
     A[Client] -->|HTTP/S| API
