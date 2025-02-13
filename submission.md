@@ -234,3 +234,12 @@ A better configuration example would be:
 }
 ```
 Using this approach, _RateLimiter_ would be able to match the discriminator's result to an algorithm it has pre-loaded.
+
+Changing the library to use this approach would constitute changes to:
+- The return type of IProvideADiscriminator from tuple to a new response object
+- RateLimiterConfiguration to allow the multiple agorithms to be defined on a discriminator
+- The pre-loading within RateLimiter for algorithms defined on a discriminator
+- RateLimiter needs to check the discriminator's result to detect if a specific algorithm is demanded
+- Updating unit tests
+
+Entire effort would take approx 4-6 hours.  In a real-world scenario, I'd give myself 8 hours and assign 3 points to the work item.  It could likely be pointed as a 2, but I'd suggest 3 as a safe bet.
