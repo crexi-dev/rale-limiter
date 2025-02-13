@@ -189,3 +189,48 @@ builder.Services.AddRateLimiting()
 Multiple custom discriminators can be added provided they each have a unique name.  A run-time exception will be thrown immediately upon application start in the case of a duplicated name.
 
 _The example for this is the sole purpose of RateLimiter.Tests.Api - which is not a test assembly, per-se - but I needed to have a place for a client in order to demonstrate consumption and usage.__
+***
+## Epilogue
+As with many (perhaps most) things in life, a good sleep can cause us to give greater thought of an issue and provide time for reflection.  That happened to me upon waking today.
+
+The current design requires two attributes in order to accomplish the goal of a different rate limiting algorithm based on the geo token. Using two attributes causes our _RateLimiter_ to process two distinct discriminators.  While this works, it is sub-optimal.  An improved approach follows:
+
+In order to achieve this, a discriminator should be able to return a specific algorithm which references an algorithm configured within our appSettings.  When the rate limiter calls the discriminator to determine the match, it would also be able to honor an algorithm specified by the discriminator.
+
+The result would be changed from a tuple (bool IsMatch, string MatchValue).  A new return value from discriminators would look like:
+
+```
+public class DiscriminatorEvaluationResult {
+
+    public bool IsMatch { get; set; }
+
+    public string MatchValue { get; set; }
+
+    public RateLimitingAlgorithm? Algorithm { get; set; } 
+}
+```
+Given this new structure, the RateLimiter would then utilize the specified algorithm if not null.  Otherwise, it would use the algorithm defined at the rule-level, or the default configuration.
+
+A better configuration example would be:
+```
+{
+    "Name": "GeoTokenRule",
+    "Type": "Custom",
+    "Discriminator": {
+        "Type": "Custom",
+        "Name": "GeoTokenDiscriminator",
+        "Algorithms": [
+            {
+                "Type": "RequestsPerTimespan",
+                "MaxRequests": 3,
+                "TimespanMilliseconds": 5000
+            },
+            {
+                "Type": "TimespanElapsed",
+                "TimespanMilliseconds": 3000
+            }
+        ]
+    }
+}
+```
+Using this approach, _RateLimiter_ would be able to match the discriminator's result to an algorithm it has pre-loaded.
