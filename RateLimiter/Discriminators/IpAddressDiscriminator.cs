@@ -20,19 +20,22 @@ namespace RateLimiter.Discriminators
                 return new DiscriminatorEvaluationResult(configuration.Name)
                 {
                     IsMatch = true,
-                    MatchValue = ipAddress
+                    MatchValue = ipAddress,
+                    AlgorithmName = configuration.AlgorithmNames[0]
                 };
 
             return configuration.DiscriminatorMatch == ipAddress ?
                 new DiscriminatorEvaluationResult(configuration.Name)
                 {
                     IsMatch = true,
-                    MatchValue = ipAddress
+                    MatchValue = ipAddress,
+                    AlgorithmName = configuration.AlgorithmNames[0]
                 } :
                 new DiscriminatorEvaluationResult(configuration.Name)
                 {
                     IsMatch = false,
-                    MatchValue = ipAddress
+                    MatchValue = ipAddress,
+                    AlgorithmName = configuration.AlgorithmNames[0]
                 };
         }
     }

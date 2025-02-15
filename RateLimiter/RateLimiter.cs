@@ -6,10 +6,8 @@ using RateLimiter.Abstractions;
 using RateLimiter.Config;
 using RateLimiter.Discriminators;
 
-using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Data;
 using System.Linq;
 
 using static RateLimiter.Config.RateLimiterConfiguration;
@@ -37,8 +35,7 @@ public class RateLimiter : IRateLimiter
         ILogger<RateLimiter> logger,
         IOptions<RateLimiterConfiguration> options,
         IRateLimitDiscriminatorProvider discriminatorsProvider,
-        IRateLimitAlgorithmProvider algorithmProvider
-        )
+        IRateLimitAlgorithmProvider algorithmProvider)
     {
         _logger = logger;
         _algorithmProvider = algorithmProvider;
