@@ -1,6 +1,6 @@
 ﻿namespace RateLimiter.Enums;
 
-public enum LimiterDiscriminator
+public enum DiscriminatorType
 {
     Custom,
     GeoLocation,

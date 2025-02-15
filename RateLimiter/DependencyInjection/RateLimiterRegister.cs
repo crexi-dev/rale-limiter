@@ -16,10 +16,9 @@ public static class RateLimiterRegister
     public static IServiceCollection AddRateLimiting(this IServiceCollection services)
     {
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        services.AddSingleton<IProvideDiscriminatorValues, DiscriminatorProvider>();
-        services.AddSingleton<IProvideRateLimitRules, RateLimiterRulesFactory>();
-        services.AddSingleton<IProvideRateLimitAlgorithms, AlgorithmProvider>();
-        services.AddSingleton<IRateLimitRequests, RateLimiter>();
+        services.AddSingleton<IRateLimitDiscriminatorProvider, DiscriminatorProvider>();
+        services.AddSingleton<IRateLimitAlgorithmProvider, AlgorithmProvider>();
+        services.AddSingleton<IRateLimiter, RateLimiter>();
         return services;
     }
     
@@ -30,9 +29,9 @@ public static class RateLimiterRegister
     /// <param name="services"></param>
     /// <returns></returns>
     public static IServiceCollection WithCustomDiscriminator<T>(this IServiceCollection services)
-        where T : class, IProvideADiscriminator
+        where T : class, IRateLimitDiscriminator
     {
-        services.AddKeyedSingleton<IProvideADiscriminator, T>(typeof(T).Name);
+        services.AddKeyedSingleton<IRateLimitDiscriminator, T>(typeof(T).Name);
         return services;
     }
 

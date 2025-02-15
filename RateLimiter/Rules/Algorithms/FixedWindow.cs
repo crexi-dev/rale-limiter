@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 
 namespace RateLimiter.Rules.Algorithms;
 
-public class FixedWindow : IAmARateLimitAlgorithm
+public class FixedWindow : IRateLimitAlgorithm
 {
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly int _maxRequests;
@@ -42,5 +42,5 @@ public class FixedWindow : IAmARateLimitAlgorithm
         return window.Count <= _maxRequests;
     }
 
-    public RateLimitingAlgorithm Algorithm { get; init; } = RateLimitingAlgorithm.FixedWindow;
+    public AlgorithmType AlgorithmType { get; init; } = AlgorithmType.FixedWindow;
 }

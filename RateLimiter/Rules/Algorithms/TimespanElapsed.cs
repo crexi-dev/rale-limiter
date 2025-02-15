@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 
 namespace RateLimiter.Rules.Algorithms
 {
-    public class TimespanElapsed : IAmARateLimitAlgorithm
+    public class TimespanElapsed : IRateLimitAlgorithm
     {
         private readonly TimeSpan _minInterval;
         private readonly IDateTimeProvider _dateTimeProvider;
@@ -36,11 +36,6 @@ namespace RateLimiter.Rules.Algorithms
             return true;
         }
 
-        public RateLimitingAlgorithm Algorithm { get; init; } = RateLimitingAlgorithm.TimespanElapsed;
-    }
-
-    public class TimespanElapsedConfiguration
-    {
-        public TimeSpan MinInterval { get; set; }
+        public AlgorithmType AlgorithmType { get; init; } = AlgorithmType.TimespanElapsed;
     }
 }

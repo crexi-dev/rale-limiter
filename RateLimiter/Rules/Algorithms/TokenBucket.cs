@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 
 namespace RateLimiter.Rules.Algorithms;
 
-public class TokenBucket : IAmARateLimitAlgorithm
+public class TokenBucket : IRateLimitAlgorithm
 {
     private readonly int _maxTokens;
     private readonly int _refillRatePerSecond; // Tokens added per second
@@ -47,7 +47,7 @@ public class TokenBucket : IAmARateLimitAlgorithm
         }
     }
 
-    public RateLimitingAlgorithm Algorithm { get; init; } = RateLimitingAlgorithm.TokenBucket;
+    public AlgorithmType AlgorithmType { get; init; } = AlgorithmType.TokenBucket;
 
     private class BucketState
     {

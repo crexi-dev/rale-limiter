@@ -1,8 +1,10 @@
-﻿using System;
+﻿using RateLimiter.Abstractions;
+
+using System;
 
 namespace RateLimiter.Rules.Algorithms
 {
-    public class SlidingWindowConfiguration
+    public class SlidingWindowConfiguration : IRateLimitAlgorithmConfiguration
     {
         public int MaxRequests { get; init; }
 

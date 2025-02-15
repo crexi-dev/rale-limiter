@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace RateLimiter.Rules.Algorithms;
 
-public class SlidingWindow : IAmARateLimitAlgorithm
+public class SlidingWindow : IRateLimitAlgorithm
 {
     private readonly int _maxRequests;
     private readonly TimeSpan _windowDuration;
@@ -42,5 +42,5 @@ public class SlidingWindow : IAmARateLimitAlgorithm
         }
     }
 
-    public RateLimitingAlgorithm Algorithm { get; init; } = RateLimitingAlgorithm.SlidingWindow;
+    public AlgorithmType AlgorithmType { get; init; } = AlgorithmType.SlidingWindow;
 }

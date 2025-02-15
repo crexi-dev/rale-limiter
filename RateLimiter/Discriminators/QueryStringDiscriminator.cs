@@ -2,30 +2,46 @@
 
 using RateLimiter.Abstractions;
 
+using static RateLimiter.Config.RateLimiterConfiguration;
+
 namespace RateLimiter.Discriminators
 {
-    public class QueryStringDiscriminator : IProvideADiscriminator
+    public class QueryStringDiscriminator(DiscriminatorConfiguration configuration) : IRateLimitDiscriminator
     {
-        public (bool IsMatch, string MatchValue) GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule)
+        public DiscriminatorConfiguration Configuration { get; set; }
+
+        public DiscriminatorEvaluationResult Evaluate(HttpContext context)
         {
-            if (string.IsNullOrEmpty(rateLimitRule.DiscriminatorKey))
+            if (string.IsNullOrEmpty(configuration.DiscriminatorKey))
             {
                 // likely should log and throw
-                return (false, string.Empty);
+                return new DiscriminatorEvaluationResult(configuration.Name);
             }
 
-            if (!context.Request.Query.TryGetValue(rateLimitRule.DiscriminatorKey, out var value))
+            if (!context.Request.Query.TryGetValue(configuration.DiscriminatorKey, out var value))
             {
-                return (false, string.Empty);
+                return new DiscriminatorEvaluationResult(configuration.Name);
             }
 
-            if (string.IsNullOrEmpty(rateLimitRule.DiscriminatorMatch) ||
-                rateLimitRule.DiscriminatorMatch == "*")
-                return (true, value.ToString());
+            if (string.IsNullOrEmpty(configuration.DiscriminatorMatch) ||
+                configuration.DiscriminatorMatch == "*")
+                return new DiscriminatorEvaluationResult(configuration.Name)
+                {
+                    IsMatch = true,
+                    MatchValue = value.ToString()
+                };
 
-            return rateLimitRule.DiscriminatorMatch == value.ToString() ?
-                (true, value.ToString()) :
-                (false, value.ToString());
+            return configuration.DiscriminatorMatch == value.ToString() ?
+                new DiscriminatorEvaluationResult(configuration.Name)
+                {
+                    IsMatch = true,
+                    MatchValue = value.ToString()
+                } :
+                new DiscriminatorEvaluationResult(configuration.Name)
+                {
+                    IsMatch = false,
+                    MatchValue = value.ToString()
+                };
         }
     }
 }

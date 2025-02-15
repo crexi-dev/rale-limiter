@@ -2,18 +2,26 @@
 
 using RateLimiter.Abstractions;
 
+using static RateLimiter.Config.RateLimiterConfiguration;
+
 namespace RateLimiter.Discriminators
 {
-    public class GeoBasedDiscriminator : IProvideADiscriminator
+    public class GeoBasedDiscriminator(DiscriminatorConfiguration configuration) : IRateLimitDiscriminator
     {
-        public (bool IsMatch, string MatchValue) GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule)
+        public DiscriminatorConfiguration Configuration { get; set; }
+
+        public DiscriminatorEvaluationResult Evaluate(HttpContext context)
         {
             // get the ip address via cache/external source
 
             // perform a geo lookup on it
 
             // return the geolocation
-            return (false, "US");
+            return new DiscriminatorEvaluationResult(configuration.Name)
+            {
+                IsMatch = false,
+                MatchValue = "US"
+            };
         }
     }
 }

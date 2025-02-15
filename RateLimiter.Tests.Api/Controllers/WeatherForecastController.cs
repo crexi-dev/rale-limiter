@@ -4,7 +4,7 @@ using RateLimiter.Config;
 
 namespace RateLimiter.Tests.Api.Controllers
 {
-    [RateLimitedResource(RuleName = "RequestsPerTimespan-Default")]
+    //[RateLimitedResource(RuleName = "RequestsPerTimespan-Default")]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
@@ -21,8 +21,7 @@ namespace RateLimiter.Tests.Api.Controllers
             _logger = logger;
         }
 
-        [RateLimitedResource(RuleName = "GeoTokenRule-US")]
-        [RateLimitedResource(RuleName = "GeoTokenRule-EU")]
+        [RateLimitedResource(RuleName = "GeoTokenRule")]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {

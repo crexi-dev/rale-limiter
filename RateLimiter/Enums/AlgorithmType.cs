@@ -1,6 +1,6 @@
 ﻿namespace RateLimiter.Enums;
 
-public enum RateLimitingAlgorithm
+public enum AlgorithmType
 {
     Default,
     FixedWindow,
