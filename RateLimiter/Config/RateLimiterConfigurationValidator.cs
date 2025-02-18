@@ -24,25 +24,25 @@ namespace RateLimiter.Config
                             messages.Add($"Algorithm {algorithm.Name} is of type {algorithm.Type}, but is missing {nameof(algorithm.Parameters.WindowDurationMS)}");
                         break;
                     case AlgorithmType.LeakyBucket:
-                        if (algorithm.Parameters.MaxRequests is null)
+                        if (algorithm.Parameters.Capacity is null)
                             messages.Add($"Algorithm {algorithm.Name} is of type {algorithm.Type}, but is missing {nameof(algorithm.Parameters.Capacity)}");
-                        if (algorithm.Parameters.MaxRequests is null)
+                        if (algorithm.Parameters.IntervalMS is null)
                             messages.Add($"Algorithm {algorithm.Name} is of type {algorithm.Type}, but is missing {nameof(algorithm.Parameters.IntervalMS)}");
                         break;
                     case AlgorithmType.SlidingWindow:
                         if (algorithm.Parameters.MaxRequests is null)
                             messages.Add($"Algorithm {algorithm.Name} is of type {algorithm.Type}, but is missing {nameof(algorithm.Parameters.MaxRequests)}");
-                        if (algorithm.Parameters.MaxRequests is null)
+                        if (algorithm.Parameters.WindowDurationMS is null)
                             messages.Add($"Algorithm {algorithm.Name} is of type {algorithm.Type}, but is missing {nameof(algorithm.Parameters.WindowDurationMS)}");
                         break;
                     case AlgorithmType.TimespanElapsed:
-                        if (algorithm.Parameters.MaxRequests is null)
+                        if (algorithm.Parameters.MinIntervalMS is null)
                             messages.Add($"Algorithm {algorithm.Name} is of type {algorithm.Type}, but is missing {nameof(algorithm.Parameters.MinIntervalMS)}");
                         break;
                     case AlgorithmType.TokenBucket:
-                        if (algorithm.Parameters.MaxRequests is null)
+                        if (algorithm.Parameters.MaxTokens is null)
                             messages.Add($"Algorithm {algorithm.Name} is of type {algorithm.Type}, but is missing {nameof(algorithm.Parameters.MaxTokens)}");
-                        if (algorithm.Parameters.MaxRequests is null)
+                        if (algorithm.Parameters.RefillRatePerSecond is null)
                             messages.Add($"Algorithm {algorithm.Name} is of type {algorithm.Type}, but is missing {nameof(algorithm.Parameters.RefillRatePerSecond)}");
                         break;
                     default:

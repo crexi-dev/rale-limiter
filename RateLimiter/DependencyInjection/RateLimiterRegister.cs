@@ -16,6 +16,7 @@ public static class RateLimiterRegister
     public static IServiceCollection AddRateLimiting(this IServiceCollection services)
     {
         services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
+        services.AddSingleton<IRateLimiterConfigurationValidator, RateLimiterConfigurationValidator>();
         services.AddSingleton<IRateLimitDiscriminatorProvider, DiscriminatorProvider>();
         services.AddSingleton<IRateLimitAlgorithmProvider, AlgorithmProvider>();
         services.AddSingleton<IRateLimiter, RateLimiter>();

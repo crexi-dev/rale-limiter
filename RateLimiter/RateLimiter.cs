@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -27,6 +28,7 @@ public class RateLimiter : IRateLimiter
     private readonly IEnumerable<RuleConfiguration> _rules;
 
     private readonly IRateLimitDiscriminatorProvider _discriminatorsProvider;
+    private readonly IRateLimiterConfigurationValidator _configurationValidator;
 
     private ConcurrentDictionary<string, IRateLimitAlgorithm> _algorithms;
     private ConcurrentDictionary<string, IRateLimitDiscriminator> _discriminators;
@@ -35,7 +37,8 @@ public class RateLimiter : IRateLimiter
         ILogger<RateLimiter> logger,
         IOptions<RateLimiterConfiguration> options,
         IRateLimitDiscriminatorProvider discriminatorsProvider,
-        IRateLimitAlgorithmProvider algorithmProvider)
+        IRateLimitAlgorithmProvider algorithmProvider,
+        IRateLimiterConfigurationValidator configurationValidator)
     {
         _logger = logger;
         _algorithmProvider = algorithmProvider;
@@ -44,13 +47,17 @@ public class RateLimiter : IRateLimiter
         _config = options.Value;
         _rules = options.Value.Rules;
         _discriminatorsProvider = discriminatorsProvider;
+        _configurationValidator = configurationValidator;
+
         ValidateConfiguration(_config);
         ProcessConfiguration(_config);
     }
 
     private void ValidateConfiguration(RateLimiterConfiguration config)
     {
-        return;
+        var validationResult = _configurationValidator.Validate(config);
+        if (!validationResult.IsValid)
+            throw new ApplicationException($"RateLimiter Configuration is invalid. {validationResult.Errors.ToList()}");
     }
 
     private void ProcessConfiguration(RateLimiterConfiguration configuration)
