@@ -1,23 +1,12 @@
-﻿using RateLimiter.DataStore.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using RateLimiter.DataStore.Entities;
 
 namespace RateLimiter.DataStore.Interfaces
 {
     public interface IDataContext
     {
-        Task AddRequestLog(RequestLog requestLog);
+        public DbSet<RequestLog> RequestLogs { get; set; }
 
-        Task DeleteExpiredLogs(int pastHours);
-
-        Task UpdateRequestLogCounts(RequestLog requestLog);
-
-        Task<RequestLog?> GetLogByTimeStamp(
-            string token,
-            string resourceName,
-            string timeStamp);
-
-        Task<IList<RequestLog>> GetLogsWithinTimeSpan(
-            string token,
-            string resourceName,
-            TimeSpan timeSpan);
+        void SaveChanges();
     }
 }

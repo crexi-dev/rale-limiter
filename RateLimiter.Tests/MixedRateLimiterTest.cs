@@ -56,13 +56,13 @@ namespace RateLimiter.Tests
         public async Task MixedRateLimiterTest_TestingTimeSpan_ShouldHandleIt()
         {
             // Arrange
-            var dataContext = new InMemoryDataContext();
+            var rateLimitRepository =  new RateLimitRepository(new InMemoryDataContext());
             var resource = "www.myapi.com/login";
             var token = "EU_" + Guid.NewGuid();
 
             for (var i = 0; i < 10; i++)
             {
-                await dataContext.AddRequestLog(new RequestLog()
+                await rateLimitRepository.AddRequestLog(new RequestLog()
                 {
                     ClientToken = token,
                     ResourceName = resource

@@ -8,23 +8,25 @@ namespace RateLimiter.Services.Factory
     {
         public static IRuleService CreateRuleService(RuleOptions ruleOptions) 
         {
+            var reposiotry = new RateLimitRepository(new InMemoryDataContext());
+
             if (ruleOptions.RuleType == Enums.RuleType.USA)
             {
                 return new USARuleService(
                     ruleOptions,
-                    new InMemoryDataContext());
+                    reposiotry);
             }
             else if (ruleOptions.RuleType == Enums.RuleType.Europe)
             {
                 return new EuropeRuleService(
                     ruleOptions,
-                    new InMemoryDataContext());
+                    reposiotry);
             }
             else if (ruleOptions.RuleType == Enums.RuleType.Mixed)
             {
                 return new MixedRuleService(
                     ruleOptions,
-                    new InMemoryDataContext());
+                    reposiotry);
             }
             else
             {

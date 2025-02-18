@@ -7,25 +7,25 @@ namespace RateLimiter.Services
 {
     public class USARuleService : IRuleService
     {
-        private readonly IDataContext _dataContext;
+        private readonly IRateLimitRepository _rateLimitRepository;
         private readonly RuleOptions _ruleOptions;
 
-        public USARuleService(RuleOptions ruleOptions, IDataContext dataContext) 
+        public USARuleService(RuleOptions ruleOptions, IRateLimitRepository rateLimitRepository) 
         {
-            _dataContext = dataContext;
+            _rateLimitRepository = rateLimitRepository;
             _ruleOptions = ruleOptions;
         }
 
         public async Task DeleteOldRequestLogs(int pastHours)
         {
-            await _dataContext.DeleteExpiredLogs(pastHours);
+            await _rateLimitRepository.DeleteExpiredLogs(pastHours);
         }
 
         public async Task<bool> HasRateLimitExceeded(string token, string resourceName)
         {
             var timeStampString = DateTime.UtcNow.ToString(_ruleOptions.TimeStampFormat);
 
-            var currentLog = await _dataContext.GetLogByTimeStamp(
+            var currentLog = await _rateLimitRepository.GetLogByTimeStamp(
                 token,
                 resourceName,
                 timeStampString);
@@ -37,11 +37,11 @@ namespace RateLimiter.Services
                     return true;
                 }
 
-                _ = _dataContext.UpdateRequestLogCounts(currentLog);
+                _ = _rateLimitRepository.UpdateRequestLogCounts(currentLog);
             }
             else
             {
-                _ = _dataContext.AddRequestLog(new RequestLog()
+                _ = _rateLimitRepository.AddRequestLog(new RequestLog()
                 {
                     ClientToken = token,
                     ResourceName = resourceName,
