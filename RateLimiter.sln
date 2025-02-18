@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{5ECAE5DF-8
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiter.Tests.Api", "RateLimiter.Tests.Api\RateLimiter.Tests.Api.csproj", "{74A6BC1D-D8A6-4FA0-8D2C-03C8491C74D3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RateLimiter.Tests.Integration", "RateLimiter.Tests.Integration\RateLimiter.Tests.Integration.csproj", "{071F6C5E-FA17-474E-A194-E3F314BE0E07}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{74A6BC1D-D8A6-4FA0-8D2C-03C8491C74D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{74A6BC1D-D8A6-4FA0-8D2C-03C8491C74D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{74A6BC1D-D8A6-4FA0-8D2C-03C8491C74D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{071F6C5E-FA17-474E-A194-E3F314BE0E07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{071F6C5E-FA17-474E-A194-E3F314BE0E07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{071F6C5E-FA17-474E-A194-E3F314BE0E07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{071F6C5E-FA17-474E-A194-E3F314BE0E07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -47,6 +53,7 @@ Global
 		{36F4BDC6-D3DA-403A-8DB7-0C79F94B938F} = {EFA099B0-7DF4-40D2-8CAA-92730F7E25BF}
 		{C4F9249B-010E-46BE-94B8-DD20D82F1E60} = {5ECAE5DF-86AA-4264-9C41-AEFF9B9A8292}
 		{74A6BC1D-D8A6-4FA0-8D2C-03C8491C74D3} = {5ECAE5DF-86AA-4264-9C41-AEFF9B9A8292}
+		{071F6C5E-FA17-474E-A194-E3F314BE0E07} = {5ECAE5DF-86AA-4264-9C41-AEFF9B9A8292}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {67D05CB6-8603-4C96-97E5-C6CEFBEC6134}

@@ -19,7 +19,10 @@ public class GeoTokenDiscriminator : IRateLimitDiscriminator
     {
         if (!context.Request.Headers.TryGetValue("x-crexi-token", out var value))
         {
-            return new DiscriminatorEvaluationResult(Configuration.Name);
+            return new DiscriminatorEvaluationResult(Configuration.Name)
+            {
+                IsMatch = false
+            };
         }
 
         return value.ToString().StartsWith("US") ?

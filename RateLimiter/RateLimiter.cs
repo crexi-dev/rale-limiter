@@ -103,9 +103,10 @@ public class RateLimiter : IRateLimiter
             results.Add(x.Evaluate(context));
         });
 
+        // lastly, for each of the discriminators, process it with the correct algorithm IFF the discriminator was a match
         var passed = true;
         var lastRule = string.Empty;
-        foreach (var x in results)
+        foreach (var x in results.Where(r => r.IsMatch))
         {
             lastRule = $"{x.DiscriminatorName}:{x.AlgorithmName}";
             passed = _algorithms[x.AlgorithmName].IsAllowed(x.MatchValue);
