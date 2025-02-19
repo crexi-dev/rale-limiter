@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -7,11 +6,10 @@ using RateLimiter.Abstractions;
 using RateLimiter.Config;
 using RateLimiter.Discriminators;
 
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-
-using static RateLimiter.Config.RateLimiterConfiguration;
 
 namespace RateLimiter;
 
@@ -21,12 +19,6 @@ public class RateLimiter : IRateLimiter
     private readonly IOptions<RateLimiterConfiguration> _options;
     private readonly RateLimiterConfiguration _config;
     private readonly IRateLimitAlgorithmProvider _algorithmProvider;
-
-    /// <summary>
-    /// List of rules as defined in appSettings.RateLimiter section (or via Fluent registration)
-    /// </summary>
-    private readonly IEnumerable<RuleConfiguration> _rules;
-
     private readonly IRateLimitDiscriminatorProvider _discriminatorsProvider;
     private readonly IRateLimiterConfigurationValidator _configurationValidator;
 
@@ -42,10 +34,8 @@ public class RateLimiter : IRateLimiter
     {
         _logger = logger;
         _algorithmProvider = algorithmProvider;
-        // TODO: IOptions<RateLimiterConfiguration> should be replaced with IOptionsMonitor<T> for hot-reloading
-        _options = options;
+        _options = options; // TODO: IOptions<RateLimiterConfiguration> should be replaced with IOptionsMonitor<T> for hot-reloading
         _config = options.Value;
-        _rules = options.Value.Rules;
         _discriminatorsProvider = discriminatorsProvider;
         _configurationValidator = configurationValidator;
 

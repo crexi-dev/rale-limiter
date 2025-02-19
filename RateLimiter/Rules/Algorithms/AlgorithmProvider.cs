@@ -9,20 +9,8 @@ using System.Collections.Concurrent;
 
 namespace RateLimiter.Rules.Algorithms
 {
-    public class AlgorithmProvider : IRateLimitAlgorithmProvider
+    public class AlgorithmProvider(IDateTimeProvider dateTimeProvider) : IRateLimitAlgorithmProvider
     {
-        private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IOptions<RateLimiterConfiguration> _options;
-
-        public AlgorithmProvider(
-            IDateTimeProvider dateTimeProvider,
-            IOptions<RateLimiterConfiguration> options)
-        {
-            _dateTimeProvider = dateTimeProvider;
-            _options = options;
-        }
-
-
         public ConcurrentDictionary<string, IRateLimitAlgorithm>
             GenerateAlgorithmsFromRules(RateLimiterConfiguration configuration)
         {
@@ -33,56 +21,56 @@ namespace RateLimiter.Rules.Algorithms
                 switch (algo.Type)
                 {
                     case AlgorithmType.FixedWindow:
-                        if (!algorithms.TryGetValue(algo.Name, out var existingAlgo))
+                        if (!algorithms.TryGetValue(algo.Name, out _))
                         {
-                            algorithms.TryAdd(algo.Name, new FixedWindow(_dateTimeProvider,
+                            algorithms.TryAdd(algo.Name, new FixedWindow(dateTimeProvider,
                                 new FixedWindowConfiguration()
                                 {
-                                    MaxRequests = algo.Parameters.MaxRequests.Value,
-                                    WindowDuration = TimeSpan.FromMilliseconds(algo.Parameters.WindowDurationMS.Value)
+                                    MaxRequests = algo.Parameters.MaxRequests!.Value,
+                                    WindowDuration = TimeSpan.FromMilliseconds(algo.Parameters.WindowDurationMS!.Value)
                                 }));
                         }
                         break;
                     case AlgorithmType.LeakyBucket:
-                        if (!algorithms.TryGetValue(algo.Name, out var existingLeaky))
+                        if (!algorithms.TryGetValue(algo.Name, out _))
                         {
-                            algorithms.TryAdd(algo.Name, new LeakyBucket(_dateTimeProvider,
+                            algorithms.TryAdd(algo.Name, new LeakyBucket(dateTimeProvider,
                                 new LeakyBucketConfiguration()
                                 {
-                                    Capacity = algo.Parameters.Capacity.Value,
-                                    Interval = TimeSpan.FromMilliseconds(algo.Parameters.IntervalMS.Value)
+                                    Capacity = algo.Parameters.Capacity!.Value,
+                                    Interval = TimeSpan.FromMilliseconds(algo.Parameters.IntervalMS!.Value)
                                 }));
                         }
                         break;
                     case AlgorithmType.SlidingWindow:
-                        if (!algorithms.TryGetValue(algo.Name, out var existingSliding))
+                        if (!algorithms.TryGetValue(algo.Name, out _))
                         {
-                            algorithms.TryAdd(algo.Name, new SlidingWindow(_dateTimeProvider,
+                            algorithms.TryAdd(algo.Name, new SlidingWindow(dateTimeProvider,
                                 new SlidingWindowConfiguration()
                                 {
-                                    MaxRequests = algo.Parameters.MaxRequests.Value,
-                                    WindowDuration = TimeSpan.FromMilliseconds(algo.Parameters.WindowDurationMS.Value)
+                                    MaxRequests = algo.Parameters.MaxRequests!.Value,
+                                    WindowDuration = TimeSpan.FromMilliseconds(algo.Parameters.WindowDurationMS!.Value)
                                 }));
                         }
                         break;
                     case AlgorithmType.TimespanElapsed:
-                        if (!algorithms.TryGetValue(algo.Name, out var existingTSElapsed))
+                        if (!algorithms.TryGetValue(algo.Name, out _))
                         {
-                            algorithms.TryAdd(algo.Name, new TimespanElapsed(_dateTimeProvider,
+                            algorithms.TryAdd(algo.Name, new TimespanElapsed(dateTimeProvider,
                                 new TimespanElapsedConfiguration()
                                 {
-                                    MinInterval = TimeSpan.FromMilliseconds(algo.Parameters.MinIntervalMS.Value)
+                                    MinInterval = TimeSpan.FromMilliseconds(algo.Parameters.MinIntervalMS!.Value)
                                 }));
                         }
                         break;
                     case AlgorithmType.TokenBucket:
-                        if (!algorithms.TryGetValue(algo.Name, out var existingTokenBucket))
+                        if (!algorithms.TryGetValue(algo.Name, out _))
                         {
-                            algorithms.TryAdd(algo.Name, new TokenBucket(_dateTimeProvider,
+                            algorithms.TryAdd(algo.Name, new TokenBucket(dateTimeProvider,
                                 new TokenBucketConfiguration()
                                 {
-                                    RefillRatePerSecond = algo.Parameters.RefillRatePerSecond.Value,
-                                    MaxTokens = algo.Parameters.MaxTokens.Value
+                                    RefillRatePerSecond = algo.Parameters.RefillRatePerSecond!.Value,
+                                    MaxTokens = algo.Parameters.MaxTokens!.Value
                                 }));
                         }
                         break;

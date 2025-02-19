@@ -89,6 +89,7 @@ public class RateLimiterTest
 
         mocker.Use<IDateTimeProvider>(new DateTimeProvider());
         mocker.Use<IRateLimitDiscriminatorProvider>(new DiscriminatorProvider(null, null));
+        mocker.Use<IRateLimiterConfigurationValidator>(new RateLimiterConfigurationValidator());
 
         // mock the rule attribute as would be applied to our resource's endpoint
         var rateLimitedResources = new List<RateLimitedResource>()
