@@ -1,8 +1,7 @@
-﻿using RateLimiter.Abstractions;
+﻿using System;
+using RateLimiter.Abstractions;
 
-using System;
-
-namespace RateLimiter.Rules.Algorithms;
+namespace RateLimiter.Algorithms;
 
 public record FixedWindowConfiguration : IRateLimitAlgorithmConfiguration
 {

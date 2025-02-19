@@ -3,11 +3,10 @@
 using RateLimiter.Abstractions;
 using RateLimiter.Config;
 using RateLimiter.Enums;
-
 using System;
 using System.Collections.Concurrent;
 
-namespace RateLimiter.Rules.Algorithms
+namespace RateLimiter.Algorithms
 {
     public class AlgorithmProvider(IDateTimeProvider dateTimeProvider) : IRateLimitAlgorithmProvider
     {

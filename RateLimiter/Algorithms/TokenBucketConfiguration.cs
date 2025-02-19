@@ -1,6 +1,6 @@
 ﻿using RateLimiter.Abstractions;
 
-namespace RateLimiter.Rules.Algorithms
+namespace RateLimiter.Algorithms
 {
     public class TokenBucketConfiguration : IRateLimitAlgorithmConfiguration
     {

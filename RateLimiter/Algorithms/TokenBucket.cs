@@ -4,7 +4,7 @@ using RateLimiter.Enums;
 using System;
 using System.Collections.Concurrent;
 
-namespace RateLimiter.Rules.Algorithms;
+namespace RateLimiter.Algorithms;
 
 public class TokenBucket : IRateLimitAlgorithm
 {

@@ -12,11 +12,11 @@ using Microsoft.Extensions.Primitives;
 using Moq.AutoMock;
 
 using RateLimiter.Abstractions;
+using RateLimiter.Algorithms;
 using RateLimiter.Common;
 using RateLimiter.Config;
 using RateLimiter.Discriminators;
 using RateLimiter.Enums;
-using RateLimiter.Rules.Algorithms;
 
 using System.Collections.Generic;
 using System.Threading;

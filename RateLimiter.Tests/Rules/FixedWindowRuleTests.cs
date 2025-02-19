@@ -1,9 +1,7 @@
 ﻿using FluentAssertions;
 
+using RateLimiter.Algorithms;
 using RateLimiter.Common;
-using RateLimiter.Rules;
-using RateLimiter.Rules.Algorithms;
-
 using System;
 using System.Threading;
 

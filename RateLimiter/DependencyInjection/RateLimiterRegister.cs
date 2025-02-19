@@ -3,11 +3,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using RateLimiter.Abstractions;
+using RateLimiter.Algorithms;
 using RateLimiter.Common;
 using RateLimiter.Config;
 using RateLimiter.Discriminators;
 using RateLimiter.Middleware;
-using RateLimiter.Rules.Algorithms;
 
 namespace RateLimiter.DependencyInjection;
 

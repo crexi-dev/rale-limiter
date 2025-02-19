@@ -2,7 +2,7 @@
 
 using System;
 
-namespace RateLimiter.Rules.Algorithms
+namespace RateLimiter.Algorithms
 {
     public class SlidingWindowConfiguration : IRateLimitAlgorithmConfiguration
     {

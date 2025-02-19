@@ -5,7 +5,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-namespace RateLimiter.Rules.Algorithms;
+namespace RateLimiter.Algorithms;
 
 public class SlidingWindow : IRateLimitAlgorithm
 {
