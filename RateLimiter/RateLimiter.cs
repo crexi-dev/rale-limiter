@@ -106,7 +106,7 @@ public class RateLimiter : IRateLimiter
         foreach (var x in results.Where(r => r.IsMatch))
         {
             lastRule = $"{x.DiscriminatorName}:{x.AlgorithmName}";
-            passed = _algorithms[x.AlgorithmName].IsAllowed(x.MatchValue);
+            passed = _algorithms[x.AlgorithmName!].IsAllowed(x.MatchValue);
             if (!passed)
                 break;
         }
