@@ -2,11 +2,11 @@
 
 namespace RateLimiter.Abstractions;
 
-public interface IAmARateLimitAlgorithm
+public interface IRateLimitAlgorithm
 {
     string Name { get; init; }
 
     bool IsAllowed(string discriminator);
 
-    RateLimitingAlgorithm Algorithm { get; init; }
+    AlgorithmType AlgorithmType { get; init; }
 }

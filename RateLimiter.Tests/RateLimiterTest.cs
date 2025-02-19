@@ -34,7 +34,7 @@ public class RateLimiterTest
     /// Chose to use concrete implementations in some places to facilitate functional testing
     /// </summary>
 	[Fact]
-	public void IsRequestAllowed()
+    public void IsRequestAllowed()
     {
         var mocker = new AutoMocker();
         var fixture = new Fixture();
@@ -42,10 +42,45 @@ public class RateLimiterTest
         // arrange
         var appOptions = Options.Create<RateLimiterConfiguration>(new RateLimiterConfiguration()
         {
-            DefaultAlgorithm = RateLimitingAlgorithm.FixedWindow,
-            DefaultMaxRequests = 5,
-            DefaultTimespanMilliseconds = 3000,
-            Rules = GenerateRateLimitRules()
+            Algorithms =
+            [
+                new AlgorithmConfiguration()
+                {
+                    Name = "RequestsPerTimeSpan0",
+                    Parameters = new AlgorithmConfiguration.AlgorithmConfigurationParameters()
+                    {
+                        MaxRequests = 3,
+                        WindowDurationMS = 3000
+                    },
+                    Type = AlgorithmType.FixedWindow
+                },
+                new AlgorithmConfiguration()
+                {
+                    Name = "TimeSpanElapsed0",
+                    Parameters = new AlgorithmConfiguration.AlgorithmConfigurationParameters()
+                    {
+                        MinIntervalMS = 3000
+                    },
+                    Type = AlgorithmType.TimespanElapsed
+                }
+            ],
+            Rules =
+            [
+                new RuleConfiguration()
+                {
+                    Name = "IpAddressRule",
+                    Discriminators = ["IpAddressDisc"]
+                }
+            ],
+            Discriminators =
+            [
+                new DiscriminatorConfiguration()
+                {
+                    Name = "IpAddressDisc",
+                    Type = DiscriminatorType.IpAddress,
+                    AlgorithmNames = ["RequestsPerTimeSpan0"]
+                }
+            ]
         });
 
         mocker.GetMock<IOptions<RateLimiterConfiguration>>()
@@ -53,20 +88,14 @@ public class RateLimiterTest
             .Returns(appOptions.Value);
 
         mocker.Use<IDateTimeProvider>(new DateTimeProvider());
-        mocker.Use<IProvideDiscriminatorValues>(new DiscriminatorProvider(null, null));
-
-        //// mock the rules as would be defined within appSettings
-        //var rateLimitRules = GenerateRateLimitRules();
-        //mocker.GetMock<IProvideRateLimitRules>()
-        //    .Setup(s => s.GetRules(new RateLimiterConfiguration()))
-        //    .Returns(rateLimitRules);
-        mocker.Use<IProvideRateLimitRules>(new RateLimiterRulesFactory());
+        mocker.Use<IRateLimitDiscriminatorProvider>(new DiscriminatorProvider(null, null));
+        mocker.Use<IRateLimiterConfigurationValidator>(new RateLimiterConfigurationValidator());
 
         // mock the rule attribute as would be applied to our resource's endpoint
         var rateLimitedResources = new List<RateLimitedResource>()
         {
             fixture.Build<RateLimitedResource>()
-                .With(x => x.RuleName, "RequestPerTimespan-Default")
+                .With(x => x.RuleName, "IpAddressRule")
                 .Create()
         };
 
@@ -79,17 +108,17 @@ public class RateLimiterTest
             .SetupRequestMethod("GET");
 
         var algoProvider = mocker.CreateInstance<AlgorithmProvider>();
-        mocker.Use<IProvideRateLimitAlgorithms>(algoProvider);
+        mocker.Use<IRateLimitAlgorithmProvider>(algoProvider);
 
         var limiter = mocker.CreateInstance<RateLimiter>();
-        
+
         // act
         const int numberOfRequestsToTry = 4;
 
         for (var i = 0; i < numberOfRequestsToTry; i++)
         {
             var result = limiter.IsRequestAllowed(context, rateLimitedResources);
-            
+
             // assert
             if (i <= 2)
             {
@@ -110,34 +139,5 @@ public class RateLimiterTest
                 result.ErrorMessage.Should().BeNullOrEmpty();
             }
         }
-    }
-
-    private static List<RateLimiterRuleItemConfiguration> GenerateRateLimitRules()
-    {
-        var fixture = new Fixture();
-        var values = new List<RateLimiterRuleItemConfiguration>
-        {
-            fixture.Build<RateLimiterRuleItemConfiguration>()
-                .With(x => x.Name, "RequestPerTimespan-Default")
-                .With(x => x.Type, LimiterType.RequestsPerTimespan)
-                .With(x => x.Discriminator, LimiterDiscriminator.IpAddress)
-                .With(x => x.DiscriminatorMatch, string.Empty)
-                .With(x => x.DiscriminatorKey, string.Empty)
-                .With(x => x.MaxRequests, 3)
-                .With(x => x.TimespanMilliseconds, 3000)
-                .With(x => x.Algorithm, RateLimitingAlgorithm.Default)
-                .Create(),
-            fixture.Build<RateLimiterRuleItemConfiguration>()
-                .With(x => x.Name, "ApiKey-Default")
-                .With(x => x.Type, LimiterType.RequestsPerTimespan)
-                .With(x => x.Discriminator, LimiterDiscriminator.QueryString)
-                .With(x => x.DiscriminatorMatch, "x-crexi-token")
-                .With(x => x.DiscriminatorKey, "US")
-                .With(x => x.Algorithm, RateLimitingAlgorithm.Default)
-                .With(x => x.TimespanMilliseconds, 4000)
-                .Create()
-        };
-
-        return values;
     }
 }

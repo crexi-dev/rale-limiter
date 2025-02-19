@@ -6,7 +6,7 @@ using System.Collections.Concurrent;
 
 namespace RateLimiter.Rules.Algorithms;
 
-public class LeakyBucket : IAmARateLimitAlgorithm
+public class LeakyBucket : IRateLimitAlgorithm
 {
     private readonly int _capacity;
     private readonly TimeSpan _leakInterval;
@@ -53,7 +53,7 @@ public class LeakyBucket : IAmARateLimitAlgorithm
         }
     }
 
-    public RateLimitingAlgorithm Algorithm { get; init; } = RateLimitingAlgorithm.LeakyBucket;
+    public AlgorithmType AlgorithmType { get; init; } = AlgorithmType.LeakyBucket;
 
     private class BucketState
     {

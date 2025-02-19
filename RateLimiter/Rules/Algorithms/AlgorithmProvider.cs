@@ -5,61 +5,81 @@ using RateLimiter.Config;
 using RateLimiter.Enums;
 
 using System;
+using System.Collections.Concurrent;
 
 namespace RateLimiter.Rules.Algorithms
 {
-    public class AlgorithmProvider : IProvideRateLimitAlgorithms
+    public class AlgorithmProvider(IDateTimeProvider dateTimeProvider) : IRateLimitAlgorithmProvider
     {
-        private readonly IDateTimeProvider _dateTimeProvider;
-        private readonly IOptions<RateLimiterConfiguration> _options;
-
-        public AlgorithmProvider(
-            IDateTimeProvider dateTimeProvider,
-            IOptions<RateLimiterConfiguration> options)
+        public ConcurrentDictionary<string, IRateLimitAlgorithm>
+            GenerateAlgorithmsFromRules(RateLimiterConfiguration configuration)
         {
-            _dateTimeProvider = dateTimeProvider;
-            _options = options;
-        }
+            var algorithms = new ConcurrentDictionary<string, IRateLimitAlgorithm>();
 
-        public IAmARateLimitAlgorithm GetAlgorithm(
-            RateLimitingAlgorithm algo,
-            int? maxRequests,
-            TimeSpan? timespanMilliseconds)
-        {
-            return algo switch
+            foreach (var algo in configuration.Algorithms)
             {
-                RateLimitingAlgorithm.Default or RateLimitingAlgorithm.FixedWindow => new FixedWindow(_dateTimeProvider,
-                    new FixedWindowConfiguration()
-                    {
-                        MaxRequests = maxRequests ?? _options.Value.DefaultMaxRequests,
-                        WindowDuration = timespanMilliseconds ?? TimeSpan.FromMilliseconds(_options.Value.DefaultTimespanMilliseconds)
-                    }),
-                RateLimitingAlgorithm.TokenBucket => new TokenBucket(_dateTimeProvider,
-                    new TokenBucketConfiguration()
-                    {
-                        // TODO: Move to config
-                        MaxTokens = 10,
-                        RefillRatePerSecond = 10
-                    }),
-                RateLimitingAlgorithm.LeakyBucket => new LeakyBucket(_dateTimeProvider,
-                    new LeakyBucketConfiguration()
-                    {
-                        Capacity = maxRequests ?? _options.Value.DefaultMaxRequests,
-                        Interval = timespanMilliseconds ?? TimeSpan.FromMilliseconds(_options.Value.DefaultTimespanMilliseconds)
-                    }),
-                RateLimitingAlgorithm.SlidingWindow => new SlidingWindow(_dateTimeProvider,
-                    new SlidingWindowConfiguration()
-                    {
-                        MaxRequests = maxRequests ?? _options.Value.DefaultMaxRequests,
-                        WindowDuration = timespanMilliseconds ?? TimeSpan.FromMilliseconds(_options.Value.DefaultTimespanMilliseconds)
-                    }),
-                RateLimitingAlgorithm.TimespanElapsed => new TimespanElapsed(_dateTimeProvider,
-                    new TimespanElapsedConfiguration()
-                    {
-                        MinInterval = timespanMilliseconds ?? TimeSpan.FromMilliseconds(_options.Value.DefaultTimespanMilliseconds)
-                    }),
-                _ => throw new ArgumentOutOfRangeException(nameof(algo), algo, null)
-            };
+                switch (algo.Type)
+                {
+                    case AlgorithmType.FixedWindow:
+                        if (!algorithms.TryGetValue(algo.Name, out _))
+                        {
+                            algorithms.TryAdd(algo.Name, new FixedWindow(dateTimeProvider,
+                                new FixedWindowConfiguration()
+                                {
+                                    MaxRequests = algo.Parameters.MaxRequests!.Value,
+                                    WindowDuration = TimeSpan.FromMilliseconds(algo.Parameters.WindowDurationMS!.Value)
+                                }));
+                        }
+                        break;
+                    case AlgorithmType.LeakyBucket:
+                        if (!algorithms.TryGetValue(algo.Name, out _))
+                        {
+                            algorithms.TryAdd(algo.Name, new LeakyBucket(dateTimeProvider,
+                                new LeakyBucketConfiguration()
+                                {
+                                    Capacity = algo.Parameters.Capacity!.Value,
+                                    Interval = TimeSpan.FromMilliseconds(algo.Parameters.IntervalMS!.Value)
+                                }));
+                        }
+                        break;
+                    case AlgorithmType.SlidingWindow:
+                        if (!algorithms.TryGetValue(algo.Name, out _))
+                        {
+                            algorithms.TryAdd(algo.Name, new SlidingWindow(dateTimeProvider,
+                                new SlidingWindowConfiguration()
+                                {
+                                    MaxRequests = algo.Parameters.MaxRequests!.Value,
+                                    WindowDuration = TimeSpan.FromMilliseconds(algo.Parameters.WindowDurationMS!.Value)
+                                }));
+                        }
+                        break;
+                    case AlgorithmType.TimespanElapsed:
+                        if (!algorithms.TryGetValue(algo.Name, out _))
+                        {
+                            algorithms.TryAdd(algo.Name, new TimespanElapsed(dateTimeProvider,
+                                new TimespanElapsedConfiguration()
+                                {
+                                    MinInterval = TimeSpan.FromMilliseconds(algo.Parameters.MinIntervalMS!.Value)
+                                }));
+                        }
+                        break;
+                    case AlgorithmType.TokenBucket:
+                        if (!algorithms.TryGetValue(algo.Name, out _))
+                        {
+                            algorithms.TryAdd(algo.Name, new TokenBucket(dateTimeProvider,
+                                new TokenBucketConfiguration()
+                                {
+                                    RefillRatePerSecond = algo.Parameters.RefillRatePerSecond!.Value,
+                                    MaxTokens = algo.Parameters.MaxTokens!.Value
+                                }));
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            return algorithms;
         }
     }
 }

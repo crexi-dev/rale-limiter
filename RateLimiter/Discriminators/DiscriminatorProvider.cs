@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 using RateLimiter.Abstractions;
+using RateLimiter.Config;
 using RateLimiter.Enums;
 
 using System;
@@ -11,12 +11,10 @@ using System.Collections.Generic;
 
 namespace RateLimiter.Discriminators
 {
-    public class DiscriminatorProvider : IProvideDiscriminatorValues
+    public class DiscriminatorProvider : IRateLimitDiscriminatorProvider
     {
         private readonly ILogger<DiscriminatorProvider> _logger;
         private readonly IServiceProvider _serviceProvider;
-
-        private readonly ConcurrentDictionary<string, IProvideADiscriminator> _discriminators = new();
 
         public DiscriminatorProvider(
             ILogger<DiscriminatorProvider> logger,
@@ -26,108 +24,40 @@ namespace RateLimiter.Discriminators
             _serviceProvider = serviceProvider;
         }
 
-        public Dictionary<string, (bool, string)> GetDiscriminatorValues(
-            HttpContext context,
-            IEnumerable<IDefineARateLimitRule> rules)
+        public ConcurrentDictionary<string, IRateLimitDiscriminator> GenerateDiscriminators(
+            List<RateLimiterConfiguration.DiscriminatorConfiguration> configDiscriminators)
         {
-            // TODO: These values should likely be cached in the caller
+            var values = new ConcurrentDictionary<string, IRateLimitDiscriminator>();
 
-            var results = new Dictionary<string, (bool, string)>();
-
-            // for each rule in here, we need to generate the discriminator value
-            foreach (var rule in rules)
+            foreach (var disc in configDiscriminators)
             {
-                switch (rule.Discriminator)
+                switch (disc.Type)
                 {
-                    case LimiterDiscriminator.QueryString:
-                        results.Add(rule.Name, GetQuerystringValue(context, rule));
+                    case DiscriminatorType.Custom:
+                        var customDiscriminator = _serviceProvider
+                            .GetRequiredKeyedService<IRateLimitDiscriminator>(disc.CustomDiscriminatorType);
+                        customDiscriminator.Configuration = disc;
+                        values.TryAdd(disc.Name, customDiscriminator);
                         break;
-                    case LimiterDiscriminator.RequestHeader:
-                        results.Add(rule.Name, GetRequestHeaderValue(context, rule));
+                    case DiscriminatorType.GeoLocation:
+                        values.TryAdd(disc.Name, new GeoBasedDiscriminator(disc));
                         break;
-                    case LimiterDiscriminator.IpAddress:
-                        results.Add(rule.Name, GetIpAddressValue(context, rule));
+                    case DiscriminatorType.IpAddress:
+                        values.TryAdd(disc.Name, new IpAddressDiscriminator(disc));
                         break;
-                    case LimiterDiscriminator.Custom:
-                        results.Add(rule.Name, GetCustomValue(_serviceProvider, context, rule));
+                    case DiscriminatorType.QueryString:
+                        values.TryAdd(disc.Name, new QueryStringDiscriminator(disc));
                         break;
-                    case LimiterDiscriminator.GeoLocation:
-                    case LimiterDiscriminator.IpSubNet:
+                    case DiscriminatorType.RequestHeader:
+                        values.TryAdd(disc.Name, new RequestHeaderDiscriminator(disc));
+                        break;
+                    case DiscriminatorType.IpSubNet:
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
             }
 
-            return results;
-        }
-
-        // TODO: Refactor to generic
-        private (bool IsMatch, string MatchValue) GetCustomValue(IServiceProvider serviceProvider, HttpContext context, IDefineARateLimitRule rule)
-        {
-            IProvideADiscriminator discriminator;
-
-            if (!_discriminators.TryGetValue(rule.Name, out var value))
-            {
-                discriminator = serviceProvider.GetRequiredKeyedService<IProvideADiscriminator>(rule.CustomDiscriminatorName);
-                _discriminators.TryAdd(rule.Name, discriminator);
-            }
-            else
-            {
-                discriminator = value;
-            }
-
-            return discriminator.GetDiscriminator(context, rule);
-        }
-
-        private (bool IsMatch, string MatchValue) GetIpAddressValue(HttpContext context, IDefineARateLimitRule rule)
-        {
-            IProvideADiscriminator discriminator;
-
-            if (!_discriminators.TryGetValue(rule.Name, out var value))
-            {
-                discriminator = new IpAddressDiscriminator();
-                _discriminators.TryAdd(rule.Name, discriminator);
-            }
-            else
-            {
-                discriminator = value;
-            }
-
-            return discriminator.GetDiscriminator(context, rule);
-        }
-
-        private (bool IsMatch, string MatchValue) GetRequestHeaderValue(HttpContext context, IDefineARateLimitRule rule)
-        {
-            IProvideADiscriminator discriminator;
-
-            if (!_discriminators.TryGetValue(rule.Name, out var value))
-            {
-                discriminator = new RequestHeaderDiscriminator();
-                _discriminators.TryAdd(rule.Name, discriminator);
-            }
-            else
-            {
-                discriminator = value;
-            }
-
-            return discriminator.GetDiscriminator(context, rule);
-        }
-
-        private (bool IsMatch, string MatchValue) GetQuerystringValue(HttpContext context, IDefineARateLimitRule rule)
-        {
-            IProvideADiscriminator discriminator;
-
-            if (!_discriminators.TryGetValue(rule.Name, out var value))
-            {
-                discriminator = new QueryStringDiscriminator();
-                _discriminators.TryAdd(rule.Name, discriminator);
-            }
-            else
-            {
-                discriminator = value;
-            }
-
-            return discriminator.GetDiscriminator(context, rule);
+            return values;
         }
     }
 }

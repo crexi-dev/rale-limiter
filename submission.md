@@ -243,3 +243,44 @@ Changing the library to use this approach would constitute changes to:
 - Updating unit tests
 
 Entire effort would take approx 4-6 hours.  In a real-world scenario, I'd give myself 8 hours and assign 3 points to the work item.  It could likely be pointed as a 2, but I'd suggest 3 as a safe bet.
+## Final Implementation (for this effort)
+Based on the content in Epilogue, I reworked RateLimiter so that rules could operate with multiple algorithms.  This approach allows us to define a single rule for our Geo-Based Token discriminator.  If the discriminator detects a match, it returns a result definining which algorithm should be utilized.
+
+The new configuration looks like:
+```
+  "RateLimiter": {
+    "Algorithms": [
+      {
+        "Name": "TSElapsed0",
+        "Type": "TimespanElapsed",
+        "Parameters": {
+          "MinIntervalMS": 3000
+        }
+      },
+      {
+        "Name": "ReqPerTspan0",
+        "Type": "FixedWindow",
+        "Parameters": {
+          "MaxRequests": 2,
+          "WindowDurationMS": 3000
+        }
+      }
+    ],
+    "Discriminators": [
+      {
+        "Name": "GeoTokenDisc",
+        "Type": "Custom",
+        "CustomDiscriminatorType": "GeoTokenDiscriminator",
+        "DiscriminatorKey": null,
+        "DiscriminatorMatch": null,
+        "AlgorithmNames": [ "ReqPerTspan0", "TSElapsed0" ]
+      }
+    ],
+    "Rules": [
+      {
+        "Name": "GeoTokenRule",
+        "Discriminators": [ "GeoTokenDisc" ]
+      }
+    ]
+  }
+```

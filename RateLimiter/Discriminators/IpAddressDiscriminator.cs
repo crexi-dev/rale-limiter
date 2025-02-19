@@ -2,22 +2,41 @@
 
 using RateLimiter.Abstractions;
 
+using static RateLimiter.Config.RateLimiterConfiguration;
+
 namespace RateLimiter.Discriminators
 {
-    public class IpAddressDiscriminator : IProvideADiscriminator
+    public class IpAddressDiscriminator(DiscriminatorConfiguration configuration) : IRateLimitDiscriminator
     {
-        public (bool IsMatch, string MatchValue) GetDiscriminator(HttpContext context, IDefineARateLimitRule rateLimitRule)
+        public DiscriminatorConfiguration Configuration { get; set; }
+
+        public DiscriminatorEvaluationResult Evaluate(HttpContext context)
         {
             // TODO: This is likely incorrect. Cannot test b/c shows "localhost"
             var ipAddress = context.Request.Headers.Host.ToString();
 
-            if (string.IsNullOrEmpty(rateLimitRule.DiscriminatorMatch) ||
-                rateLimitRule.DiscriminatorMatch == "*")
-                return (true, ipAddress);
+            if (string.IsNullOrEmpty(configuration.DiscriminatorMatch) ||
+                configuration.DiscriminatorMatch == "*")
+                return new DiscriminatorEvaluationResult(configuration.Name)
+                {
+                    IsMatch = true,
+                    MatchValue = ipAddress,
+                    AlgorithmName = configuration.AlgorithmNames[0]
+                };
 
-            return rateLimitRule.DiscriminatorMatch == ipAddress ?
-                (true, ipAddress) :
-                (false, ipAddress);
+            return configuration.DiscriminatorMatch == ipAddress ?
+                new DiscriminatorEvaluationResult(configuration.Name)
+                {
+                    IsMatch = true,
+                    MatchValue = ipAddress,
+                    AlgorithmName = configuration.AlgorithmNames[0]
+                } :
+                new DiscriminatorEvaluationResult(configuration.Name)
+                {
+                    IsMatch = false,
+                    MatchValue = ipAddress,
+                    AlgorithmName = configuration.AlgorithmNames[0]
+                };
         }
     }
 }

@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace RateLimiter.Abstractions;
 
-public interface IRateLimitRequests
+public interface IRateLimiter
 {
     (bool RequestIsAllowed, string ErrorMessage) IsRequestAllowed(HttpContext context, IEnumerable<RateLimitedResource> rateLimitedResources);
 }

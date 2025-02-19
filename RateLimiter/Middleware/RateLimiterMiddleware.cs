@@ -14,12 +14,12 @@ public class RateLimiterMiddleware
 {
     private readonly ILogger<RateLimiterMiddleware> _logger;
     private readonly RequestDelegate _next;
-    private readonly IRateLimitRequests _rateLimiter;
+    private readonly IRateLimiter _rateLimiter;
 
     public RateLimiterMiddleware(
         ILogger<RateLimiterMiddleware> logger,
         RequestDelegate next,
-        IRateLimitRequests rateLimiter)
+        IRateLimiter rateLimiter)
     {
         _logger = logger;
         _next = next;

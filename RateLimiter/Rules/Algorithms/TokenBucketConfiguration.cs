@@ -1,6 +1,8 @@
-﻿namespace RateLimiter.Rules.Algorithms
+﻿using RateLimiter.Abstractions;
+
+namespace RateLimiter.Rules.Algorithms
 {
-    public class TokenBucketConfiguration
+    public class TokenBucketConfiguration : IRateLimitAlgorithmConfiguration
     {
         public int MaxTokens { get; set; }
 
