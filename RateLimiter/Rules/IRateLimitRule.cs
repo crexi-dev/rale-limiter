@@ -1,13 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using RateLimiter.Models;
 using System.Threading.Tasks;
 
 namespace RateLimiter.Rules
 {
     public interface IRateLimitRule
     {
-        bool IsWithinLimit(string userId);
+        Task<bool> IsWithinLimitAsync(RequestModel request);
     }
 }

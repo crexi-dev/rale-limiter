@@ -1,10 +1,12 @@
-﻿using RateLimiter.Rules;
+﻿using RateLimiter.Models;
+using RateLimiter.Rules;
+using System.Threading.Tasks;
 
 namespace RateLimiter
 {
     public interface IRateLimiter
     {
         void RegisterRule(string resourceId, IRateLimitRule rule);
-        bool IsRequestAllowed(string resourceId, string userId);
+        Task<bool> IsRequestAllowedAsync(RequestModel request);
     }
 }
