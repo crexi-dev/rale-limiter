@@ -1,12 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
-using Moq;
+﻿using System;
+using System.Threading.Tasks;
 using NUnit.Framework;
+using RateLimiter.Factories;
 using RateLimiter.Models;
 using RateLimiter.Rules;
 using RateLimiter.Stores;
-using System;
-using System.Collections.Concurrent;
-using System.Threading.Tasks;
 
 namespace RateLimiter.Tests.Rules
 {
@@ -21,9 +19,13 @@ namespace RateLimiter.Tests.Rules
             var request = new RequestModel(resourceId, userId, string.Empty, string.Empty, string.Empty);
             var numRequestsAllowed = 1;
             var interval = new TimeSpan(hours: 0, minutes: 0, seconds: 5);
-            var loggerMock = new Mock<ILogger<RequestsPerTimeSpanRule>>();
-            var dataStoreMock = new Mock<IRateLimitDataStore<RateLimitCounterModel>>();
-            var rateLimitRule = new RequestsPerTimeSpanRule(numRequestsAllowed, interval, dataStoreMock.Object, loggerMock.Object);
+            var dataStoreFactory = new RateLimitDataStoreFactory();
+            var ruleFactory = new RateLimitRuleFactory(dataStoreFactory);
+            var rateLimitRule = ruleFactory.CreateRateLimitRule(
+                RateLimitRuleTypes.RequestsPerTimeSpan,
+                RateLimitDataStoreTypes.ConcurrentInMemory,
+                numRequestsAllowed,
+                interval);
 
             // Act
             var firstRequestAllowed = await rateLimitRule.IsWithinLimitAsync(request);
@@ -40,10 +42,13 @@ namespace RateLimiter.Tests.Rules
             int numRequestsAllowed = 1;
             var request = new RequestModel(resourceId, string.Empty, string.Empty, string.Empty, string.Empty);
             var interval = new TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 1);
-            var loggerMock = new Mock<ILogger<RequestsPerTimeSpanRule>>();
-            var concurrentDict = new ConcurrentDictionary<string, RateLimitCounterModel>();
-            var dataStore = new ConcurrentInMemoryRateLimitDataStore(concurrentDict);
-            var rateLimitRule = new RequestsPerTimeSpanRule(numRequestsAllowed, interval, dataStore, loggerMock.Object);
+            var dataStoreFactory = new RateLimitDataStoreFactory();
+            var ruleFactory = new RateLimitRuleFactory(dataStoreFactory);
+            var rateLimitRule = ruleFactory.CreateRateLimitRule(
+                RateLimitRuleTypes.RequestsPerTimeSpan,
+                RateLimitDataStoreTypes.ConcurrentInMemory,
+                numRequestsAllowed,
+                interval);
 
             // Act
             var firstRequestAllowed = await rateLimitRule.IsWithinLimitAsync(request);
@@ -59,26 +64,30 @@ namespace RateLimiter.Tests.Rules
         public async Task RequestPerTimeSpanRule_IsWithinLimit_MultipleRequests()
         {
             // Arrange
-            var delayInMs = 1001;
+            var delayInMs = 11;
             var resourceId = "/api/path";
             var request = new RequestModel(resourceId, string.Empty, string.Empty, string.Empty, string.Empty);
             int numRequestsAllowed = 1;
-            var interval = new TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 1);
-            var loggerMock = new Mock<ILogger<RequestsPerTimeSpanRule>>();
-            var concurrentDict = new ConcurrentDictionary<string, RateLimitCounterModel>();
-            var dataStore = new ConcurrentInMemoryRateLimitDataStore(concurrentDict);
-            var rateLimitRule = new RequestsPerTimeSpanRule(numRequestsAllowed, interval, dataStore, loggerMock.Object);
+            var interval = new TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 10);
+            var dataStoreFactory = new RateLimitDataStoreFactory();
+            var ruleFactory = new RateLimitRuleFactory(dataStoreFactory);
+            var rateLimitRule = ruleFactory.CreateRateLimitRule(
+                RateLimitRuleTypes.RequestsPerTimeSpan,
+                RateLimitDataStoreTypes.ConcurrentInMemory,
+                numRequestsAllowed,
+                interval);
 
             // Act
             var firstRequestAllowed = await rateLimitRule.IsWithinLimitAsync(request);
             var secondRequestAllowed = await rateLimitRule.IsWithinLimitAsync(request);
             var thirdRequestAllowed = async () => await rateLimitRule.IsWithinLimitAsync(request);
+            var fourthRequestAllowed = async () => await rateLimitRule.IsWithinLimitAsync(request);
 
             // Assert
             Assert.IsTrue(firstRequestAllowed, "Expected first request to be allowed");
             Assert.IsFalse(secondRequestAllowed, "Expected second request to be denied");
             Assert.That(() => thirdRequestAllowed(), Is.True.After(delayInMs), "Expected third request to be allowed");
-            Assert.That(async () => await rateLimitRule.IsWithinLimitAsync(request), Is.False, "Expected fourth request to be denied");
+            Assert.That(() => fourthRequestAllowed(), Is.False, "Expected fourth request to be denied");
         }
     }
 }

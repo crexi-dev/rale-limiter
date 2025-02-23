@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using RateLimiter.Models;
 using RateLimiter.Rules;
 using RateLimiter.Stores;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace RateLimiter
 {

@@ -4,13 +4,13 @@ using System.Collections.Concurrent;
 
 namespace RateLimiter.Stores
 {
-    public class ConcurrentInMemoryRateLimitDataStore : IRateLimitDataStore<RateLimitCounterModel>
+    public class ConcurrentInMemoryRateLimitDataStore : IRateLimitDataStore
     {
         private readonly ConcurrentDictionary<string, RateLimitCounterModel?> _store;
 
-        public ConcurrentInMemoryRateLimitDataStore(ConcurrentDictionary<string, RateLimitCounterModel?> store)
+        public ConcurrentInMemoryRateLimitDataStore()
         {
-            _store = store;
+            _store = new ConcurrentDictionary<string, RateLimitCounterModel?>();
         }
 
         public RateLimitCounterModel? Get(string key)

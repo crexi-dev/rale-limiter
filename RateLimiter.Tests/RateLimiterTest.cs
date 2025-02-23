@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 using RateLimiter.Models;
 using RateLimiter.Rules;
 using RateLimiter.Stores;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace RateLimiter.Tests;
 

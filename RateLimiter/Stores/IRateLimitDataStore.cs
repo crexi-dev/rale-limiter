@@ -2,10 +2,10 @@
 
 namespace RateLimiter.Stores
 {
-    public interface IRateLimitDataStore<T> where T : class
+    public interface IRateLimitDataStore
     {
-        T? Get(string key);
+        RateLimitCounterModel? Get(string key);
         void Add(string key, RateLimitCounterModel value);
-        void Update(string key, T value);
+        void Update(string key, RateLimitCounterModel value);
     }
 }
