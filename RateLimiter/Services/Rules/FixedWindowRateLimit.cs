@@ -8,8 +8,8 @@ using RateLimiter.Models;
 /// 4:27:30 - Allowed (3/5)  
 /// 4:27:45 - Allowed (4/5)  
 /// 4:27:55 - Allowed (5/5)  
-/// 4:27:58 - Blocked! (Wait until 4:28:00)  
-/// At 4:28:00, requests reset.
+/// 4:27:58 - Blocked! (Wait until 4:28:10)  
+/// At 4:28:10, requests reset.
 /// </summary>
 public class FixedWindowRateLimit : IRateLimitRule
 {

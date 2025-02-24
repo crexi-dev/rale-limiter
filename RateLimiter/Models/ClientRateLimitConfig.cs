@@ -9,6 +9,6 @@ namespace RateLimiter.Models
     public class ClientRateLimitConfig
     {
         public string ClientId { get; set; }
-        public List<ResourceRateLimitConfig> ResourceLimits { get; set; } = new();
+        public List<ResourceRateLimitConfig> ResourceLimits { get; set; } = new List<ResourceRateLimitConfig> { };
     }
 }
