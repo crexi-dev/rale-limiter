@@ -12,11 +12,13 @@ namespace RateLimiter
     {
         private readonly IRulesetStore _rulesetStore;
         private readonly ILogger<RateLimiter> _logger;
+        private readonly bool _allowRequestsOnFailure;
 
-        public RateLimiter(IRulesetStore rulesetStore, ILogger<RateLimiter> logger)
+        public RateLimiter(IRulesetStore rulesetStore, ILogger<RateLimiter> logger, bool allowRequestsOnFailure)
         {
             _rulesetStore = rulesetStore;
             _logger = logger;
+            _allowRequestsOnFailure = allowRequestsOnFailure;
         }
 
         public async Task<bool> IsRequestAllowedAsync(RequestModel request)
@@ -44,7 +46,7 @@ namespace RateLimiter
                 _logger.LogError(e, e.Message);
             }
 
-            return true;
+            return _allowRequestsOnFailure;
         }
 
         public void RegisterRule(string resourceId, IRateLimitRule rule)

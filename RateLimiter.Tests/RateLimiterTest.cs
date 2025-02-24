@@ -16,12 +16,13 @@ public class RateLimiterTest
 	public async Task RateLimiter_AllowsRequest_When_NoRulesAreSet()
 	{
         // Arrange
+        var allowRequestsOnFailure = true;
         var resourceId = "/api/resource";
         var userId = "user1";
         var request = new RequestModel(resourceId, userId, string.Empty, string.Empty, string.Empty);
         var rulesetStoreMock = new Mock<IRulesetStore>();
         var loggerMock = new Mock<ILogger<RateLimiter>>();
-        var rateLimiter = new RateLimiter(rulesetStoreMock.Object, loggerMock.Object);
+        var rateLimiter = new RateLimiter(rulesetStoreMock.Object, loggerMock.Object, allowRequestsOnFailure);
 
         // Act
         var allowed = await rateLimiter.IsRequestAllowedAsync(request);
@@ -34,6 +35,7 @@ public class RateLimiterTest
     public async Task RateLimiter_AllowsRequest_When_WithinConfiguredRuleLimits()
     {
         // Arrange
+        var allowRequestsOnFailure = true;
         var resourceId = "/api/resource";
         var userId = "user1";
         var request = new RequestModel(resourceId, userId, string.Empty, string.Empty, string.Empty);
@@ -44,7 +46,7 @@ public class RateLimiterTest
         };
         var rulesetStoreMock = new Mock<IRulesetStore>();
         var loggerMock = new Mock<ILogger<RateLimiter>>();
-        var rateLimiter = new RateLimiter(rulesetStoreMock.Object, loggerMock.Object);
+        var rateLimiter = new RateLimiter(rulesetStoreMock.Object, loggerMock.Object, allowRequestsOnFailure);
 
         testRule.Setup(testRule => testRule.IsWithinLimitAsync(request)).ReturnsAsync(true);
         rulesetStoreMock.Setup(store => store.GetRules(resourceId)).Returns(ruleList);
@@ -60,6 +62,7 @@ public class RateLimiterTest
     public async Task RateLimiter_DeniesRequest_When_ConfiguredRulesFail()
     {
         // Arrange
+        var allowRequestsOnFailure = true;
         var requestPath = "/api/resource";
         var userId = "user1";
         var request = new RequestModel(requestPath, userId, string.Empty, string.Empty, string.Empty);
@@ -72,7 +75,7 @@ public class RateLimiterTest
         };
         var rulesetStoreMock = new Mock<IRulesetStore>();
         var loggerMock = new Mock<ILogger<RateLimiter>>();
-        var rateLimiter = new RateLimiter(rulesetStoreMock.Object, loggerMock.Object);
+        var rateLimiter = new RateLimiter(rulesetStoreMock.Object, loggerMock.Object, allowRequestsOnFailure);
 
         testRule1.Setup(testRule => testRule.IsWithinLimitAsync(request)).ReturnsAsync(true);
         testRule2.Setup(testRule => testRule.IsWithinLimitAsync(request)).ReturnsAsync(false);
