@@ -1,6 +1,7 @@
-﻿using RateLimiter.Services;
+﻿using RateLimiter.Models;
+using RateLimiter.Services;
 using System.Text.Json;
-
+using System.Text.Json.Serialization;
 public class RateLimiterMiddleware
 {
     private readonly RequestDelegate _next;
@@ -21,11 +22,15 @@ public class RateLimiterMiddleware
             return;
         }
 
-        // Validate X-Client-Id header
         string clientId = context.Request.Headers["X-Client-Id"];
         if (string.IsNullOrEmpty(clientId))
         {
-            await RespondWithError(context, 400, "MISSING_CLIENT_ID", "Client ID is required in the 'X-Client-Id' header.");
+            await RespondWithError(
+                context,
+                StatusCodes.Status400BadRequest,
+                RateLimitErrorCode.MissingClientId,
+                "Client ID is required in the 'X-Client-Id' header."
+            );
             return;
         }
 
@@ -34,30 +39,48 @@ public class RateLimiterMiddleware
 
         if (!rateLimitResult.IsAllowed)
         {
-            context.Response.StatusCode = 429;
-            context.Response.Headers["Retry-After"] = Math.Ceiling(rateLimitResult.RetryAfter.TotalSeconds).ToString();
-            await RespondWithError(context, 429, "RATE_LIMIT_EXCEEDED", "Rate limit exceeded. Try again later.", rateLimitResult.RetryAfter.TotalSeconds);
+            var retryAfterSeconds = Math.Ceiling(rateLimitResult.RetryAfter.TotalSeconds);
+            context.Response.Headers["Retry-After"] = retryAfterSeconds.ToString();
+
+            await RespondWithError(
+                context,
+                StatusCodes.Status429TooManyRequests,
+                RateLimitErrorCode.RateLimitExceeded,
+                "Rate limit exceeded. Try again later.",
+                retryAfterSeconds
+            );
             return;
         }
 
         await _next(context);
     }
 
-    private static async Task RespondWithError(HttpContext context, int statusCode, string errorCode, string message, double? retryAfter = null)
+    private static async Task RespondWithError(
+        HttpContext context,
+        int statusCode,
+        RateLimitErrorCode errorCode,
+        string message,
+        double? retryAfter = null)
     {
         context.Response.StatusCode = statusCode;
         context.Response.ContentType = "application/json";
 
-        var errorResponse = new
+        var errorResponse = new ErrorResponse
         {
-            error = new
+            Error = new ErrorDetails
             {
-                code = errorCode,
-                message = message,
-                retry_after = Math.Ceiling(retryAfter ?? 0) // Ensures no long decimal places
+                Code = errorCode,
+                Message = message,
+                RetryAfter = retryAfter
             }
         };
 
-        await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse));
+        var options = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
+
+        await context.Response.WriteAsync(JsonSerializer.Serialize(errorResponse, options));
     }
 }
