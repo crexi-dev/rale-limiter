@@ -10,8 +10,6 @@ namespace RateLimiter.Tests.Services
 {
     public class RateLimiterManagerTests
     {
-        private RateLimiterManager _manager;
-
         private const string TEST_RESOURCE = "/api/test/resource";
         private const string DIFFERENT_RESOURCE = "/different/resource";
         private const string CLIENT_ID = "TestClient";
@@ -21,16 +19,11 @@ namespace RateLimiter.Tests.Services
         private const int RATE_LIMIT_COUNT = 1;
         private static readonly TimeSpan RATE_LIMIT_DURATION = TimeSpan.FromSeconds(5);
 
-        [SetUp]
-        public void Setup()
-        {
-            _manager = new RateLimiterManager();
-        }
-
         [Test]
         public void GivenUnknownClient_WhenRequestMade_ReturnsFalse()
         {
-            var result = _manager.IsRequestAllowed(UNKNOWN_CLIENT, TEST_RESOURCE);
+            var manager = new RateLimiterManager(new List<ClientRateLimitConfig>());
+            var result = manager.IsRequestAllowed(UNKNOWN_CLIENT, TEST_RESOURCE);
             Assert.That(result.IsAllowed, Is.False);
         }
 
@@ -38,9 +31,9 @@ namespace RateLimiter.Tests.Services
         public void GivenUnconfiguredResource_WhenRequestMade_ReturnsFalse()
         {
             var config = CreateTestConfig(CLIENT_ID, TEST_RESOURCE);
-            _manager.AddRateLimitRules(new List<ClientRateLimitConfig> { config });
+            var manager = new RateLimiterManager(new List<ClientRateLimitConfig> { config });
 
-            var result = _manager.IsRequestAllowed(CLIENT_ID, DIFFERENT_RESOURCE);
+            var result = manager.IsRequestAllowed(CLIENT_ID, DIFFERENT_RESOURCE);
             Assert.That(result.IsAllowed, Is.False);
         }
 
@@ -48,20 +41,20 @@ namespace RateLimiter.Tests.Services
         public void GivenValidConfiguration_WhenRequestMade_AllowsRequests()
         {
             var config = CreateTestConfig(CLIENT_ID, TEST_RESOURCE);
-            _manager.AddRateLimitRules(new List<ClientRateLimitConfig> { config });
+            var manager = new RateLimiterManager(new List<ClientRateLimitConfig> { config });
 
-            var result = _manager.IsRequestAllowed(CLIENT_ID, TEST_RESOURCE);
+            var result = manager.IsRequestAllowed(CLIENT_ID, TEST_RESOURCE);
             Assert.That(result.IsAllowed, Is.True);
         }
 
         [Test]
-        public void GivenDuplicateClientConfig_WhenAdded_ThrowsException()
+        public void GivenDuplicateClientConfig_WhenCreated_ThrowsException()
         {
             var config = CreateTestConfig(CLIENT_ID, TEST_RESOURCE);
-            _manager.AddRateLimitRules(new List<ClientRateLimitConfig> { config });
+            var duplicateConfig = CreateTestConfig(CLIENT_ID, TEST_RESOURCE);
 
             Assert.Throws<ArgumentException>(() =>
-                _manager.AddRateLimitRules(new List<ClientRateLimitConfig> { config }));
+                new RateLimiterManager(new List<ClientRateLimitConfig> { config, duplicateConfig }));
         }
 
         [Test]
@@ -84,13 +77,13 @@ namespace RateLimiter.Tests.Services
                 }
             };
 
-            _manager.AddRateLimitRules(new List<ClientRateLimitConfig> { config });
+            var manager = new RateLimiterManager(new List<ClientRateLimitConfig> { config });
 
             // First request should pass both rules
-            Assert.That(_manager.IsRequestAllowed(CLIENT_ID, TEST_RESOURCE).IsAllowed, Is.True);
+            Assert.That(manager.IsRequestAllowed(CLIENT_ID, TEST_RESOURCE).IsAllowed, Is.True);
 
             // Second request should fail both rules
-            var result = _manager.IsRequestAllowed(CLIENT_ID, TEST_RESOURCE);
+            var result = manager.IsRequestAllowed(CLIENT_ID, TEST_RESOURCE);
             Assert.That(result.IsAllowed, Is.False);
         }
 

@@ -4,19 +4,24 @@ namespace RateLimiter.Services
 {
     public class RateLimiterManager
     {
-        private readonly List<ClientRateLimitConfig> _clientRateLimits = new();
+        private readonly IReadOnlyList<ClientRateLimitConfig> _clientRateLimits;
 
-        public void AddRateLimitRules(List<ClientRateLimitConfig> clientConfigs)
+        public RateLimiterManager(IEnumerable<ClientRateLimitConfig> clientConfigs)
         {
-            foreach (var clientConfig in clientConfigs)
-            {
-                if (_clientRateLimits.Any(c => c.ClientId == clientConfig.ClientId))
-                {
-                    throw new ArgumentException($"Client ID '{clientConfig.ClientId}' is already registered.");
-                }
+            // Validate for duplicate client IDs
+            var duplicateClients = clientConfigs
+                .GroupBy(c => c.ClientId)
+                .Where(g => g.Count() > 1)
+                .Select(g => g.Key)
+                .ToList();
 
-                _clientRateLimits.Add(clientConfig);
+            if (duplicateClients.Any())
+            {
+                throw new ArgumentException(
+                    $"Duplicate client IDs found: {string.Join(", ", duplicateClients)}");
             }
+
+            _clientRateLimits = clientConfigs.ToList();
         }
 
         public RateLimitResult IsRequestAllowed(string clientId, string resource)

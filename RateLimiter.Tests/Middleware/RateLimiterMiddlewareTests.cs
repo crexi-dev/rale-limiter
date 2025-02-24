@@ -29,7 +29,8 @@ namespace RateLimiter.Tests.Middleware
         [SetUp]
         public void Setup()
         {
-            _manager = new RateLimiterManager();
+            // Initialize with empty config list - specific tests will create their own configs
+            _manager = new RateLimiterManager(new List<ClientRateLimitConfig>());
             _middleware = new RateLimiterMiddleware(
                 next: (context) => Task.CompletedTask,
                 _manager
@@ -74,7 +75,7 @@ namespace RateLimiter.Tests.Middleware
         [Test]
         public async Task GivenRateLimitExceeded_WhenInvoked_ReturnsTooManyRequests()
         {
-            // Setup client with a rate limit of 1 request per 5 seconds
+            // Create a new manager instance with the rate limit configuration
             var config = new ClientRateLimitConfig
             {
                 ClientId = CLIENT_A,
@@ -90,7 +91,15 @@ namespace RateLimiter.Tests.Middleware
                     }
                 }
             };
-            _manager.AddRateLimitRules(new List<ClientRateLimitConfig> { config });
+
+            // Create new manager with the config
+            _manager = new RateLimiterManager(new List<ClientRateLimitConfig> { config });
+
+            // Create new middleware with the updated manager
+            _middleware = new RateLimiterMiddleware(
+                next: (context) => Task.CompletedTask,
+                _manager
+            );
 
             _context.Request.Path = TEST_RESOURCE;
             _context.Request.Headers[HEADER_CLIENT_ID] = CLIENT_A;

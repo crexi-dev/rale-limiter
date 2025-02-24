@@ -44,8 +44,7 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-//Register Rate Limiter Services
-var rateLimiterManager = new RateLimiterManager();
+
 
 var clientRegions = new List<ClientRegionConfig>
 {
@@ -75,7 +74,9 @@ var clientRateLimits = clientRegions.Select(client => new ClientRateLimitConfig
     }
 }).ToList();
 
-rateLimiterManager.AddRateLimitRules(clientRateLimits);
+//Register Rate Limiter Services
+var rateLimiterManager = new RateLimiterManager(clientRateLimits);
+
 builder.Services.AddSingleton(rateLimiterManager);
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
