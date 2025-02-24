@@ -1,4 +1,5 @@
-﻿using RateLimiter.Stores;
+﻿using RateLimiter.Constants;
+using RateLimiter.Stores;
 
 namespace RateLimiter.Factories
 {

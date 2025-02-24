@@ -1,4 +1,6 @@
 ﻿using System;
+using RateLimiter.Constants;
+using RateLimiter.Exceptions;
 using RateLimiter.Rules;
 using RateLimiter.Stores;
 
@@ -6,7 +8,6 @@ namespace RateLimiter.Factories
 {
     public class RateLimitRuleFactory : IRateLimitRuleFactory
     {
-        private static readonly string UnknownRuleError = "Unknown RateLimitRuleType: {0}";
         private readonly IRateLimitDataStoreFactory _rateLimitDataStoreFactory;
 
         public RateLimitRuleFactory(IRateLimitDataStoreFactory rateLimitDataStoreFactory)
@@ -14,19 +15,22 @@ namespace RateLimiter.Factories
             _rateLimitDataStoreFactory = rateLimitDataStoreFactory;
         }
 
-        public IRateLimitRule CreateRateLimitRule(RateLimitRuleTypes ruleType, RateLimitDataStoreTypes dataStoreTypeint, int numberOfRequests, TimeSpan interval)
+        public IRateLimitRule CreateRule(
+            RateLimitRuleTypes ruleType, 
+            RateLimitDataStoreTypes dataStoreType, 
+            DataStoreKeyTypes dataStoreKeyType,
+            int numberOfRequests, 
+            TimeSpan interval)
         {
-            var dataStore = _rateLimitDataStoreFactory.CreateDataStore(dataStoreTypeint);
+            var dataStore = _rateLimitDataStoreFactory.CreateDataStore(dataStoreType);
+            var keyGenerator = new DataStoreKeyGenerator(dataStoreKeyType);
 
             switch (ruleType)
             {
                 case RateLimitRuleTypes.RequestsPerTimeSpan:
-                    return new RequestsPerTimeSpanRule(numberOfRequests, interval, dataStore);
-                case RateLimitRuleTypes.RequestsPerUserPerTimeSpan:
-                    return new RequestsPerUserPerTimeSpanRule(numberOfRequests, interval, dataStore);
+                    return new RequestsPerTimeSpanRule(numberOfRequests, interval, dataStore, keyGenerator);
                 default:
-                    var errorMessage = string.Format(UnknownRuleError, ruleType.ToString());
-                    throw new NotImplementedException(errorMessage);
+                    throw new RuleTypeNotImplementedException();
             }
         }
     }

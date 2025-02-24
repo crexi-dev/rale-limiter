@@ -1,11 +1,16 @@
 ﻿using System;
+using RateLimiter.Constants;
 using RateLimiter.Rules;
-using RateLimiter.Stores;
 
 namespace RateLimiter.Factories
 {
     public interface IRateLimitRuleFactory
     {
-        IRateLimitRule CreateRateLimitRule(RateLimitRuleTypes ruleType, RateLimitDataStoreTypes dataStoreType, int numberOfRequests, TimeSpan interval);
+        IRateLimitRule CreateRule(
+            RateLimitRuleTypes ruleType, 
+            RateLimitDataStoreTypes dataStoreType, 
+            DataStoreKeyTypes dataStoreKeyType,
+            int numberOfRequests, 
+            TimeSpan interval);
     }
 }

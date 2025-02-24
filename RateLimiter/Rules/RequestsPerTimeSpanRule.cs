@@ -7,6 +7,7 @@ namespace RateLimiter.Rules
 {
     public class RequestsPerTimeSpanRule : BaseRateLimitRule
     {
+        private readonly IDataStoreKeyGenerator _keyGenerator;
         private readonly IRateLimitDataStore _store;
         private readonly TimeSpan _interval;
         private readonly int _numberOfRequestsAllowed;
@@ -14,23 +15,26 @@ namespace RateLimiter.Rules
         public RequestsPerTimeSpanRule(
             int numberOfRequests, 
             TimeSpan interval, 
-            IRateLimitDataStore store)
+            IRateLimitDataStore store,
+            IDataStoreKeyGenerator keyGenerator)
             : base(numberOfRequests)
         {
             _interval = interval;
             _numberOfRequestsAllowed = numberOfRequests;
             _store = store;
+            _keyGenerator = keyGenerator;
         }
 
         protected override Task<bool> ProcessRuleAsync(RequestModel request)
         {
+            var rateLimitDataKey = _keyGenerator.GenerateKey(request);
             var currentRequestTime = DateTime.UtcNow.Ticks;
-            var limitCounterModel = _store.Get(request.RequestPath);
+            var limitCounterModel = _store.Get(rateLimitDataKey);
 
             if (limitCounterModel == null)
             {
                 limitCounterModel = new RateLimitCounterModel(0, currentRequestTime);
-                _store.Add(request.RequestPath, limitCounterModel);
+                _store.Add(rateLimitDataKey, limitCounterModel);
             }
 
             // If the current request is within the timespan, 
@@ -44,7 +48,7 @@ namespace RateLimiter.Rules
                 limitCounterModel.RequestTime = currentRequestTime;
             }
 
-            _store.Update(request.RequestPath, limitCounterModel);
+            _store.Update(rateLimitDataKey, limitCounterModel);
 
             if (limitCounterModel.RequestCount > _numberOfRequestsAllowed)
             {

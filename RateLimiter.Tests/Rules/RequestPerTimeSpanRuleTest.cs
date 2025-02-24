@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
 using NUnit.Framework;
+using RateLimiter.Constants;
 using RateLimiter.Factories;
 using RateLimiter.Models;
-using RateLimiter.Rules;
-using RateLimiter.Stores;
 
 namespace RateLimiter.Tests.Rules
 {
@@ -21,9 +20,10 @@ namespace RateLimiter.Tests.Rules
             var interval = new TimeSpan(hours: 0, minutes: 0, seconds: 5);
             var dataStoreFactory = new RateLimitDataStoreFactory();
             var ruleFactory = new RateLimitRuleFactory(dataStoreFactory);
-            var rateLimitRule = ruleFactory.CreateRateLimitRule(
+            var rateLimitRule = ruleFactory.CreateRule(
                 RateLimitRuleTypes.RequestsPerTimeSpan,
                 RateLimitDataStoreTypes.ConcurrentInMemory,
+                DataStoreKeyTypes.RequestsPerResource,
                 numRequestsAllowed,
                 interval);
 
@@ -44,9 +44,10 @@ namespace RateLimiter.Tests.Rules
             var interval = new TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 1);
             var dataStoreFactory = new RateLimitDataStoreFactory();
             var ruleFactory = new RateLimitRuleFactory(dataStoreFactory);
-            var rateLimitRule = ruleFactory.CreateRateLimitRule(
+            var rateLimitRule = ruleFactory.CreateRule(
                 RateLimitRuleTypes.RequestsPerTimeSpan,
                 RateLimitDataStoreTypes.ConcurrentInMemory,
+                DataStoreKeyTypes.RequestsPerResource,
                 numRequestsAllowed,
                 interval);
 
@@ -71,9 +72,10 @@ namespace RateLimiter.Tests.Rules
             var interval = new TimeSpan(days: 0, hours: 0, minutes: 0, seconds: 0, milliseconds: 10);
             var dataStoreFactory = new RateLimitDataStoreFactory();
             var ruleFactory = new RateLimitRuleFactory(dataStoreFactory);
-            var rateLimitRule = ruleFactory.CreateRateLimitRule(
+            var rateLimitRule = ruleFactory.CreateRule(
                 RateLimitRuleTypes.RequestsPerTimeSpan,
                 RateLimitDataStoreTypes.ConcurrentInMemory,
+                DataStoreKeyTypes.RequestsPerResource,
                 numRequestsAllowed,
                 interval);
 

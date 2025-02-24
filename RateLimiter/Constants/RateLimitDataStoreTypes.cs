@@ -1,4 +1,4 @@
-﻿namespace RateLimiter.Stores
+﻿namespace RateLimiter.Constants
 {
     public enum RateLimitDataStoreTypes
     {
