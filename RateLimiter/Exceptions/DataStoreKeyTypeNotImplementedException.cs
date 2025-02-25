@@ -1,4 +1,5 @@
 ﻿using System;
+using RateLimiter.Constants;
 
 namespace RateLimiter.Exceptions
 {
@@ -7,5 +8,9 @@ namespace RateLimiter.Exceptions
         private const string _message = "The requested data store key type has not been implemented";
 
         public DataStoreKeyTypeNotImplementedException() : base(_message) { }
+
+        public DataStoreKeyTypeNotImplementedException(DataStoreKeyTypes dataStoreKeyType) 
+            : base($"{_message}: {dataStoreKeyType.ToString()}") 
+        { }
     }
 }

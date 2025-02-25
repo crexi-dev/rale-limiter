@@ -6,16 +6,16 @@ namespace RateLimiter.Stores
 {
     public class DataStoreKeyGenerator : IDataStoreKeyGenerator
     {
-        private readonly DataStoreKeyTypes _ruleType;
+        private readonly DataStoreKeyTypes _keyType;
 
-        public DataStoreKeyGenerator(DataStoreKeyTypes ruleType)
+        public DataStoreKeyGenerator(DataStoreKeyTypes keyType)
         {
-            _ruleType = ruleType;
+            _keyType = keyType;
         }
 
         public string GenerateKey(RequestModel request)
         {
-            switch (_ruleType)
+            switch (_keyType)
             {
                 case DataStoreKeyTypes.RequestsPerResource:
                     return $"{request.RequestPath}";
@@ -36,7 +36,7 @@ namespace RateLimiter.Stores
                 case DataStoreKeyTypes.RequestsPerOrganizationUserPerResource:
                     return $"{request.UserId}:{request.OrganizationId}:{request.RequestPath}";
                 default:
-                    throw new DataStoreKeyTypeNotImplementedException();
+                    throw new DataStoreKeyTypeNotImplementedException(_keyType);
             }
         }
     }

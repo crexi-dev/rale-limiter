@@ -30,7 +30,7 @@ namespace RateLimiter.Factories
                 case RateLimitRuleTypes.RequestsPerTimeSpan:
                     return new RequestsPerTimeSpanRule(numberOfRequests, interval, dataStore, keyGenerator);
                 default:
-                    throw new RuleTypeNotImplementedException();
+                    throw new RuleTypeNotImplementedException(ruleType);
             }
         }
     }

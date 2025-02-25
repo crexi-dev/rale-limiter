@@ -13,7 +13,7 @@ namespace RateLimiter.Factories
                 case RateLimitDataStoreTypes.ConcurrentInMemory:
                     return new ConcurrentInMemoryRateLimitDataStore();
                 default:
-                    throw new DataStoreTypeNotImplementedException();
+                    throw new DataStoreTypeNotImplementedException(dataStoreType);
             }
         }
     }
