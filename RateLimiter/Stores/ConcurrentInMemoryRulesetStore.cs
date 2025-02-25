@@ -8,6 +8,11 @@ namespace RateLimiter.Stores
     {
         private readonly ConcurrentDictionary<string, IList<IRateLimitRule>> _rulesetStore;
 
+        public ConcurrentInMemoryRulesetStore()
+        {
+            _rulesetStore = new ConcurrentDictionary<string, IList<IRateLimitRule>>();
+        }
+
         public ConcurrentInMemoryRulesetStore(ConcurrentDictionary<string, IList<IRateLimitRule>> rulesetStore)
         {
             _rulesetStore = rulesetStore;
