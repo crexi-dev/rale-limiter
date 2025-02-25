@@ -5,6 +5,6 @@ namespace RateLimiter.Rules
 {
     public interface IRateLimitRule
     {
-        Task<bool> IsWithinLimitAsync(RequestModel request);
+        Task<bool> IsRequestAllowedAsync(RequestModel request);
     }
 }

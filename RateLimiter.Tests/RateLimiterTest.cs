@@ -48,7 +48,7 @@ public class RateLimiterTest
         var loggerMock = new Mock<ILogger<RateLimiter>>();
         var rateLimiter = new RateLimiter(rulesetStoreMock.Object, loggerMock.Object, allowRequestsOnFailure);
 
-        testRule.Setup(testRule => testRule.IsWithinLimitAsync(request)).ReturnsAsync(true);
+        testRule.Setup(testRule => testRule.IsRequestAllowedAsync(request)).ReturnsAsync(true);
         rulesetStoreMock.Setup(store => store.GetRules(resourceId)).Returns(ruleList);
 
         // Act
@@ -77,8 +77,8 @@ public class RateLimiterTest
         var loggerMock = new Mock<ILogger<RateLimiter>>();
         var rateLimiter = new RateLimiter(rulesetStoreMock.Object, loggerMock.Object, allowRequestsOnFailure);
 
-        testRule1.Setup(testRule => testRule.IsWithinLimitAsync(request)).ReturnsAsync(true);
-        testRule2.Setup(testRule => testRule.IsWithinLimitAsync(request)).ReturnsAsync(false);
+        testRule1.Setup(testRule => testRule.IsRequestAllowedAsync(request)).ReturnsAsync(true);
+        testRule2.Setup(testRule => testRule.IsRequestAllowedAsync(request)).ReturnsAsync(false);
         rulesetStoreMock.Setup(store => store.GetRules(requestPath)).Returns(ruleList);
 
         // Act

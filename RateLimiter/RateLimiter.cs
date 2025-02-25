@@ -33,7 +33,7 @@ namespace RateLimiter
 
                 foreach (var rule in applicableRules)
                 {
-                    if (!await rule.IsWithinLimitAsync(request))
+                    if (!await rule.IsRequestAllowedAsync(request))
                     {
                         return false;
                     }

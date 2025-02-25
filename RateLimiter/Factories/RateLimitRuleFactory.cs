@@ -29,6 +29,8 @@ namespace RateLimiter.Factories
             {
                 case RateLimitRuleTypes.RequestsPerTimeSpan:
                     return new RequestsPerTimeSpanRule(numberOfRequests, interval, dataStore, keyGenerator);
+                case RateLimitRuleTypes.TimeSpanSinceLastRequest:
+                    return new TimeSpanSinceLastRequestRule(interval, dataStore, keyGenerator);
                 default:
                     throw new RuleTypeNotImplementedException(ruleType);
             }

@@ -7,10 +7,10 @@ using RateLimiter.Models;
 
 namespace RateLimiter.Tests.Rules
 {
-    internal class RequestPerTimeSpanRuleTest
+    public class TimeSpanSinceLastRequestRuleTest
     {
         [Test]
-        public async Task RequestPerTimeSpanRule_IsWithinLimit_ReturnsTrue_When_LimitIsNotExceeded()
+        public async Task IsRequestAllowedAsync_ReturnsTrue_When_LimitIsNotExceeded()
         {
             // Arrange
             var resourceId = "/api/path";
@@ -21,7 +21,7 @@ namespace RateLimiter.Tests.Rules
             var dataStoreFactory = new RateLimitDataStoreFactory();
             var ruleFactory = new RateLimitRuleFactory(dataStoreFactory);
             var rateLimitRule = ruleFactory.CreateRule(
-                RateLimitRuleTypes.RequestsPerTimeSpan,
+                RateLimitRuleTypes.TimeSpanSinceLastRequest,
                 RateLimitDataStoreTypes.ConcurrentInMemory,
                 DataStoreKeyTypes.RequestsPerResource,
                 numRequestsAllowed,
@@ -35,7 +35,7 @@ namespace RateLimiter.Tests.Rules
         }
 
         [Test]
-        public async Task RequestPerTimeSpanRule_IsWithinLimit_ReturnsFalse_When_LimitIsExceeded()
+        public async Task IsRequestAllowedAsync_ReturnsFalse_When_LimitIsExceeded()
         {
             // Arrange
             var resourceId = "/api/path";
@@ -45,7 +45,7 @@ namespace RateLimiter.Tests.Rules
             var dataStoreFactory = new RateLimitDataStoreFactory();
             var ruleFactory = new RateLimitRuleFactory(dataStoreFactory);
             var rateLimitRule = ruleFactory.CreateRule(
-                RateLimitRuleTypes.RequestsPerTimeSpan,
+                RateLimitRuleTypes.TimeSpanSinceLastRequest,
                 RateLimitDataStoreTypes.ConcurrentInMemory,
                 DataStoreKeyTypes.RequestsPerResource,
                 numRequestsAllowed,
@@ -62,7 +62,7 @@ namespace RateLimiter.Tests.Rules
 
 
         [Test]
-        public async Task RequestPerTimeSpanRule_IsWithinLimit_MultipleRequests()
+        public async Task IsRequestAllowedAsync_MultipleRequests()
         {
             // Arrange
             var delayInMs = 11;
@@ -73,7 +73,7 @@ namespace RateLimiter.Tests.Rules
             var dataStoreFactory = new RateLimitDataStoreFactory();
             var ruleFactory = new RateLimitRuleFactory(dataStoreFactory);
             var rateLimitRule = ruleFactory.CreateRule(
-                RateLimitRuleTypes.RequestsPerTimeSpan,
+                RateLimitRuleTypes.TimeSpanSinceLastRequest,
                 RateLimitDataStoreTypes.ConcurrentInMemory,
                 DataStoreKeyTypes.RequestsPerResource,
                 numRequestsAllowed,

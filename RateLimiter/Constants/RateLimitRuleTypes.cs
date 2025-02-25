@@ -2,6 +2,7 @@
 {
     public enum RateLimitRuleTypes
     {
-        RequestsPerTimeSpan
+        RequestsPerTimeSpan,
+        TimeSpanSinceLastRequest
     }
 }
